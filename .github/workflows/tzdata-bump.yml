@@ -7,6 +7,11 @@
 # The pin is single-sourced in resources/tzdata-version.txt, which the generators write, so
 # regenerating *is* moving the pin — there is no second step to forget. This proves the result before
 # proposing it, and leaves a diff to read rather than a chore to remember.
+#
+# Note the order below: the new release is written to the version file *before* the image is rebuilt.
+# The image reads its pin from that file, so the rebuild is what installs the candidate database, and
+# the image's own build-time check is what refuses to go on if it did not take. No separate guard, and
+# no way to generate against one release while labelling the output with another.
 
 name: tz database bump
 
@@ -18,6 +23,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 
 jobs:
   bump:
@@ -28,20 +34,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      # No timezonedb yet: this call exists only to read what upstream publishes.
-      - name: Setup PHP
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
-        with:
-          php-version: '8.5'
-          extensions: dom, curl, libxml, mbstring, zip, fileinfo, intl, calendar
-          coverage: none
-          ini-values: date.timezone=UTC
+      # Built on the *current* pin, purely to ask PECL what exists. Cached, so it costs seconds.
+      - name: Build the container
+        uses: ./.github/actions/container
 
       - name: Compare the pin against PECL
         id: check
         run: |
           CURRENT="$(cat resources/tzdata-version.txt)"
-          LATEST="$(php tools/tzdata-release.php --latest)"
+          LATEST="$(docker/run php tools/tzdata-release.php --latest)"
 
           echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
           echo "latest=$LATEST" >> "$GITHUB_OUTPUT"
@@ -54,38 +55,28 @@ jobs:
             echo "Pinned to $CURRENT; PECL publishes $LATEST."
           fi
 
-      # Reconfigures the same PHP with the new database loaded. The generators read whatever the
-      # running binary carries, so this is what decides the content of the commit.
-      - name: Load the newer database
+      # Writing the file first is what makes the rebuild install the candidate database.
+      - name: Point the pin at the candidate release
         if: steps.check.outputs.needed == 'true'
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
-        with:
-          php-version: '8.5'
-          extensions: dom, curl, libxml, mbstring, zip, fileinfo, pdo, sqlite3, pdo_sqlite, intl, calendar, timezonedb-${{ steps.check.outputs.latest }}
-          coverage: none
-          ini-values: date.timezone=UTC
+        run: echo "${{ steps.check.outputs.latest }}" > resources/tzdata-version.txt
 
-      - name: Refuse to generate against the wrong database
+      # Fails its own build unless PHP then reports that release, which is the guard.
+      - name: Rebuild on the candidate release
         if: steps.check.outputs.needed == 'true'
-        run: |
-          VERSION="$(php -r 'echo timezone_version_get();')"
-          if [ "$VERSION" != "${{ steps.check.outputs.latest }}" ]; then
-            echo "::error::Asked for timezonedb ${{ steps.check.outputs.latest }} but PHP reports '$VERSION'. Generating now would commit data labelled with a release it was not built from."
-            exit 1
-          fi
+        uses: ./.github/actions/container
 
       - name: Install dependencies
         if: steps.check.outputs.needed == 'true'
-        run: composer update --prefer-stable --no-interaction --no-progress
+        run: docker/run composer update --prefer-stable --no-interaction --no-progress
 
       - name: Regenerate against it
         if: steps.check.outputs.needed == 'true'
         run: |
-          php tools/generate-enums.php
-          php tools/generate-alias-map.php
+          docker/run php tools/generate-enums.php
+          docker/run php tools/generate-alias-map.php
 
-          # The generators rewrite resources/tzdata-version.txt, and the workflows read that at run
-          # time — so moving the pin is not a separate step and cannot be the one that gets forgotten.
+          # The generators rewrite the version file themselves; this asserts they wrote what the
+          # image was built on, rather than trusting the step above to have stayed true.
           test "$(cat resources/tzdata-version.txt)" = "${{ steps.check.outputs.latest }}"
 
       # A pull request opened by a workflow does not itself trigger CI, so the proof has to happen
@@ -95,9 +86,9 @@ jobs:
         env:
           CI: 'true'
         run: |
-          composer sync-check
-          vendor/bin/pest --no-coverage --colors=always
-          composer lint
+          docker/run composer sync-check
+          docker/run vendor/bin/pest --no-coverage --colors=always
+          docker/run composer lint
 
       - name: Describe what actually changed
         if: steps.check.outputs.needed == 'true'

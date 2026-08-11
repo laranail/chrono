@@ -5,6 +5,25 @@ All notable changes to `laranail/chrono` are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **Every CI job now runs in the development container.** The compatibility leg on the runner's own
+  PHP is gone, so nothing in CI installs PHP: tests, static analysis, the weekly drift check, the
+  audit, the release and the tz bump all share one image with one PHP build, one ICU and one tz
+  release — the same one `make docker-test` builds.
+- The trade is deliberate and worth naming: CI no longer exercises Debian's PHP, glibc, or any ICU
+  but the image's. A regression that only appears off-Alpine would now reach a release rather than a
+  pull request. What it buys is that a green tick and a green local run mean the same thing.
+- The dependency matrix survived the move — `prefer-lowest` was never about the host, it is Composer
+  resolution, and it is what catches a constraint looser than the code.
+- The image build is a local composite action rather than five copies of the same steps, and CI runs
+  commands through `docker/run` so its steps read as the commands they are.
+- The tz bump writes the candidate release to the version file *before* rebuilding, so the image's own
+  build-time check is what refuses to generate against the wrong database. One guard fewer to keep
+  honest.
+
 ## [0.1.6] - 2026-08-11
 
 ### Changed

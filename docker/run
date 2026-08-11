@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+#
+# Run a command inside the development image against the working tree.
+#
+#   docker/run composer test
+#   docker/run vendor/bin/pest --filter=alias
+#
+# CI uses this so its steps read as the commands they are rather than as `docker run` boilerplate
+# repeated a dozen times. Locally you want `make docker-test` and friends instead — those go through
+# Compose, which also maps your user so files come back owned by you.
+#
+# Assumes the image is already built and tagged `chrono-dev`; in CI that is the container action's
+# job, and building here too would hide which step paid for it.
+
+set -euo pipefail
+
+if [ "$#" -eq 0 ]; then
+    echo "usage: docker/run <command> [args...]" >&2
+    exit 64
+fi
+
+exec docker run --rm \
+    --volume "$PWD:/app" \
+    --workdir /app \
+    --env CI \
+    chrono-dev \
+    "$@"

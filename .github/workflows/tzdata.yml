@@ -23,48 +23,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Read the pinned tz release
-        id: tzdata
-        run: echo "version=$(cat resources/tzdata-version.txt)" >> "$GITHUB_OUTPUT"
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
-        with:
-          php-version: '8.5'
-          # `timezonedb` is the point of this job. Ubuntu's PHP is built --with-system-tzdata,
-          # so timezone_version_get() returns the literal `0.system` and there is no release to
-          # detect drift *from* — the run would report drift every week and measure none of it.
-          # The PECL extension overrides the OS database with a versioned, current one.
-          extensions: dom, curl, libxml, mbstring, zip, fileinfo, intl, calendar, timezonedb-${{ steps.tzdata.outputs.version }}
-          coverage: none
-          ini-values: date.timezone=UTC
+      - name: Build the container
+        uses: ./.github/actions/container
 
       - name: Install dependencies
-        run: composer update --prefer-stable --no-interaction --no-progress
+        run: docker/run composer update --prefer-stable --no-interaction --no-progress
 
-      - name: Record the runner's date data
+      - name: Record the container's date data
         id: versions
         run: |
           {
-            echo "php_tzdata=$(php -r 'echo timezone_version_get();')"
-            echo "icu=$(php -r 'echo INTL_ICU_VERSION;')"
-            echo "icu_tzdata=$(php -r 'echo IntlTimeZone::getTZDataVersion();')"
+            echo "php_tzdata=$(docker run --rm chrono-dev php -r 'echo timezone_version_get();')"
+            echo "icu=$(docker run --rm chrono-dev php -r 'echo INTL_ICU_VERSION;')"
+            echo "icu_tzdata=$(docker run --rm chrono-dev php -r 'echo IntlTimeZone::getTZDataVersion();')"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Fail if the pinned database did not load
-        run: |
-          VERSION="$(php -r 'echo timezone_version_get();')"
-          EXPECTED="$(cat resources/tzdata-version.txt)"
-          if [ "$VERSION" != "$EXPECTED" ]; then
-            echo "::error::PHP reports tzdata '$VERSION' but the pin is '$EXPECTED'. Either timezonedb did not load, or the pin moved without the fixtures. Failing loudly rather than reporting drift never measured against the right baseline."
-            exit 1
-          fi
-          echo "tzdata $VERSION matches the pin - drift is measurable against the release the fixtures describe."
+      # No separate pin guard: the image fails its own build unless PHP reports the pinned release,
+      # so reaching this step at all means the database is the one the fixtures describe.
 
       - name: Run the tzdata group
         id: run
         continue-on-error: true
-        run: composer test-tzdata
+        run: docker/run composer test-tzdata
 
       - name: Open an issue on drift
         if: steps.run.outcome == 'failure'

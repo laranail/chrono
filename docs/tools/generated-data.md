@@ -111,10 +111,13 @@ ICU matters more than it looks. Every localised zone name and every human date f
 and its output moves between major versions — a suite passing on ICU 78 locally and running on ICU 74
 in CI is two suites wearing one name.
 
-A second `host` job still runs on the runner's own PHP, with `timezonedb` installed through
-`setup-php` and pinned from the same file. That one is a compatibility check rather than a
-duplicate: this package exists because hosts disagree about time, so proving it on exactly one host
-would be an odd way to make the argument.
+Every job runs there — tests, static analysis, the weekly drift check, the audit and the release.
+Nothing in CI installs PHP any more.
+
+What that costs is worth stating: CI no longer proves the package works on Debian's PHP, on glibc, or
+on any ICU but the image's. The trade was made deliberately — a green tick and a green local run
+meaning the same thing was judged worth more than breadth CI was only sampling anyway — but a
+regression that shows up off-Alpine would now reach a release rather than a pull request.
 
 One source of truth, deliberately. An earlier version wrote the release into each workflow, which
 made regenerating and pinning two acts that had to agree — and the half that gets forgotten there is
