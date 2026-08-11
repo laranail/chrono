@@ -42,7 +42,10 @@ it('covers exactly the backward-compatible remainder', function (): void {
 
     expect(array_diff($cases, $live))->toBe([])
         ->and(array_diff($live, $cases))->toBe([]);
-});
+})->skip(
+    fn (): bool => ! tzdataIsVersioned(),
+    'the host reads the OS tz database, whose set of links is its own',
+);
 
 it('has a case for every abbreviation', function (): void {
     $cases = array_map(static fn (TimezoneAbbreviation $c): string => strtolower($c->value), TimezoneAbbreviation::cases());

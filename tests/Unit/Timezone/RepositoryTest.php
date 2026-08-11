@@ -13,9 +13,36 @@ it('separates canonical identifiers from the backward-compatible list', function
     $canonical = $this->repository->identifiers();
     $withDeprecated = $this->repository->identifiers(includeDeprecated: true);
 
-    expect($canonical)->toBe(DateTimeZone::listIdentifiers(DateTimeZone::ALL))
-        ->and($withDeprecated)->toBe(DateTimeZone::listIdentifiers(DateTimeZone::ALL_WITH_BC))
+    expect(array_diff($canonical, DateTimeZone::listIdentifiers(DateTimeZone::ALL)))->toBe([])
+        ->and(array_diff($withDeprecated, DateTimeZone::listIdentifiers(DateTimeZone::ALL_WITH_BC)))->toBe([])
+        ->and(array_diff($canonical, $withDeprecated))->toBe([])
         ->and(count($withDeprecated))->toBeGreaterThan(count($canonical));
+});
+
+/**
+ * Deliberately a subset of `listIdentifiers()` rather than equal to it. On a system-tzdata build —
+ * the official Docker images, Debian, Ubuntu — PHP reports whatever is in `/usr/share/zoneinfo`,
+ * so the raw list carries `tzdata.zi` and `leapseconds` alongside the zones. The first would reach a
+ * picker as if it were a place and the second throws when constructed.
+ */
+it('never reports a file as a zone', function (): void {
+    $unbuildable = [];
+
+    foreach ($this->repository->identifiers(includeDeprecated: true) as $identifier) {
+        try {
+            // The real guarantee: everything it offers can actually be built.
+            new DateTimeZone($identifier);
+        } catch (Throwable) {
+            $unbuildable[] = $identifier;
+        }
+    }
+
+    $withDots = array_values(array_filter(
+        $this->repository->identifiers(includeDeprecated: true),
+        static fn (string $identifier): bool => str_contains($identifier, '.'),
+    ));
+
+    expect($unbuildable)->toBe([])->and($withDots)->toBe([]);
 });
 
 /**

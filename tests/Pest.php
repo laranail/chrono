@@ -68,5 +68,5 @@ function tzdataIsVersioned(): bool
 /** Zones only carry coordinates and country codes when the host ships the location tables. */
 function tzdataHasLocations(): bool
 {
-    return (new DateTimeZone('Africa/Nairobi'))->getLocation()['country_code'] === 'KE';
+    return new DateTimeZone('Africa/Nairobi')->getLocation()['country_code'] === 'KE';
 }
