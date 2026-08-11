@@ -11,7 +11,7 @@ use Simtabi\Laranail\Chrono\Core\Enums\Concerns\ResolvesZone;
  *
  * Identifiers that exist only in the backward-compatible list: deprecated aliases such as `Asia/Calcutta`, the fixed-offset `Etc/*` zones, and rule-bearing abbreviations like `CET`. Use `AliasMap` to find the canonical target, remembering that the `Etc/*` and abbreviation cases have none.
  *
- * 179 cases, generated against tzdata 2026.1. Regenerate with `laranail::chrono.sync`.
+ * 179 cases, generated against tzdata 2026.3. Regenerate with `laranail::chrono.sync`.
  * A parity test asserts every case is a live identifier, every identifier has a case, and that
  * regenerating reproduces this file byte for byte.
  */

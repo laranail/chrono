@@ -11,7 +11,7 @@ use Simtabi\Laranail\Chrono\Core\Enums\Concerns\ResolvesZone;
  *
  * Every canonical IANA timezone identifier PHP knows.
  *
- * 419 cases, generated against tzdata 2026.1. Regenerate with `laranail::chrono.sync`.
+ * 419 cases, generated against tzdata 2026.3. Regenerate with `laranail::chrono.sync`.
  * A parity test asserts every case is a live identifier, every identifier has a case, and that
  * regenerating reproduces this file byte for byte.
  */

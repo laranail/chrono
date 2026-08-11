@@ -11,7 +11,7 @@ namespace Simtabi\Laranail\Chrono\Core\Timezone\Support;
  * a test asserts this file matches what the generator emits against the runner's tz database, and
  * that every pair still shares a transition history.
  *
- * Built against tzdata 2026.1.
+ * Built against tzdata 2026.3.
  */
 final class AliasMap
 {
