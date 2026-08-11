@@ -46,6 +46,17 @@ $formatter->all($instant);                        // every named format, for a d
 The zone is applied before formatting, so passing one re-expresses the instant rather than
 relabelling it.
 
+### Zones ICU has never heard of
+
+`new DateTimeImmutable('2026-06-15T12:00:00Z')` produces a zone PHP names `Z`, and an ISO string with
+an offset produces one named `+03:00`. ICU knows neither and rejects both by throwing from its
+constructor — so formatting an instant parsed from a JSON payload, an API response or a round-tripped
+`format('c')` is the most ordinary thing an application does and used to be a fatal error.
+
+The formatter renders those as a fixed `GMT±HH:MM`, which ICU understands and which is honest: an
+offset zone carries no region, so there is no locale-specific name to be had. Region zones are passed
+through untouched. Nothing about this is visible at the call site, which is the point.
+
 ## Parsing
 
 ```php

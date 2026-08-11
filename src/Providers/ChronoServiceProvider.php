@@ -20,6 +20,7 @@ use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneRepository;
 use Simtabi\Laranail\Chrono\Core\Format\DateFormatter;
 use Simtabi\Laranail\Chrono\Core\Format\DateParser;
 use Simtabi\Laranail\Chrono\Core\Humanize\Humanizer;
+use Simtabi\Laranail\Chrono\Core\Support\ServiceResolver;
 use Simtabi\Laranail\Chrono\Core\Timezone\Repository\CachedTimezoneRepository;
 use Simtabi\Laranail\Chrono\Core\Timezone\Repository\PhpTimezoneRepository;
 use Simtabi\Laranail\Chrono\Core\Timezone\Resolver\AliasResolver;
@@ -62,6 +63,14 @@ final class ChronoServiceProvider extends PackageServiceProvider
     #[Override]
     public function packageRegistered(): void
     {
+        // How the framework-free traits in Core\Concerns find *this* application's services. Without
+        // it they construct their own defaults and work fine — but inside a Laravel application that
+        // would mean a class using the trait quietly opting out of the configured daylight-saving
+        // policy, catalogue and display settings, and disagreeing with everything around it.
+        ServiceResolver::using(fn (string $service): ?object => $this->app->bound($service)
+            ? $this->app->make($service)
+            : null);
+
         // Bound with bindIf, never singleton: a host application or a test may already have bound
         // its own PSR-20 clock, and clobbering it would silently un-freeze time in their suite.
         $this->app->bindIf(ClockInterface::class, SystemClock::class, shared: true);

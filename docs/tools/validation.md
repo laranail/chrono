@@ -39,6 +39,10 @@ $user->update(['timezone' => 'KE']);                       // Africa/Nairobi
 $user->update(['timezone' => Timezones::of('Asia/Tokyo')]);
 ```
 
+On a model, `HasTimezone` registers this cast for you and adds the accessors and scopes that go with
+it — and yields to an explicit declaration, so `AsTimezone::verbatim()` below still wins. See
+[Traits](concerns.md#hastimezone).
+
 `AsTimezone::verbatim()` opts out of the rewrite, for a column that must preserve exactly what was
 submitted.
 

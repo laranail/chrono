@@ -6,7 +6,12 @@ parameters:
     level: 8
     paths:
         - src
+        # A trait PHPStan sees no user of is not analysed at all, so the consumer fixtures are in
+        # scope deliberately — they are the only thing that makes the concerns checkable.
+        - tests/Fixtures
+        - tests/TestCase.php
     excludePaths:
         - src/Core
+        - tests/Fixtures/Core
         - vendor
     treatPhpDocTypesAsCertain: false

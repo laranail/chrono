@@ -86,7 +86,7 @@ final readonly class DateFormatter
             $resolvedLocale,
             IntlDateFormatter::FULL,
             IntlDateFormatter::FULL,
-            $resolvedZone->getName(),
+            $this->icuZoneName($resolvedZone, $instant),
             null,
             $pattern,
         );
@@ -97,6 +97,41 @@ final readonly class DateFormatter
         return $formatted === false
             ? $this->raw($instant, 'Y-m-d H:i', $zone)
             : $formatted;
+    }
+
+    /**
+     * A zone name ICU will accept, which is not the same set PHP will produce.
+     *
+     * `new DateTimeImmutable('2026-06-15T12:00:00Z')` yields a zone named `Z`, and an ISO string
+     * with an offset yields one named `+03:00`. ICU knows neither, and rejects both by throwing
+     * from the constructor — so formatting any instant parsed from a JSON payload, an API response
+     * or a round-tripped `format('c')` used to be a fatal error rather than a rendering.
+     *
+     * Only region zones survive unchanged. The other two PHP zone types are rendered as a fixed
+     * `GMT±HH:MM`, which ICU understands and which is honest: an offset zone carries no region, so
+     * there is no locale-specific name to be had.
+     */
+    private function icuZoneName(DateTimeZone $zone, DateTimeInterface $instant): string
+    {
+        $name = $zone->getName();
+
+        // A region zone — the only kind ICU has data for.
+        if (str_contains($name, '/') || $name === 'UTC') {
+            return $name;
+        }
+
+        $offset = $zone->getOffset(DateTimeImmutable::createFromInterface($instant));
+
+        if ($offset === 0) {
+            return 'UTC';
+        }
+
+        return sprintf(
+            'GMT%s%02d:%02d',
+            $offset < 0 ? '-' : '+',
+            intdiv(abs($offset), 3600),
+            intdiv(abs($offset) % 3600, 60),
+        );
     }
 
     /**

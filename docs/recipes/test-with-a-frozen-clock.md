@@ -18,21 +18,54 @@ one injection covers the whole surface.
 
 ## In a Laravel test
 
-Bind it once and every resolved service picks it up:
+Use the shipped trait rather than binding by hand:
 
 ```php
-use Psr\Clock\ClockInterface;
+use Simtabi\Laranail\Chrono\Testing\FreezesChronoTime;
 
-protected function setUp(): void
+final class RenewalTest extends TestCase
 {
-    parent::setUp();
+    use FreezesChronoTime;
 
-    $this->app->instance(ClockInterface::class, new FrozenClock('2026-06-15T12:00:00Z'));
+    public function test_it_renews_next_month(): void
+    {
+        $this->freezeChronoTime('2026-01-31T09:00:00Z');
+
+        $this->assertSame('2026-02-28', $subscription->renewsOn()->format('Y-m-d'));
+    }
 }
 ```
 
+Binding `ClockInterface` alone is not enough, and this is the part hand-rolled freezing misses: a
+singleton resolved *before* the bind captured the old clock by constructor injection and keeps
+reading the wall clock for the rest of the test. The trait rebinds and rebuilds.
+
+`travelChronoTo()` moves the clock. `freezeAtNextTransition('Europe/London')` freezes at the moment a
+daylight-saving change takes effect, asked of the database rather than hard-coded — the dates move
+every year, and a hard-coded one silently stops testing anything.
+
 The provider binds the clock with `bindIf`, never `singleton`, so an application or a test that has
 already bound its own PSR-20 clock keeps it.
+
+## In a class of your own
+
+`InteractsWithClock` extends the same guarantee to code that merely uses the package:
+
+```php
+final class RenewalService
+{
+    use InteractsWithClock;
+
+    public function renewsOn(Subscription $subscription): DateTimeImmutable
+    {
+        return $this->now()->modify('+1 month');
+    }
+}
+
+$service->withClock(new FrozenClock('2026-01-31T09:00:00Z'))->renewsOn($subscription);
+```
+
+See [Traits](../tools/concerns.md).
 
 ## Why it matters here
 

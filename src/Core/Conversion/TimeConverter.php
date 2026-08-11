@@ -77,15 +77,21 @@ final readonly class TimeConverter
     /**
      * The zones to answer for. One or many; call it repeatedly and they accumulate.
      *
-     * @param string|Timezone|iterable<string|Timezone> $zones
+     * Takes whatever the resolver takes — a string, an enum case, a `DateTimeZone`, a `Timezone`,
+     * anything `Stringable` — because a caller who has `$user->timezone` should not have to know
+     * which of those it is. Each is resolved once per call, not once per input.
+     *
+     * @param mixed $zones one value, or any iterable of them
      */
     #[NoDiscard]
-    public function to(string|Timezone|iterable $zones): self
+    public function to(mixed $zones): self
     {
         $identifiers = [];
 
         foreach (is_iterable($zones) ? $zones : [$zones] as $zone) {
-            $identifiers[] = $zone instanceof Timezone ? $zone->identifier : $zone;
+            $identifiers[] = $zone instanceof Timezone
+                ? $zone->identifier
+                : $this->timezones->resolve($zone);
         }
 
         return clone ($this, ['targets' => array_values(array_unique([...$this->targets, ...$identifiers]))]);

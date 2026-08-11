@@ -106,11 +106,18 @@ deptrac:
         - type: directory
           value: src/Core/Enums/(Region|TimezoneKind|OffsetFormat|GapPolicy|AmbiguityPolicy|LocalTimeKind|SelectShape|NamedFormat|TimeUnit)\.php
 
+    # Consumer-facing convenience traits. May reach every module; nothing may reach them.
+    # The framework-free twin of Shell: one `use` line instead of a container.
+    - name: Concerns
+      collectors:
+        - type: directory
+          value: src/Core/Concerns/.*
+
     # The Laravel shell — everything outside src/Core.
     - name: Shell
       collectors:
         - type: directory
-          value: src/(Actions|Adapters|Casts|Console|Contracts|Enums|Events|Facades|Http|Listeners|Models|Providers|Rules|Schedule|Services|Support|View)/.*
+          value: src/(Actions|Adapters|Casts|Console|Contracts|Enums|Events|Facades|Http|Listeners|Models|Providers|Rules|Schedule|Services|Support|Testing|View)/.*
 
     # ---- Forbidden tokens, declared only so Core can be forbidden from touching them ---------
     - name: Illuminate
@@ -183,8 +190,17 @@ deptrac:
       - Recurrence
       - Astronomy
 
+    Concerns:
+      - Shared
+      - Temporal
+      - Timezone
+      - Presentation
+      - Format
+      - Humanize
+
     # The shell is the only layer allowed to see the framework.
     Shell:
+      - Concerns
       - Shared
       - Temporal
       - Timezone

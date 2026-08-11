@@ -11,6 +11,30 @@ $table->string('timezone', 64)->nullable()->index();
 64 characters covers every identifier with room to spare. The package ships no migration, because
 the column belongs to your `users` table.
 
+Then add the trait, and the rest of this page is mostly done for you:
+
+```php
+final class User extends Authenticatable
+{
+    use HasTimezone;
+}
+```
+
+```php
+$user->timezone = 'US/Eastern';     // stored as America/New_York
+$user->timezone;                    // a Timezone object
+$user->localTime($order->placed_at);
+User::query()->whereTimezoneCountry('KE');
+```
+
+Canonicalising on write is the reason to bother. The resolver deliberately *accepts* deprecated
+aliases — that is what lets `US/Eastern` from a legacy integration resolve at all — but stored
+verbatim the column ends up holding `Asia/Calcutta` and `Asia/Kolkata` for one place, and every
+`where` and `group by` treats them as two. See [Traits](../tools/concerns.md#hastimezone).
+
+The sections below are what the trait does underneath, and what to reach for when a model is not
+involved.
+
 ## Validate and canonicalise on the way in
 
 ```php

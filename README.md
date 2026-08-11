@@ -56,6 +56,7 @@ Hosted at **[opensource.simtabi.com/documentation/laranail/chrono](https://opens
 
 ### Reference
 - [Facades and helpers](docs/tools/facade.md) — `Chrono`, `Timezones`, and injecting instead
+- [Traits](docs/tools/concerns.md) — one `use` line, with a container or without one
 - [Resolution](docs/tools/resolution.md) — the nine-strategy chain, and when it refuses
 - [Querying](docs/tools/query.md) — the fluent builder, collections and select shapes
 - [Converting between zones](docs/tools/conversion.md) — one instant or many, one zone or many

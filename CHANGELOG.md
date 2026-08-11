@@ -5,10 +5,20 @@ All notable changes to `laranail/chrono` are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.1.1] - 2026-08-11
 
 ### Added
 
+- **Traits.** Eight of them, so a class can have the package's behaviour in one `use` line and keep
+  it outside a framework. `InteractsWithClock`, `InteractsWithTimezones`, `ResolvesLocalTimes`,
+  `ConvertsTimezones`, `PresentsTimezones` and `RendersDateTimes` in `Core\Concerns`, composed by
+  `InteractsWithChrono`; `HasTimezone` for an Eloquent model; `FreezesChronoTime` for a test case.
+  Inside an application they return the *configured* services, so a helper using one cannot quietly
+  opt out of the daylight-saving policy and catalogue everything else obeys; outside one they
+  construct working defaults with no wiring.
+- `Core\Support\ServiceResolver`, the seam that makes both of those true at once — a closure the
+  provider installs at boot, and nothing in `Core` that knows what a container is.
+- `TimeConverter::to()` now accepts anything the resolver does, matching `Timezones::of()`.
 - `select.shape` on the presenter and the Blade component: one setting carries a picker's grouping
   and label template together, and `<x-chrono::timezone-select shape="flat" />` overrides it for one
   field. `TimezonePresenter::shape()` and `toShape()` expose the same four shapes to code.
@@ -26,6 +36,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`DateFormatter` threw on the most ordinary input there is.** ICU rejects the zone names PHP
+  produces for an ISO 8601 string — `Z` for a UTC suffix, `+03:00` for an offset — so formatting an
+  instant parsed from a JSON payload, an API response or a round-tripped `format('c')` was an
+  `IntlException` rather than a rendering. Those zones now render as a fixed `GMT±HH:MM`.
 - **Nine configuration keys were documented and never read**: `dst.on_gap`, `dst.on_ambiguous`,
   `display.offset_format`, `display.datetime_format`, `select.shape`, `select.placeholder`,
   `doctor.strict`, `resolution.canonicalise` and `catalogue.sort`. Setting `dst.on_gap = throw` did
@@ -39,6 +53,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The picker's embedded JSON is hex-escaped, so a translated country name or a custom label template
   cannot close the `<script>` element early.
 - The `Chrono` facade's docblock omitted `present()` and `convert()`.
+- The package's own `TestCase` bound `ClockInterface` but not `Clock`, and did not rebuild the
+  singletons already made from the old clock. It now uses the shipped `FreezesChronoTime`, which
+  does both — freezing by hand there meant the helper consumers are told to use was never exercised.
 
 ### Changed
 

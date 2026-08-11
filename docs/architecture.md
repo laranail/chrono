@@ -40,6 +40,26 @@ exists so the same class of gap cannot reappear with a future language feature.
 | `Business` | v0.3 | Holidays, working hours, business days |
 | `Astronomy` | v0.3 | Sunrise, sunset, twilight |
 
+`Core\Concerns` sits outside that graph as its own layer. It may reach every module and nothing may
+reach it — the framework-free twin of the shell, offering the same convenience through a `use` line
+that the container offers through a binding. See [Traits](tools/concerns.md).
+
+### How a framework-free trait finds a configured service
+
+The traits have to be correct in two worlds: inside an application they must return the services
+carrying *that* application's daylight-saving policy, catalogue and display settings, and outside one
+they must still work with no wiring at all. A trait that built its own `new Timezones` would satisfy
+the second and quietly break the first.
+
+`Core\Support\ServiceResolver` is the seam. It holds one closure, installed by the service provider
+at boot; without it every lookup returns null and the caller constructs a default. `Core` never
+learns what a container is, so the deptrac boundary is untouched.
+
+It is the package's only mutable global, which is a real cost and is why it is confined to lookup: it
+holds no services, caches nothing, and cannot change behaviour except by returning something
+configured elsewhere. Injection is still preferred wherever a call site can manage it, and every
+trait accepts an explicit service that overrides the lookup.
+
 ## Determinism
 
 Every current-time read routes through a PSR-20 `ClockInterface`. Nothing in `src/` calls `time()`,

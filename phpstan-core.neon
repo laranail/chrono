@@ -7,6 +7,9 @@ parameters:
     level: 10
     paths:
         - src/Core
+        # Framework-free consumer fixtures. A trait with no user is not analysed, so without these
+        # the Core\Concerns traits would pass by never being read.
+        - tests/Fixtures/Core
     treatPhpDocTypesAsCertain: true
     reportUnmatchedIgnoredErrors: true
 
