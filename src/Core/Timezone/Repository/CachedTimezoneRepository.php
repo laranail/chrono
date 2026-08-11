@@ -103,6 +103,11 @@ final class CachedTimezoneRepository implements TimezoneRepository
         return $this->fingerprint ??= $this->inner->fingerprint();
     }
 
+    public function usesSystemDatabase(): bool
+    {
+        return $this->inner->usesSystemDatabase();
+    }
+
     public function version(): string
     {
         return $this->inner->version();

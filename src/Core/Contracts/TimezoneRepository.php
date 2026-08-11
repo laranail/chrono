@@ -54,6 +54,15 @@ interface TimezoneRepository
      */
     public function fingerprint(): string;
 
-    /** PHP's own tzdata release, e.g. `2025.3`. */
+    /** PHP's own tzdata release, e.g. `2025.3` — or `0.system` on a system-tzdata build. */
     public function version(): string;
+
+    /**
+     * Whether PHP reads the operating system's tz database rather than its own bundled copy.
+     *
+     * True on the official Docker images, Debian and Ubuntu. The data is fine — often fresher than
+     * the bundled copy — but it carries no version, so anything comparing releases or checking
+     * generated data byte for byte has nothing to compare against.
+     */
+    public function usesSystemDatabase(): bool;
 }

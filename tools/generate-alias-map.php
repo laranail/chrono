@@ -172,7 +172,17 @@ $aliases = array_values(array_diff($withBc, $canonical));
  * reject a pair that is correct by definition.
  */
 $fingerprint = static function (string $identifier, bool $strict = true): string {
-    $transitions = (new DateTimeZone($identifier))->getTransitions(0, 2145916800);
+    // `listIdentifiers()` on a system-tzdata build reports files as well as zones — `tzdata.zi`,
+    // `leapseconds` — and constructing one of those is a fatal error rather than an exception to
+    // step over. This generator ran fine for months on a bundled-database machine and died on the
+    // first Debian one it met.
+    try {
+        $zone = new DateTimeZone($identifier);
+    } catch (Exception) {
+        return 'none';
+    }
+
+    $transitions = $zone->getTransitions(0, 2145916800);
 
     if ($transitions === false) {
         return 'none';

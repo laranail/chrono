@@ -45,9 +45,22 @@ final class DoctorCommand extends Command
         $minimum = (string) config('laranail.chrono.doctor.min_tzdata', '2024.1');
 
         $this->components->info('Date data');
-        $this->components->twoColumnDetail('PHP tzdata', $phpTzdata);
 
-        if (version_compare($this->comparable($phpTzdata), $this->comparable($minimum), '<')) {
+        // A system-tzdata build reports `0.system` rather than a release. Comparing that against a
+        // minimum would warn on every well-maintained Debian host in existence, so say what is
+        // actually true instead: the data comes from the OS, and the OS is what keeps it current.
+        if ($timezones->usesSystemDatabase()) {
+            $this->components->twoColumnDetail('PHP tzdata', 'from the OS (' . $phpTzdata . ')');
+            $this->components->twoColumnDetail(
+                '',
+                '<fg=gray>keep it current with the system package, not with PHP</>',
+            );
+        } else {
+            $this->components->twoColumnDetail('PHP tzdata', $phpTzdata);
+        }
+
+        if (! $timezones->usesSystemDatabase()
+            && version_compare($this->comparable($phpTzdata), $this->comparable($minimum), '<')) {
             $this->components->warn(sprintf(
                 'tzdata %s is older than the configured minimum of %s. Zones change several times a '
                 . 'year by decree; this host is likely wrong about at least one country.',
@@ -64,7 +77,8 @@ final class DoctorCommand extends Command
             $this->components->twoColumnDetail('ICU', (string) $icuVersion);
             $this->components->twoColumnDetail('ICU tzdata', $icu === false ? 'unknown' : $icu);
 
-            if (is_string($icu) && $icu !== '' && (bool) config('laranail.chrono.doctor.warn_on_icu_drift', true)) {
+            if (is_string($icu) && $icu !== '' && ! $timezones->usesSystemDatabase()
+                && (bool) config('laranail.chrono.doctor.warn_on_icu_drift', true)) {
                 if ($this->comparable($icu) !== $this->comparable($phpTzdata)) {
                     $this->components->warn(sprintf(
                         'ICU carries tzdata %s while PHP carries %s. Localised names come from ICU and '
