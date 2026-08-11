@@ -1,18 +1,20 @@
+# Runs in the development container, so `make docker-lint` and this are the same thing.
+#
+# Static analysis has no platform dimension worth testing — PHPStan reads types, not a tz database —
+# but `sync-check` does, and it is the reason this moved. Byte-for-byte parity of the generated data
+# only means something on a host carrying the release those files were built against, and the image
+# carries it by construction: no extension pin to thread through, no way for the gate to skip while
+# still reporting green.
+
 name: Static analysis
 
 on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
-  workflow_dispatch:
 
 permissions:
   contents: read
-
-concurrency:
-  group: static-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   static:
@@ -23,48 +25,47 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Read the pinned tz release
-        id: tzdata
-        run: echo "version=$(cat resources/tzdata-version.txt)" >> "$GITHUB_OUTPUT"
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+      # Shares the layer cache with the tests workflow, so only one of them pays for a rebuild.
+      - name: Build the image
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
         with:
-          php-version: '8.5'
-          # Pinned to the release the generated files were built against
-            # (resources/tzdata-version.txt). Ubuntu's PHP is built --with-system-tzdata and
-            # reports `0.system`, which no comparison can use; timezonedb replaces it with a
-            # versioned copy so `composer sync-check` is a real check rather than a skipped one.
-          extensions: dom, curl, libxml, mbstring, zip, fileinfo, intl, calendar, timezonedb-${{ steps.tzdata.outputs.version }}
-          coverage: none
+          context: .
+          file: docker/Dockerfile
+          load: true
+          tags: chrono-dev
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      - name: Cache Composer files
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ~/.cache/composer/files
-          key: composer-static-${{ hashFiles('composer.json') }}
-          restore-keys: composer-static-
+      - name: Report what it carries
+        run: |
+          docker run --rm chrono-dev php -r \
+            'printf("php %s  tzdata %s  icu %s\n", PHP_VERSION, timezone_version_get(), INTL_ICU_VERSION);'
 
       - name: Install dependencies
-        run: composer update --prefer-stable --no-interaction --no-progress
+        run: |
+          docker run --rm -v "$PWD:/app" -w /app chrono-dev \
+            composer update --prefer-stable --no-interaction --no-progress
 
       - name: Parallel lint
-        run: composer parallel-lint
+        run: docker run --rm -v "$PWD:/app" -w /app chrono-dev composer parallel-lint
 
       - name: Pint (code style)
-        run: vendor/bin/pint --test
+        run: docker run --rm -v "$PWD:/app" -w /app chrono-dev vendor/bin/pint --test
 
       - name: PHPStan (shell level 8, core level 10 + strict)
-        run: composer phpstan
+        run: docker run --rm -v "$PWD:/app" -w /app chrono-dev composer phpstan
 
-      # Runs through tools/deptrac-guard.php, not deptrac directly: deptrac exits 0 when it
-      # cannot parse a file, which would leave the Core boundary silently unenforced.
+      # deptrac is pinned to ^4.7 because 3.0 cannot parse PHP 8.5's clone-with and reports a parse
+      # error while still exiting 0 — see docs/architecture.md. The guard fails on parse errors.
       - name: deptrac (architecture boundary)
-        run: composer deptrac
+        run: docker run --rm -v "$PWD:/app" -w /app chrono-dev composer deptrac
 
       - name: Rector (dry run, php85 set)
-        run: vendor/bin/rector process --dry-run --no-progress-bar
+        run: docker run --rm -v "$PWD:/app" -w /app chrono-dev vendor/bin/rector process --dry-run --no-progress-bar
 
-      # Fails when the committed generated enums and maps disagree with the runner's tzdata.
+      # A real comparison here, not a skipped one: the image carries the release the files describe.
       - name: Generated data is in sync
-        run: composer sync-check
+        run: docker run --rm -v "$PWD:/app" -w /app -e CI=true chrono-dev composer sync-check

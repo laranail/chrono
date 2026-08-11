@@ -101,17 +101,20 @@ Ubuntu's PHP — and the official Docker images, and Debian's — is built `--wi
 reads `/usr/share/zoneinfo` and `timezone_version_get()` returns the literal `0.system`. There is no
 release to compare against, and for a while that meant this gate quietly skipped on every CI run.
 
-The workflows install the PECL `timezonedb`, **pinned to that same release** — read from the file
-rather than restated:
+The canonical jobs — the suite and static analysis — **run inside the development container**, so
+they carry the pinned release by construction. There is no extension to thread through and no way for
+the gate to skip while still reporting green. It is the same image `make docker-test` builds, which
+is the point: a contributor's run and CI agree on the PHP build, the extensions, the tz release and
+the ICU version.
 
-```yaml
-- run: echo "version=$(cat resources/tzdata-version.txt)" >> "$GITHUB_OUTPUT"
-  id: tzdata
+ICU matters more than it looks. Every localised zone name and every human date format comes from it,
+and its output moves between major versions — a suite passing on ICU 78 locally and running on ICU 74
+in CI is two suites wearing one name.
 
-- uses: shivammathur/setup-php@…
-  with:
-    extensions: intl, calendar, timezonedb-${{ steps.tzdata.outputs.version }}
-```
+A second `host` job still runs on the runner's own PHP, with `timezonedb` installed through
+`setup-php` and pinned from the same file. That one is a compatibility check rather than a
+duplicate: this package exists because hosts disagree about time, so proving it on exactly one host
+would be an odd way to make the argument.
 
 One source of truth, deliberately. An earlier version wrote the release into each workflow, which
 made regenerating and pinning two acts that had to agree — and the half that gets forgotten there is

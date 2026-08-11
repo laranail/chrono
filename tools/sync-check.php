@@ -10,9 +10,9 @@ declare(strict_types=1);
  * byte, so a stale enum or alias map cannot ship unnoticed.
  *
  * The comparison is only meaningful on a host carrying the *same* release the files were generated
- * against — `resources/tzdata-version.txt`, written by the generators themselves. CI pins the PECL
- * `timezonedb` to that release, which is what turns this from a check that is skipped into one that
- * runs.
+ * against — `resources/tzdata-version.txt`, written by the generators themselves. CI runs this inside
+ * the development container, which carries that release by construction, which is what turns it from
+ * a check that is skipped into one that runs.
  *
  * Two different failures, deliberately not conflated:
  *
@@ -45,9 +45,9 @@ if ($actual !== $expected) {
 
     if ($inCi) {
         fwrite(STDERR, "sync-check cannot run, and in CI that is a failure.\n\n" . $message
-            . "\nCI pins the PECL timezonedb to " . $expected . ". If that pin no longer resolves,\n"
-            . "the gate is silently not running — fix the pin, or regenerate against a newer release\n"
-            . "and move the pin with it.\n");
+            . "\nCI runs this inside the development container, which carries " . $expected . " by\n"
+            . "construction. Reaching this branch there means the image is not the one it should be —\n"
+            . "the gate is silently not running. Rebuild it, or regenerate against a newer release.\n");
 
         exit(1);
     }

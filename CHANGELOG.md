@@ -5,6 +5,21 @@ All notable changes to `laranail/chrono` are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **CI runs the suite and static analysis inside the development container**, so a contributor's
+  `make docker-test` and the canonical CI job agree on the PHP build, the extensions, the tz release
+  and the ICU version. ICU is the one that prompted this: every localised zone name and human date
+  format comes from it and its output moves between major versions, so passing on ICU 78 locally
+  while CI ran ICU 74 meant two suites wearing one name.
+- `sync-check` in CI no longer needs an extension pin threaded through the workflow — the image
+  carries the pinned release by construction, so the gate cannot skip while still reporting green.
+- A second `host` job keeps running on the runner's own PHP as a compatibility check. This package
+  exists because hosts disagree about time; proving it on exactly one host would be an odd way to
+  make that argument, and a disagreement between the two legs is information worth having.
+
 ## [0.1.5] - 2026-08-11
 
 ### Fixed

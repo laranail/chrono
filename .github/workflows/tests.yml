@@ -1,22 +1,68 @@
+# Two legs, deliberately.
+#
+# `container` is canonical: the same image `make docker-test` builds, so a contributor's local run
+# and CI agree on the PHP build, the extensions, the tz release and — the reason this changed — the
+# ICU version. Localised names and human date formats all come from ICU, and its output moves between
+# major versions, so a suite that passes on ICU 78 locally and runs on ICU 74 in CI is two different
+# suites wearing one name.
+#
+# `host` is a compatibility check on the runner's own PHP, which is a different build with a
+# different ICU. Keeping it is not hedging: this package exists because hosts disagree about time, so
+# proving it on exactly one host would be an odd way to make that argument. If the two legs ever
+# disagree, the code is sensitive to something it should not be sensitive to, and that is worth
+# knowing. Delete the job if the cost stops being worth it.
+
 name: Tests
 
 on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
-  workflow_dispatch:
 
 permissions:
   contents: read
 
-concurrency:
-  group: tests-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  pest:
-    name: PHP ${{ matrix.php }} · ${{ matrix.dependency-versions }}
+  container:
+    name: Container · tzdata-pinned
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+
+      # Layers are cached across runs and jobs, so this costs seconds after the first build. The
+      # image is loaded into the local daemon and never pushed — nothing about it is published.
+      - name: Build the image
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          file: docker/Dockerfile
+          load: true
+          tags: chrono-dev
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Report what it carries
+        run: |
+          docker run --rm chrono-dev php -r \
+            'printf("php %s  tzdata %s  icu %s  icu tzdata %s\n", PHP_VERSION, timezone_version_get(), INTL_ICU_VERSION, IntlTimeZone::getTZDataVersion());'
+
+      - name: Install dependencies
+        run: |
+          docker run --rm -v "$PWD:/app" -w /app chrono-dev \
+            composer update --prefer-stable --no-interaction --no-progress
+
+      # Excludes the tzdata group; those assertions track government decrees and run weekly in
+      # tzdata.yml so a mid-sprint tzdata release cannot turn this red.
+      - name: Run the suite
+        run: docker run --rm -v "$PWD:/app" -w /app chrono-dev composer test
+
+  host:
+    name: Host PHP ${{ matrix.php }} · ${{ matrix.dependency-versions }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -37,14 +83,16 @@ jobs:
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
         with:
           php-version: ${{ matrix.php }}
-          # Pinned to the release the generated files were built against
-            # (resources/tzdata-version.txt). Ubuntu's PHP is built --with-system-tzdata and
-            # reports `0.system`, which no comparison can use; timezonedb replaces it with a
-            # versioned copy so `composer sync-check` is a real check rather than a skipped one.
+          # The release comes from resources/tzdata-version.txt, which the generators write — one
+          # source of truth, so the pin cannot drift from the data it is meant to check. Ubuntu's
+          # PHP is built --with-system-tzdata and reports `0.system`, which no comparison can use;
+          # timezonedb replaces it with a versioned copy.
           extensions: dom, curl, libxml, mbstring, zip, fileinfo, pdo, sqlite3, pdo_sqlite, intl, calendar, timezonedb-${{ steps.tzdata.outputs.version }}
           coverage: none
           ini-values: error_reporting=E_ALL, date.timezone=UTC
 
+      # Printed so a disagreement between the two legs can be read straight off the log rather than
+      # guessed at. The ICU here is the runner's and is deliberately not the container's.
       - name: Report the runner's date data
         run: php -r 'printf("php tzdata=%s  icu=%s  icu tzdata=%s%s", timezone_version_get(), INTL_ICU_VERSION, IntlTimeZone::getTZDataVersion(), PHP_EOL);'
 
@@ -63,7 +111,5 @@ jobs:
             composer update --prefer-stable --no-interaction --no-progress
           fi
 
-      # Excludes the tzdata group; those assertions track government decrees and run weekly
-      # in tzdata.yml so a mid-sprint tzdata bump on the runner image cannot turn this red.
       - name: Run the suite
         run: composer test
