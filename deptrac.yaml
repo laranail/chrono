@@ -102,6 +102,8 @@ deptrac:
         - type: directory
           value: src/Core/Contracts/(ChronoException|Clock|TimezoneRepository)\.php
         - type: directory
+          value: src/Core/Config/(DstPolicy|DisplayOptions|SelectOptions)\.php
+        - type: directory
           value: src/Core/Enums/(Region|TimezoneKind|OffsetFormat|GapPolicy|AmbiguityPolicy|LocalTimeKind|SelectShape|NamedFormat|TimeUnit)\.php
 
     # The Laravel shell — everything outside src/Core.

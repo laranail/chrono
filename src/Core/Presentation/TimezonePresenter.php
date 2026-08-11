@@ -13,6 +13,7 @@ use NoDiscard;
 use Simtabi\Laranail\Chrono\Core\Enums\GroupBy;
 use Simtabi\Laranail\Chrono\Core\Enums\OffsetFormat;
 use Simtabi\Laranail\Chrono\Core\Enums\PresentationPreset;
+use Simtabi\Laranail\Chrono\Core\Enums\SelectShape;
 use Simtabi\Laranail\Chrono\Core\Enums\TimezoneField;
 use Simtabi\Laranail\Chrono\Core\Enums\ZoneField;
 use Simtabi\Laranail\Chrono\Core\Timezone\Query\TimezoneQuery;
@@ -134,6 +135,24 @@ final readonly class TimezonePresenter
     public function groupByOffset(): self
     {
         return $this->groupBy(GroupBy::Offset);
+    }
+
+    /**
+     * Adopt one of the four picker shapes wholesale — grouping and label template together.
+     *
+     * This is the setting `select.shape` names, and the three non-payload shapes reproduce the
+     * arrays `simtabi/pheg`'s `Time::getTimezones()` emitted, so a migrating caller gets the same
+     * structure without rebuilding it from `groupBy()` and `label()` by hand.
+     */
+    #[NoDiscard]
+    public function shape(SelectShape $shape): self
+    {
+        return match ($shape) {
+            SelectShape::Flat => $this->flat()->label('{city}, {country} ({gmt})'),
+            SelectShape::Grouped => $this->groupByContinent()->label('{city} ({gmt})'),
+            SelectShape::Formed => $this->groupByContinent()->label('{id} ({gmt})'),
+            SelectShape::Payload => $this->flat()->preset(PresentationPreset::Api),
+        };
     }
 
     #[NoDiscard]
@@ -280,6 +299,23 @@ final readonly class TimezonePresenter
         }
 
         return $options;
+    }
+
+    /**
+     * Apply a shape and return whatever that shape's array looks like.
+     *
+     * The one terminal that can be driven from configuration or a request parameter, since the
+     * shape is a value rather than a method name. Prefer the named terminals when the shape is known
+     * at the call site — they carry precise return types.
+     *
+     * @return array<array-key, mixed>
+     */
+    #[NoDiscard]
+    public function toShape(SelectShape $shape): array
+    {
+        $presenter = $this->shape($shape);
+
+        return $shape === SelectShape::Payload ? $presenter->forApi() : $presenter->forSelect();
     }
 
     /** @return list<PresentedZone> */
@@ -433,19 +469,32 @@ final readonly class TimezonePresenter
      * null rather than the raw code when ICU has nothing, so a caller can tell the difference
      * between "Kenya" and "we only know KE".
      */
+    /**
+     * A country's name in the presentation locale, resolved once per locale and code.
+     *
+     * There are 419 zones and about 249 countries, and the United States alone accounts for 29 of
+     * the zones — so rendering a full picker asked ICU the same question dozens of times. The answer
+     * depends only on the pair, and neither ICU's data nor the locale changes mid-process.
+     */
     private function countryName(?string $countryCode): ?string
     {
         if ($countryCode === null || ! class_exists(Locale::class)) {
             return null;
         }
 
-        $name = Locale::getDisplayRegion('-' . $countryCode, $this->locale ?? 'en');
+        /** @var array<string, string|null> $names */
+        static $names = [];
 
-        if (! is_string($name) || $name === '' || $name === $countryCode) {
-            return null;
+        $locale = $this->locale ?? 'en';
+        $key = $locale . '|' . $countryCode;
+
+        if (array_key_exists($key, $names)) {
+            return $names[$key];
         }
 
-        return $name;
+        $name = Locale::getDisplayRegion('-' . $countryCode, $locale);
+
+        return $names[$key] = is_string($name) && $name !== '' && $name !== $countryCode ? $name : null;
     }
 
     /**

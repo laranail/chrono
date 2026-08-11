@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use JsonException;
 use NoDiscard;
+use Simtabi\Laranail\Chrono\Core\Config\DisplayOptions;
 use Simtabi\Laranail\Chrono\Core\Enums\AmbiguityPolicy;
 use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
 use Simtabi\Laranail\Chrono\Core\Enums\OffsetFormat;
@@ -43,10 +44,11 @@ final readonly class TimeConverter
         private array $inputs = [],
         private array $targets = [],
         private ?string $source = null,
-        private GapPolicy $gap = GapPolicy::Forward,
-        private AmbiguityPolicy $ambiguity = AmbiguityPolicy::Earlier,
-        private string $format = 'Y-m-d H:i',
-        private OffsetFormat $offsetFormat = OffsetFormat::Utc,
+        private ?GapPolicy $gap = null,
+        private ?AmbiguityPolicy $ambiguity = null,
+        private ?string $format = null,
+        private ?OffsetFormat $offsetFormat = null,
+        private DisplayOptions $display = new DisplayOptions,
     ) {}
 
     // ── what to convert ─────────────────────────────────────────────────────────────────────
@@ -104,6 +106,7 @@ final readonly class TimeConverter
 
     // ── how to interpret and render ─────────────────────────────────────────────────────────
 
+    /** Override the application's configured gap policy for this conversion only. */
     #[NoDiscard]
     public function onGap(GapPolicy $policy): self
     {
@@ -140,15 +143,21 @@ final readonly class TimeConverter
     {
         $results = [];
 
+        // Both hoisted deliberately. `resolvedTargets()` runs the full resolver chain per zone, so
+        // leaving it in the inner loop would resolve the same ten zones once for every instant.
+        $targets = $this->resolvedTargets();
+        $format = $this->format ?? $this->display->dateTimeFormat;
+        $offsetFormat = $this->offsetFormat ?? $this->display->offsetFormat;
+
         foreach ($this->instants() as $index => $instant) {
-            foreach ($this->resolvedTargets() as $target) {
+            foreach ($targets as $target) {
                 $results[] = new ConvertedTime(
                     index: $index,
                     instant: $instant,
                     zone: $target,
                     local: $target->convert($instant),
-                    format: $this->format,
-                    offsetFormat: $this->offsetFormat,
+                    format: $format,
+                    offsetFormat: $offsetFormat,
                 );
             }
         }
@@ -270,7 +279,8 @@ final readonly class TimeConverter
         }
 
         // A bare wall-clock reading goes through the source zone's daylight-saving policies rather
-        // than PHP's silent resolution; with no source it is read as UTC.
+        // than PHP's silent resolution; with no source it is read as UTC. Passing null lets the
+        // zone apply the application's configured pair.
         $zone = $source ?? $this->timezones->utc();
 
         return $zone->at($input, $this->gap, $this->ambiguity);

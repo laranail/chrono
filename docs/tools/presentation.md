@@ -22,6 +22,38 @@ Chrono::present()
     ->forSelect();
 ```
 
+The presenter starts from the application's [display settings](../configuration.md#display), so
+`offsetFormat()` and `timeFormat()` are refinements rather than the only way to get a consistent
+offset shape. Set `display.offset_format` once and every picker, API response and converted time in
+the product agrees.
+
+## Shapes
+
+A shape carries grouping and label template together — the four a picker actually wants, and the
+setting `select.shape` names.
+
+```php
+->shape(SelectShape::Grouped)   // ['Africa' => ['Africa/Nairobi' => 'Nairobi (UTC +03:00)']]
+->shape(SelectShape::Formed)    // ['Africa' => ['Africa/Nairobi' => 'Africa/Nairobi (UTC +03:00)']]
+->shape(SelectShape::Flat)      // ['Africa/Nairobi' => 'Nairobi, Kenya (UTC +03:00)']
+->shape(SelectShape::Payload)   // [['id' => …, 'label' => …, 'search' => …, 'dir' => …], …]
+```
+
+The three non-payload shapes reproduce the arrays `simtabi/pheg`'s `Time::getTimezones()` emitted, so
+a migrating caller gets the same structure without rebuilding it from `groupBy()` and `label()` by
+hand. Anything set after a shape wins, so `->shape(SelectShape::Flat)->label('{id}')` is exactly what
+it looks like.
+
+`toShape()` is the matching terminal — the one that can be driven from configuration or a request
+parameter, since a shape is a value rather than a method name:
+
+```php
+Chrono::present()->toShape(SelectShape::tryFrom($request->query('shape')) ?? SelectShape::Grouped);
+```
+
+Prefer the named terminals below when the shape is known at the call site: they carry precise return
+types, and `toShape()` cannot.
+
 ## Grouping
 
 ```php
@@ -133,6 +165,16 @@ $base    = Chrono::present()->preset(PresentationPreset::Api);
 $grouped = $base->groupByContinent();   // $base is untouched
 $flat    = $base->flat();
 ```
+
+## Cost
+
+Rendering the full 419-zone catalogue with all 18 fields takes about 15 ms, and a two-field
+`<select>` about 6 ms — most of which is building the collection rather than presenting it. Country
+names are resolved once per locale and code rather than once per zone, because the United States
+alone accounts for 29 zones and ICU was being asked the same question dozens of times.
+
+Fields differ in what they cost: `ObservesDst` and `Abbreviation` read transitions, which is why they
+sit in `Full` rather than `Form`. Ask for what you render.
 
 ## Where it sits
 

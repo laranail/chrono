@@ -26,6 +26,9 @@ final class PhpTimezoneRepository implements TimezoneRepository
     /** @var list<string>|null */
     private ?array $withDeprecated = null;
 
+    /** @var array<string, true>|null */
+    private ?array $canonicalIndex = null;
+
     /** @var array<string, list<string>>|null */
     private ?array $countryIndex = null;
 
@@ -42,6 +45,13 @@ final class PhpTimezoneRepository implements TimezoneRepository
         }
 
         return $this->canonical ??= DateTimeZone::listIdentifiers(DateTimeZone::ALL);
+    }
+
+    public function isCanonical(string $identifier): bool
+    {
+        $this->canonicalIndex ??= array_fill_keys($this->identifiers(), true);
+
+        return isset($this->canonicalIndex[$identifier]);
     }
 
     /** @return list<string> */

@@ -88,6 +88,25 @@ Labels are derived rather than stored. Baking 419 English strings into a generat
 a translation that ICU already has in every locale — use `toTimezone()` and the formatter for a
 localised name.
 
+## Passing one to the service
+
+Every entry point takes a case directly — the constants because they are strings, the enums because
+the resolver unwraps any string-backed case to the value it spells and then judges *that*.
+
+```php
+Timezones::of(Tz::AMERICA_NEW_YORK);
+Timezones::of(Timezone::AmericaNewYork);
+Timezones::of(TimezoneLegacy::AsiaCalcutta);      // canonicalised like any other alias
+```
+
+Unwrapping rather than trusting the type is deliberate. `TimezoneAbbreviation::CST` also spells a
+string, and that string is not an identifier and names sixty-two zones — so it still has to earn its
+answer from the abbreviation strategy, which is off by default and reports its own uncertainty.
+
+`Timezone::toTimezone()` builds a bare value object with the engine's default daylight-saving
+policies, because an enum has no container to read configuration from. Where the configured pair
+matters — anywhere a wall-clock reading is interpreted — go through the service instead.
+
 ## The `laranail/enumerator` bridge
 
 ```php

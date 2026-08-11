@@ -25,6 +25,14 @@ trait ResolvesZone
         return new DateTimeZone($this->value);
     }
 
+    /**
+     * A bare value object, with the engine's default daylight-saving policies.
+     *
+     * Deliberately not the application's configured pair: this layer has no framework and no
+     * container to read one from. Where the configured policy matters — anywhere a wall-clock
+     * reading is interpreted — go through the service instead, which accepts the enum directly:
+     * `Timezones::of(Timezone::AmericaNewYork)`.
+     */
     public function toTimezone(): Timezone
     {
         return new Timezone($this->value, $this->kind());
@@ -40,7 +48,15 @@ trait ResolvesZone
             return TimezoneKind::Fixed;
         }
 
-        return in_array($this->value, DateTimeZone::listIdentifiers(DateTimeZone::ALL), true)
+        // Built once per process, as a hash. A linear scan of the 419-entry list would turn
+        // building one collection into 175,000 string comparisons. It is a function static rather
+        // than a class property because an enum may not declare properties.
+        /** @var array<string, true>|null $canonical */
+        static $canonical = null;
+
+        $canonical ??= array_fill_keys(DateTimeZone::listIdentifiers(DateTimeZone::ALL), true);
+
+        return isset($canonical[$this->value])
             ? TimezoneKind::Canonical
             : TimezoneKind::Legacy;
     }

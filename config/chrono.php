@@ -64,6 +64,8 @@ return [
         // ISO 3166-1 alpha-2 codes. Empty means every country.
         'countries' => [],
 
+        // The order every picker, API response and rule list comes back in.
+        // Prefix with `-` to reverse: `-offset` runs UTC+14 down to UTC-12.
         'sort' => env('CHRONO_SORT', TimezoneField::Offset->value),
     ],
 
@@ -144,11 +146,17 @@ return [
     | `utc` reproduces the shape simtabi/pheg emitted, for a byte-identical
     | migration.
     |
+    | `datetime_format` is what a converted time renders as; `time_format` is
+    | the clock a picker shows beside each zone. Both are PHP `date()` patterns.
+    | For a locale-correct rendering use the Format module instead — these are
+    | the fixed shapes a form and an API want to agree on.
+    |
     */
 
     'display' => [
         'offset_format' => env('CHRONO_OFFSET_FORMAT', OffsetFormat::Utc->value),
         'datetime_format' => env('CHRONO_DATETIME_FORMAT', 'M j, Y H:i'),
+        'time_format' => env('CHRONO_TIME_FORMAT', 'H:i'),
         'locale' => null, // null = app()->getLocale()
     ],
 
@@ -161,6 +169,11 @@ return [
     | grouped  ['Africa' => ['Africa/Nairobi' => 'Nairobi (UTC +03:00)']]
     | formed   ['Africa' => ['Africa/Nairobi' => 'Africa/Nairobi (UTC +03:00)']]
     | payload  [['id' => …, 'label' => …, 'search' => …, 'dir' => …], …]
+    |
+    | The shape sets both the grouping and the label template, so the Blade
+    | component and anything calling `present()->toShape()` agree without either
+    | restating it. `<x-chrono-timezone-select shape="flat" />` overrides it for
+    | one field.
     |
     */
 

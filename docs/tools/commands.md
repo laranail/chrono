@@ -63,10 +63,16 @@ It reports the checks nobody thinks to make:
   every localised zone name. Offsets come from PHP and names from ICU, so the two can describe the
   same zone differently.
 - **The configured `default` and `fallback`**, failing if either resolves to nothing.
+- **The catalogue**, reporting how many zones this application offers against how many it knows, and
+  failing outright when the configured restrictions match nothing at all — an empty picker and a rule
+  that rejects everything is a broken application, not a stale one.
+- **The daylight-saving pair in force**, always. The defaults reproduce PHP's silent resolution, and
+  an application that never chose is worth telling.
 - **The process default against `app.timezone`**, warned about when they differ. Eloquent assumes
   they match; moving one without the other silently shifts every timestamp it writes.
 
-`--strict` is the CI form.
+`--strict` turns warnings into a non-zero exit for one run; `doctor.strict` does it permanently,
+which is what a CI pipeline wants. A genuine failure exits non-zero either way.
 
 ## `chrono:sync`
 

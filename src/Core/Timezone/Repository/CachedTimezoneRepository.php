@@ -44,6 +44,12 @@ final class CachedTimezoneRepository implements TimezoneRepository
     }
 
     /** @return list<string> */
+    /** Delegated, not cached: the inner repository answers from a hash it built once. */
+    public function isCanonical(string $identifier): bool
+    {
+        return $this->inner->isCanonical($identifier);
+    }
+
     public function forCountry(string $countryCode): array
     {
         return $this->inner->forCountry($countryCode);

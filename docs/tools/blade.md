@@ -26,6 +26,9 @@ already listening to the field — validation, Livewire, a framework binding —
 Options travel in a `<script type="application/json">` block and settings in `data-` attributes, so
 a strict Content Security Policy needs no `unsafe-inline`. Nothing is passed in a script tag.
 
+The JSON is hex-escaped, so a translated country name or a custom label template cannot close the
+`<script>` element early no matter what it contains.
+
 ```html
 <div data-chrono-select
      data-chrono-searchable="true"
@@ -65,21 +68,31 @@ before a click ever landed.
 
 ## Props
 
+Every appearance prop falls back to configuration rather than to a literal, so an application sets
+its picker once in `laranail.chrono` and no template repeats it. Passing a prop overrides it for that
+field only.
+
 | Prop | Default | |
 |---|---|---|
 | `name` | `timezone` | |
 | `selected` | — | Current value |
 | `id` | derived from `name` | |
-| `group` | `continent` | `continent`, `country`, `offset`, `none` |
-| `preset` | `form` | Any `PresentationPreset` |
-| `offset-format` | `utc` | Any `OffsetFormat` |
-| `label-template` | `{city} ({gmt})` | See [Presentation](presentation.md) |
+| `shape` | `select.shape` | `flat`, `grouped`, `formed`, `payload` — sets grouping and label together |
+| `group` | from the shape | `continent`, `country`, `offset`, `none`. Overrides the shape's grouping |
+| `preset` | `form` | Any `PresentationPreset`. Left to the shape when `shape="payload"` |
+| `offset-format` | `display.offset_format` | Any `OffsetFormat` |
+| `label-template` | from the shape | See [Presentation](presentation.md) |
 | `locale` | app locale | Also sets `dir` |
 | `searchable` | `true` | `false` leaves the plain select |
 | `required` / `disabled` | `false` | |
-| `placeholder` / `search-placeholder` / `empty-message` | translated | |
+| `placeholder` | `select.placeholder`, else translated | |
+| `search-placeholder` / `empty-message` | translated | |
 
 Anything else is merged onto the wrapper, so `class` and `x-data` pass through.
+
+`shape` is the one to reach for first: it carries the grouping and the label template as a pair, so
+`shape="formed"` gives `Africa/Nairobi (UTC +03:00)` under an `Africa` optgroup without naming either.
+`group` and `label-template` are refinements applied after it, so they always win.
 
 ## Examples
 
@@ -95,6 +108,9 @@ Anything else is merged onto the wrapper, so `class` and `x-data` pass through.
 
 {{-- Right-to-left --}}
 <x-chrono::timezone-select name="timezone" locale="ar" />
+
+{{-- One flat field in an application whose default shape is grouped --}}
+<x-chrono::timezone-select name="timezone" shape="flat" />
 ```
 
 ## Styling

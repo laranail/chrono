@@ -44,6 +44,10 @@ Chrono::convert('2026-03-08 02:30')->from('America/New_York')->onGap(GapPolicy::
 // SkippedLocalTime — that reading never happened
 ```
 
+`onGap()` and `onAmbiguity()` override the application's configured pair for one conversion. Naming
+neither is not "no policy" — it is [the one the application chose](../configuration.md#daylight-saving),
+so `dst.on_ambiguous = throw` reaches this builder without any call site mentioning it.
+
 ## Shapes
 
 ```php
@@ -55,6 +59,10 @@ Chrono::convert('2026-03-08 02:30')->from('America/New_York')->onGap(GapPolicy::
 ->forJson();
 ->instants();   // the instants alone, before any target zone
 ```
+
+`format()` and `offsetFormat()` likewise start from
+[`display.datetime_format` and `display.offset_format`](../configuration.md#display), so a converted
+time and a picker label render the same way without either being told twice.
 
 ```php
 Chrono::convert(['2026-06-15 09:00', '2026-06-15 14:00'])
@@ -82,6 +90,14 @@ $converted->abbreviation();   // 'BST'
 $converted->isDst();
 $converted->offsetFrom($other);   // seconds — the "they are 7 hours behind" number
 ```
+
+`toArray()` carries both `instant` and `local` as ISO 8601 alongside the human `formatted` string, so
+changing the display format never changes what a client parses.
+
+## Cost
+
+Target zones are resolved once per call rather than once per input, so a five-instant by ten-zone
+grid runs the resolver ten times and not fifty. Fifty conversions take well under a millisecond.
 
 ---
 

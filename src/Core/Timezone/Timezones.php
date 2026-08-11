@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Timezone;
 
+use BackedEnum;
 use DateTimeImmutable;
 use DateTimeInterface;
 use NoDiscard;
 use Psr\Clock\ClockInterface;
 use Simtabi\Laranail\Chrono\Core\Config\CatalogueOptions;
+use Simtabi\Laranail\Chrono\Core\Config\DstPolicy;
 use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneRepository;
+use Simtabi\Laranail\Chrono\Core\Enums\AmbiguityPolicy;
+use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
 use Simtabi\Laranail\Chrono\Core\Enums\Region;
 use Simtabi\Laranail\Chrono\Core\Enums\TimezoneKind;
 use Simtabi\Laranail\Chrono\Core\Exception\TimezoneNotFound;
@@ -44,6 +48,8 @@ final readonly class Timezones
         private array $preferredCountries = [],
         private bool $allowAbbreviations = false,
         private CatalogueOptions $catalogue = new CatalogueOptions,
+        private DstPolicy $dst = new DstPolicy,
+        private bool $canonicaliseAliases = true,
     ) {}
 
     // ── interpreting ────────────────────────────────────────────────────────────────────────
@@ -60,15 +66,19 @@ final readonly class Timezones
     {
         $resolution = $this->explain($input);
 
-        return $resolution instanceof Resolution ? $this->make($resolution->identifier) : null;
+        return $resolution instanceof Resolution
+            ? $this->make($this->preserving($input, $resolution->identifier))
+            : null;
     }
 
     /** The identifier the input resolves to, falling back when configured to. */
     #[NoDiscard]
     public function resolve(mixed $input): string
     {
-        return $this->explain($input)->identifier
+        $identifier = $this->explain($input)->identifier
             ?? ($this->strict ? throw TimezoneNotFound::forInput($input) : $this->fallback);
+
+        return $this->preserving($input, $identifier);
     }
 
     /** Which strategy answered, how confident it was, and what else it could have been. */
@@ -225,6 +235,38 @@ final readonly class Timezones
         return clone ($this, ['catalogue' => $catalogue]);
     }
 
+    /** The daylight-saving pair every zone this service hands out will default to. */
+    #[NoDiscard]
+    public function withDst(DstPolicy $policy): self
+    {
+        return clone ($this, ['dst' => $policy]);
+    }
+
+    #[NoDiscard]
+    public function onGap(GapPolicy $policy): self
+    {
+        return $this->withDst($this->dst->onGap($policy));
+    }
+
+    #[NoDiscard]
+    public function onAmbiguity(AmbiguityPolicy $policy): self
+    {
+        return $this->withDst($this->dst->onAmbiguity($policy));
+    }
+
+    /**
+     * Keep a deprecated identifier as written instead of rewriting it to its canonical form.
+     *
+     * The default rewrites, because `Asia/Calcutta` and `Asia/Kolkata` comparing unequal is a real
+     * source of duplicate rows. An application migrating gradually, or one that must echo back
+     * exactly what a third party sent, turns it off.
+     */
+    #[NoDiscard]
+    public function preservingAliases(bool $preserve = true): self
+    {
+        return clone ($this, ['canonicaliseAliases' => ! $preserve]);
+    }
+
     #[NoDiscard]
     public function lenient(): self
     {
@@ -237,9 +279,42 @@ final readonly class Timezones
         return clone ($this, ['allowAbbreviations' => $allow]);
     }
 
+    /**
+     * With canonicalisation off, an input that is already a usable identifier is kept as written.
+     *
+     * Only an exact IANA alias qualifies. Anything else the chain understood — an abbreviation, a
+     * country code, a Windows name — has no identity of its own to preserve, so it still resolves.
+     */
+    private function preserving(mixed $input, string $identifier): string
+    {
+        if ($this->canonicaliseAliases) {
+            return $identifier;
+        }
+
+        // An enum case spells an identifier just as a string does, so `TimezoneLegacy::AsiaCalcutta`
+        // is preserved on the same terms as the literal.
+        $written = match (true) {
+            is_string($input) => $input,
+            $input instanceof BackedEnum && is_string($input->value) => $input->value,
+            default => null,
+        };
+
+        if ($written === null || $written === $identifier) {
+            return $identifier;
+        }
+
+        return AliasMap::isAlias($written) ? $written : $identifier;
+    }
+
     private function make(string $identifier): Timezone
     {
-        return new Timezone($identifier, $this->kindOf($identifier), $this->scanner, clock: $this->clock);
+        return new Timezone(
+            $identifier,
+            $this->kindOf($identifier),
+            $this->scanner,
+            clock: $this->clock,
+            dst: $this->dst,
+        );
     }
 
     private function kindOf(string $identifier): TimezoneKind
@@ -252,7 +327,7 @@ final readonly class Timezones
             return TimezoneKind::Fixed;
         }
 
-        return in_array($identifier, $this->repository->identifiers(), true)
+        return $this->repository->isCanonical($identifier)
             ? TimezoneKind::Canonical
             : TimezoneKind::Legacy;
     }

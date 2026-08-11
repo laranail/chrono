@@ -6,6 +6,7 @@ namespace Simtabi\Laranail\Chrono;
 
 use DateTimeInterface;
 use NoDiscard;
+use Simtabi\Laranail\Chrono\Core\Config\DisplayOptions;
 use Simtabi\Laranail\Chrono\Core\Conversion\TimeConverter;
 use Simtabi\Laranail\Chrono\Core\Format\DateFormatter;
 use Simtabi\Laranail\Chrono\Core\Format\DateParser;
@@ -31,6 +32,7 @@ final readonly class Chrono
         private DateFormatter $formatter,
         private DateParser $parser,
         private Humanizer $humanizer,
+        private DisplayOptions $display = new DisplayOptions,
     ) {}
 
     /** Interpreting, fetching and querying timezones. */
@@ -67,7 +69,18 @@ final readonly class Chrono
     #[NoDiscard]
     public function present(): TimezonePresenter
     {
-        return new TimezonePresenter($this->timezones->query());
+        $presenter = new TimezonePresenter(
+            $this->timezones->query(),
+            offsetFormat: $this->display->offsetFormat,
+            timeFormat: $this->display->timeFormat,
+        );
+
+        // Applied through the setter rather than the constructor because that is what also resolves
+        // text direction; passing the locale positionally would leave an RTL locale rendering ltr.
+
+        return $this->display->locale === null
+            ? $presenter
+            : $presenter->locale($this->display->locale);
     }
 
     /**
@@ -81,7 +94,7 @@ final readonly class Chrono
     #[NoDiscard]
     public function convert(string|DateTimeInterface|iterable|null $input = null): TimeConverter
     {
-        $converter = new TimeConverter($this->timezones);
+        $converter = new TimeConverter($this->timezones, display: $this->display);
 
         return $input === null ? $converter : $converter->of($input);
     }
@@ -91,6 +104,12 @@ final readonly class Chrono
     public function zone(mixed $input): Timezone
     {
         return $this->timezones->of($input);
+    }
+
+    /** The offset shape, date format and locale everything this service renders defaults to. */
+    public function display(): DisplayOptions
+    {
+        return $this->display;
     }
 
     /** PHP's tzdata release — the version every behavioural decision keys on. */

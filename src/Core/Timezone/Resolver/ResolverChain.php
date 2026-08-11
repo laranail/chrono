@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Timezone\Resolver;
 
+use BackedEnum;
 use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneResolver;
+use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
+use Stringable;
 
 /**
  * Tries each strategy in turn and takes the first confident answer.
@@ -52,6 +55,7 @@ final readonly class ResolverChain implements TimezoneResolver
 
     public function resolve(mixed $input, ResolutionContext $context): ?Resolution
     {
+        $input = $this->unwrap($input);
         $best = null;
 
         foreach ($this->resolvers as $resolver) {
@@ -77,6 +81,32 @@ final readonly class ResolverChain implements TimezoneResolver
 
         // A zero-confidence result means "ambiguous, and I will not choose".
         return $context->strict && $best->confidence <= 0.0 ? null : $best;
+    }
+
+    /**
+     * Reduce a wrapper to the string inside it, then let the chain judge that string.
+     *
+     * Deliberately an unwrap rather than a resolver of its own. A strategy that answered "this is a
+     * `Tz` case, so it is a valid zone" would short-circuit before anything validated it, and the
+     * same shortcut applied to `TimezoneAbbreviation::CST` would assert that `CST` names one zone
+     * when it names sixty-two. Unwrapping keeps every value on the same footing: `Tz` cases pass the
+     * identifier check because they *are* identifiers, and abbreviations still have to earn their
+     * answer from the abbreviation strategy, which the configuration can refuse to enable.
+     */
+    private function unwrap(mixed $input): mixed
+    {
+        if ($input instanceof BackedEnum) {
+            return $input->value;
+        }
+
+        // `Timezone` is excluded even though it is Stringable: it carries a zone rather than spells
+        // one, and the instance strategy reads it exactly. Rendering it to a string first would send
+        // a deprecated identifier back through validation for no reason.
+        if ($input instanceof Stringable && ! $input instanceof Timezone) {
+            return (string) $input;
+        }
+
+        return $input;
     }
 
     /** @return list<string> */

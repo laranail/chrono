@@ -3,6 +3,10 @@
 declare(strict_types=1);
 
 use Simtabi\Laranail\Chrono\Core\Enums\Region;
+use Simtabi\Laranail\Chrono\Core\Enums\Timezone as TimezoneEnum;
+use Simtabi\Laranail\Chrono\Core\Enums\TimezoneAbbreviation;
+use Simtabi\Laranail\Chrono\Core\Enums\TimezoneLegacy;
+use Simtabi\Laranail\Chrono\Core\Enums\Tz;
 use Simtabi\Laranail\Chrono\Core\Exception\TimezoneNotFound;
 use Simtabi\Laranail\Chrono\Core\Testing\FrozenClock;
 use Simtabi\Laranail\Chrono\Core\Timezone\Timezones;
@@ -70,4 +74,58 @@ it('reads the process default without ever setting it', function (): void {
     $this->timezones->system();
 
     expect(date_default_timezone_get())->toBe($before);
+});
+
+/**
+ * The static helper and the enums are only useful if the service accepts them directly. It does,
+ * by unwrapping to the string they spell and letting the chain judge that — never by trusting the
+ * wrapper, which is how `CST` would come to name one zone instead of sixty-two.
+ */
+describe('typed inputs', function (): void {
+    it('accepts an identifier enum case', function (): void {
+        expect($this->timezones->of(TimezoneEnum::AmericaNewYork)->identifier)->toBe('America/New_York');
+    });
+
+    it('accepts a Tz constant, which is only a string', function (): void {
+        expect($this->timezones->of(Tz::AMERICA_NEW_YORK)->identifier)->toBe('America/New_York');
+    });
+
+    it('canonicalises a legacy enum case like any other alias', function (): void {
+        expect($this->timezones->of(TimezoneLegacy::AsiaCalcutta)->identifier)->toBe('Asia/Kolkata');
+    });
+
+    it('accepts anything that spells a zone', function (): void {
+        $stringable = new class implements Stringable
+        {
+            public function __toString(): string
+            {
+                return 'Africa/Nairobi';
+            }
+        };
+
+        expect($this->timezones->of($stringable)->identifier)->toBe('Africa/Nairobi');
+    });
+
+    /**
+     * The trap this unwrapping is shaped to avoid. An abbreviation enum spells a string that is not
+     * an identifier, so it must still go through the strategy that knows how ambiguous it is — and
+     * be refused when the configuration has not enabled that strategy.
+     */
+    it('does not let an abbreviation enum smuggle itself past validation', function (): void {
+        // Refused outright while abbreviations are off. With them on it is answered by the
+        // abbreviation strategy — the one that knows `CST` names sixty-two zones and says so in the
+        // confidence and the alternatives — rather than waved through as if it were an identifier.
+        $resolution = $this->timezones->allowingAbbreviations()->explain(TimezoneAbbreviation::CST);
+
+        expect($this->timezones->tryOf(TimezoneAbbreviation::CST))->toBeNull()
+            ->and($resolution?->via)->toBe('abbreviation')
+            ->and($resolution?->confidence)->toBeLessThan(0.5)
+            ->and($resolution?->alternatives)->toHaveCount(62);
+    });
+
+    it('reads a Timezone object exactly, without rewriting it', function (): void {
+        $legacy = $this->timezones->preservingAliases()->of('Asia/Calcutta');
+
+        expect($this->timezones->of($legacy)->identifier)->toBe('Asia/Calcutta');
+    });
 });

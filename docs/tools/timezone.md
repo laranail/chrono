@@ -21,7 +21,22 @@ $nairobi->location();              // ?Location — latitude, longitude, comment
 $nairobi->kind;                    // TimezoneKind::Canonical
 $nairobi->canonicalIdentifier();   // follows an alias
 $nairobi->equals('Africa/Nairobi');// compares canonically, so an alias matches its target
+$nairobi->dst;                     // the daylight-saving pair this zone defaults to
 ```
+
+### A deprecated zone still has a place
+
+PHP gives an alias the `??`/-90/-180 sentinel rather than a location: `Asia/Kolkata` reports India
+and real coordinates while `Asia/Calcutta` reports nothing, though they name the same city. This
+package follows the alias, so a picker offering legacy spellings still shows their country, their
+flag and their coordinates.
+
+```php
+Timezones::preservingAliases()->of('Asia/Calcutta')->countryCode();   // 'IN'
+```
+
+Zones that are rules rather than places — `EST`, `GMT`, `Etc/GMT+5`, `UTC` — still return `null`,
+because no alias leads anywhere better.
 
 ## Offset
 

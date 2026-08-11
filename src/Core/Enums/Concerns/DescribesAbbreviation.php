@@ -21,7 +21,7 @@ trait DescribesAbbreviation
     /** @return list<string> every identifier that uses this abbreviation */
     public function identifiers(): array
     {
-        $entries = DateTimeZone::listAbbreviations()[strtolower($this->value)] ?? [];
+        $entries = $this->entries();
 
         $identifiers = [];
 
@@ -46,7 +46,7 @@ trait DescribesAbbreviation
     /** The UTC offset this abbreviation implies, or null when its uses disagree. */
     public function offsetSeconds(): ?int
     {
-        $entries = DateTimeZone::listAbbreviations()[strtolower($this->value)] ?? [];
+        $entries = $this->entries();
 
         $offsets = array_unique(array_map(
             static fn (array $entry): int => $entry['offset'],
@@ -58,14 +58,35 @@ trait DescribesAbbreviation
 
     public function isDaylightSaving(): bool
     {
-        $entries = DateTimeZone::listAbbreviations()[strtolower($this->value)] ?? [];
-
-        foreach ($entries as $entry) {
+        foreach ($this->entries() as $entry) {
             if ($entry['dst']) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * This abbreviation's rows, from a table built once per process.
+     *
+     * `listAbbreviations()` rebuilds a 144-key structure on every call — 0.41 ms measured — and the
+     * three methods above each used to ask for it separately, so describing one abbreviation cost
+     * three full rebuilds. The table comes from the tz database compiled into PHP and cannot change
+     * while the process runs.
+     *
+     * A function static rather than a class property: an enum may not declare properties at all,
+     * and a trait that tries fails at class-load with a fatal error rather than at analysis.
+     *
+     * @return list<array{dst: bool, offset: int, timezone_id: string|null}>
+     */
+    private function entries(): array
+    {
+        /** @var array<string, list<array{dst: bool, offset: int, timezone_id: string|null}>>|null $table */
+        static $table = null;
+
+        $table ??= DateTimeZone::listAbbreviations();
+
+        return $table[strtolower($this->value)] ?? [];
     }
 }

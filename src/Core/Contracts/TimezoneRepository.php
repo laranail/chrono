@@ -18,6 +18,15 @@ interface TimezoneRepository
     /** @return list<string> canonical identifiers, or all including aliases */
     public function identifiers(bool $includeDeprecated = false): array;
 
+    /**
+     * Whether an identifier is canonical, as opposed to a deprecated link or unknown entirely.
+     *
+     * A membership question rather than a list one, because the answer is needed once per
+     * constructed zone. Scanning the 419-entry list each time turns building a full collection into
+     * 175,000 string comparisons for a fact a hash lookup answers in one.
+     */
+    public function isCanonical(string $identifier): bool;
+
     /** @return list<string> */
     public function forCountry(string $countryCode): array;
 

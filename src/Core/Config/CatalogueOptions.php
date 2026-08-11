@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Chrono\Core\Config;
 
 use NoDiscard;
+use Simtabi\Laranail\Chrono\Core\Enums\TimezoneField;
 use Simtabi\Laranail\Chrono\Core\Timezone\Query\TimezoneQuery;
 
 /**
@@ -28,6 +29,8 @@ final readonly class CatalogueOptions
         public array $only = [],
         public array $except = [],
         public array $countries = [],
+        public TimezoneField $sort = TimezoneField::Offset,
+        public bool $sortDescending = false,
     ) {}
 
     /** @param array<string, mixed> $config */
@@ -40,6 +43,10 @@ final readonly class CatalogueOptions
         /** @var list<string> $countries */
         $countries = array_values((array) ($config['countries'] ?? []));
 
+        // A leading `-` reverses the order, so `-offset` needs no second setting to mean anything.
+        $sort = is_string($config['sort'] ?? null) ? $config['sort'] : TimezoneField::Offset->value;
+        $descending = str_starts_with($sort, '-');
+
         return new self(
             includeDeprecated: (bool) ($config['include_deprecated'] ?? false),
             includeFixed: (bool) ($config['include_fixed'] ?? false),
@@ -47,6 +54,8 @@ final readonly class CatalogueOptions
             only: $only,
             except: $except,
             countries: $countries,
+            sort: TimezoneField::tryFrom(ltrim($sort, '-')) ?? TimezoneField::Offset,
+            sortDescending: $descending,
         );
     }
 
@@ -67,10 +76,10 @@ final readonly class CatalogueOptions
         }
 
         if ($this->except !== []) {
-            return $query->except(...$this->except);
+            $query = $query->except(...$this->except);
         }
 
-        return $query;
+        return $query->orderBy($this->sort, $this->sortDescending);
     }
 
     public function isUnrestricted(): bool

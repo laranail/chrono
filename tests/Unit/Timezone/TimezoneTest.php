@@ -88,3 +88,25 @@ it('measures the difference between two zones at an instant', function (): void 
 
     expect($difference->format())->toBe('-07:00');
 });
+
+/**
+ * PHP gives a deprecated identifier the `??`/-90/-180 sentinel rather than a place, so a picker
+ * offering legacy spellings used to show half its rows with no country and no flag — for zones that
+ * name the same city as a row that had both.
+ */
+describe('location follows an alias', function (): void {
+    it('gives a deprecated zone the country of the zone it points at', function (): void {
+        $calcutta = new Timezone('Asia/Calcutta', TimezoneKind::Link);
+        $kolkata = new Timezone('Asia/Kolkata');
+
+        expect($calcutta->countryCode())->toBe('IN')
+            ->and($calcutta->location()?->latitude)->toBe($kolkata->location()?->latitude);
+    });
+
+    it('still returns nothing for a zone that is not a place', function (): void {
+        // `EST` and `Etc/GMT+5` are rules, not locations, and no alias leads anywhere better.
+        expect(new Timezone('EST', TimezoneKind::Legacy)->location())->toBeNull()
+            ->and(new Timezone('Etc/GMT+5', TimezoneKind::Fixed)->location())->toBeNull()
+            ->and(new Timezone('UTC', TimezoneKind::Fixed)->location())->toBeNull();
+    });
+});

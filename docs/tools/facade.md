@@ -14,10 +14,16 @@ Chrono::timezones();   // Core\Timezone\Timezones
 Chrono::format();      // Core\Format\DateFormatter
 Chrono::parse();       // Core\Format\DateParser
 Chrono::humanize();    // Core\Humanize\Humanizer
+Chrono::present();     // Core\Presentation\TimezonePresenter — pickers, APIs, form components
+Chrono::convert();     // Core\Conversion\TimeConverter — "what time is that, over there?"
 
 Chrono::zone('Asia/Calcutta');  // shorthand for timezones()->of()
+Chrono::display();              // the offset shape, date format and locale everything defaults to
 Chrono::version();              // PHP's tzdata release
 ```
+
+`present()` and `convert()` are builders rather than long-lived services, so each call returns a
+fresh one already carrying the application's [display settings](../configuration.md#display).
 
 `calendar()`, `holidays()` and `recur()` arrive with their modules in `v0.2` and `v0.3`.
 
@@ -59,6 +65,24 @@ Timezones::version();
 Timezones::fingerprint();
 ```
 
+### Typed input
+
+`of()`, `tryOf()`, `resolve()` and the rest take whatever spells a zone: a string, a `DateTimeZone`,
+a `DateTimeInterface`, an `IntlTimeZone`, a `Timezone`, a `Tz` constant, any string-backed enum case,
+or any `Stringable`.
+
+```php
+Timezones::of(Tz::AMERICA_NEW_YORK);              // a plain string constant
+Timezones::of(TimezoneEnum::AmericaNewYork);      // the generated enum
+Timezones::of(TimezoneLegacy::AsiaCalcutta);      // canonicalised like any other alias
+Timezones::of($request->user()->timezone);        // whatever the column holds
+```
+
+An enum is unwrapped to the string it spells and then judged like any other string — never trusted
+because of its type. That distinction matters for `TimezoneAbbreviation::CST`, which spells something
+that is not an identifier and names sixty-two zones: it still has to earn its answer from the
+abbreviation strategy, which is off by default.
+
 ## Reconfiguring
 
 The service is immutable, so a reconfigured copy never affects the container binding.
@@ -69,7 +93,14 @@ $biased  = Timezones::preferring('US', 'GB');        // break ties for abbreviat
 $abbrev  = Timezones::allowingAbbreviations();
 $frozen  = Timezones::withClock(new FrozenClock('2026-06-15T12:00:00Z'));
 $fixture = Timezones::withRepository($arrayRepository);
+
+$strict  = Timezones::onGap(GapPolicy::Throw)->onAmbiguity(AmbiguityPolicy::Throw);
+$asWritten = Timezones::preservingAliases();         // keep `Asia/Calcutta` as `Asia/Calcutta`
+$narrowed  = Timezones::withCatalogue($options);     // a different set of offered zones
 ```
+
+Every zone the reconfigured service hands out inherits its settings, so `$strict->of(...)->at(...)`
+refuses to guess without the call site restating it.
 
 ## Helpers
 

@@ -10,6 +10,7 @@ use DateTimeZone;
 use JsonSerializable;
 use NoDiscard;
 use Psr\Clock\ClockInterface;
+use Simtabi\Laranail\Chrono\Core\Config\DstPolicy;
 use Simtabi\Laranail\Chrono\Core\Enums\AmbiguityPolicy;
 use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
 use Simtabi\Laranail\Chrono\Core\Enums\OffsetFormat;
@@ -40,6 +41,7 @@ final readonly class Timezone implements JsonSerializable, Stringable
         private TransitionScanner $scanner = new TransitionScanner,
         private ?LocalTimeResolver $localTimes = null,
         private ?ClockInterface $clock = null,
+        public DstPolicy $dst = new DstPolicy,
     ) {
         $this->zone = new DateTimeZone($identifier);
     }
@@ -234,14 +236,30 @@ final readonly class Timezone implements JsonSerializable, Stringable
      *
      * When given a `DateTimeInterface`, only its wall-clock fields are read and its own zone is
      * discarded — re-reading a local time in a different zone is the point of the call.
+     *
+     * Omitting a policy uses the application's configured pair rather than a hard-coded one, so
+     * `dst.on_gap = throw` reaches every call site that never thought about daylight saving. Passing
+     * one overrides it for this call only.
      */
     #[NoDiscard]
     public function at(
         string|DateTimeInterface $local,
-        GapPolicy $gap = GapPolicy::Forward,
-        AmbiguityPolicy $ambiguity = AmbiguityPolicy::Earlier,
+        ?GapPolicy $gap = null,
+        ?AmbiguityPolicy $ambiguity = null,
     ): DateTimeImmutable {
-        return $this->resolver()->resolve($local, $this->zone, $gap, $ambiguity);
+        return $this->resolver()->resolve(
+            $local,
+            $this->zone,
+            $gap ?? $this->dst->gap,
+            $ambiguity ?? $this->dst->ambiguity,
+        );
+    }
+
+    /** The same zone under different daylight-saving policies — for one call, or one subsystem. */
+    #[NoDiscard]
+    public function withDst(DstPolicy $policy): self
+    {
+        return clone ($this, ['dst' => $policy]);
     }
 
     /** Classify a wall-clock reading without resolving or throwing. */
@@ -264,9 +282,28 @@ final readonly class Timezone implements JsonSerializable, Stringable
 
     // ── location ────────────────────────────────────────────────────────────────────────────
 
+    /**
+     * Where this zone is, or null for a zone that is not a place.
+     *
+     * A deprecated identifier carries no location of its own: PHP hands back the `??`/-90/-180
+     * sentinel for `Asia/Calcutta` while `Asia/Kolkata` gives India and real coordinates, even
+     * though they name the same city. Following the alias means a picker that offers legacy
+     * spellings still shows their country, their flag and their coordinates, and a filter by country
+     * still finds them — rather than silently treating half the catalogue as placeless.
+     */
     public function location(): ?Location
     {
-        return Location::fromDateTimeZone($this->zone);
+        $location = Location::fromDateTimeZone($this->zone);
+
+        if ($location instanceof Location) {
+            return $location;
+        }
+
+        $canonical = AliasMap::canonical($this->identifier);
+
+        return $canonical === null || $canonical === $this->identifier
+            ? null
+            : Location::fromDateTimeZone(new DateTimeZone($canonical));
     }
 
     public function countryCode(): ?string

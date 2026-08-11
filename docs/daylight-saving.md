@@ -49,6 +49,42 @@ $newYork->at('2026-11-01 01:30', ambiguity: AmbiguityPolicy::Throw);   // Ambigu
 package changes nothing until you opt in. `Throw` is the right setting anywhere a human will be
 billed for the result.
 
+## Deciding once, for the whole application
+
+Passing a policy at every call site is how one gets missed. Set the pair in configuration and it
+reaches every call that does not name one — including the ones written before anybody thought about
+daylight saving.
+
+```php
+// config/laranail/chrono.php
+'dst' => [
+    'on_gap' => 'throw',
+    'on_ambiguous' => 'throw',
+],
+```
+
+```php
+Timezones::of('America/New_York')->at('2026-03-08 02:30');
+// SkippedLocalTime — no policy passed, and none needed
+
+Chrono::convert('2026-11-01 01:30')->from('America/New_York')->to('UTC')->first();
+// AmbiguousLocalTime — the converter inherits it too
+```
+
+An explicit argument still wins for that call, so a report that genuinely wants PHP's old behaviour
+can ask for it without loosening the default. Narrower scopes are available where a whole subsystem
+differs:
+
+```php
+use Simtabi\Laranail\Chrono\Core\Config\DstPolicy;
+
+$billing = Timezones::withDst(DstPolicy::strict());   // every zone this hands out refuses to guess
+$zone    = $someZone->withDst(DstPolicy::permissive());
+```
+
+`php artisan laranail::chrono.doctor` prints the pair in force and points at this section when it is
+still the permissive one.
+
 ## Branching instead of catching
 
 Exceptions are wrong for a booking form: the user has not made a mistake, they have hit a real

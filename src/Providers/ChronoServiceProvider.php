@@ -13,6 +13,8 @@ use Simtabi\Laranail\Chrono\Console\ListTimezonesCommand;
 use Simtabi\Laranail\Chrono\Console\ShowTimezoneCommand;
 use Simtabi\Laranail\Chrono\Console\SyncCommand;
 use Simtabi\Laranail\Chrono\Core\Config\CatalogueOptions;
+use Simtabi\Laranail\Chrono\Core\Config\DisplayOptions;
+use Simtabi\Laranail\Chrono\Core\Config\DstPolicy;
 use Simtabi\Laranail\Chrono\Core\Contracts\Clock;
 use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneRepository;
 use Simtabi\Laranail\Chrono\Core\Format\DateFormatter;
@@ -104,8 +106,21 @@ final class ChronoServiceProvider extends PackageServiceProvider
                 preferredCountries: array_values((array) ($resolution['preferred_countries'] ?? [])),
                 allowAbbreviations: (bool) ($resolution['abbreviations'] ?? false),
                 catalogue: CatalogueOptions::fromArray((array) config('laranail.chrono.catalogue', [])),
+                dst: $this->app->make(DstPolicy::class),
+                canonicaliseAliases: (bool) ($resolution['canonicalise'] ?? true),
             );
         });
+
+        // Two settings the whole package reads, bound once so a host can rebind either in a test
+        // without reaching into every consumer that happens to render a date.
+        $this->app->singleton(DstPolicy::class, static fn (): DstPolicy => DstPolicy::fromArray(
+            (array) config('laranail.chrono.dst', []),
+        ));
+
+        $this->app->singleton(DisplayOptions::class, static fn (): DisplayOptions => DisplayOptions::fromArray([
+            ...(array) config('laranail.chrono.display', []),
+            'locale' => config('laranail.chrono.display.locale') ?? config('app.locale', 'en'),
+        ]));
 
         $this->app->singleton(DateFormatter::class, static fn (): DateFormatter => new DateFormatter(
             (string) (config('laranail.chrono.display.locale') ?? config('app.locale', 'en')),
@@ -125,6 +140,7 @@ final class ChronoServiceProvider extends PackageServiceProvider
             $this->app->make(DateFormatter::class),
             $this->app->make(DateParser::class),
             $this->app->make(Humanizer::class),
+            $this->app->make(DisplayOptions::class),
         ));
 
         $this->app->alias(Timezones::class, 'laranail.chrono.timezones');

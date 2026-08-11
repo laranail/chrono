@@ -39,5 +39,7 @@
         @endforeach
     </select>
 
-    <script type="application/json" data-chrono-options>@json($options)</script>
+    {{-- Hex-escaped: a label or a translated country name is application data, and `</script>`
+         inside a JSON block ends the element early wherever the JSON encoder is unaware of HTML. --}}
+    <script type="application/json" data-chrono-options>@json($options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE)</script>
 </div>

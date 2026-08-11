@@ -17,6 +17,7 @@ it('answers the basic question', function (): void {
         ->of('2026-06-15 09:00')
         ->from('Africa/Nairobi')
         ->to('Europe/London')
+        ->format('Y-m-d H:i')
         ->first();
 
     expect($result)->toBeInstanceOf(ConvertedTime::class)
@@ -77,7 +78,8 @@ it('honours an instant that already carries its own zone', function (): void {
 });
 
 it('answers for a whole country', function (): void {
-    $results = $this->converter->of('2026-06-15 12:00')->from('UTC')->toCountry('KE')->keyed();
+    $results = $this->converter->of('2026-06-15 12:00')->from('UTC')
+        ->toCountry('KE')->format('Y-m-d H:i')->keyed();
 
     expect($results)->toHaveKey('Africa/Nairobi')
         ->and($results['Africa/Nairobi']->formatted())->toBe('2026-06-15 15:00');

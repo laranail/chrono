@@ -6,6 +6,8 @@ namespace Simtabi\Laranail\Chrono\Console;
 
 use IntlTimeZone;
 use Override;
+use Simtabi\Laranail\Chrono\Core\Config\CatalogueOptions;
+use Simtabi\Laranail\Chrono\Core\Config\DstPolicy;
 use Simtabi\Laranail\Chrono\Core\Timezone\Timezones;
 use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
 use Simtabi\Laranail\Console\Tools\Commands\Command;
@@ -29,7 +31,7 @@ final class DoctorCommand extends Command
     protected array $commandAliases = ['chrono:doctor'];
 
     #[Override]
-    protected $signature = 'laranail::chrono.doctor {--strict : Treat warnings as failures}';
+    protected $signature = 'laranail::chrono.doctor {--strict : Treat warnings as failures, as doctor.strict does permanently}';
 
     #[Override]
     protected $description = 'Check the health of this host\'s timezone data and configuration.';
@@ -79,11 +81,44 @@ final class DoctorCommand extends Command
         }
 
         $this->components->info('Catalogue');
-        $this->components->twoColumnDetail('Canonical zones', (string) $timezones->query()->count());
+
+        $catalogue = CatalogueOptions::fromArray((array) config('laranail.chrono.catalogue', []));
+        $offered = $timezones->query()->count();
+
+        $this->components->twoColumnDetail('Zones offered', (string) $offered);
+
+        if (! $catalogue->isUnrestricted()) {
+            $total = $timezones->unrestrictedQuery()->count();
+            $this->components->twoColumnDetail('Zones known', (string) $total);
+
+            if ($offered === 0) {
+                $this->components->error(
+                    'The configured catalogue matches no zones at all, so every picker is empty and '
+                    . 'every timezone_allowed rule rejects everything. Check catalogue.only and '
+                    . 'catalogue.countries.',
+                );
+                $failed = true;
+            }
+        }
+
         $this->components->twoColumnDetail('Aliases', (string) count($timezones->aliases()));
         $this->components->twoColumnDetail('Cache fingerprint', $timezones->fingerprint());
 
         $this->components->info('Configuration');
+
+        // The setting the package exists for. Reported unconditionally, because the default
+        // reproduces PHP's silent resolution and an application that never chose is worth telling.
+        $dst = DstPolicy::fromArray((array) config('laranail.chrono.dst', []));
+
+        $this->components->twoColumnDetail('On a DST gap', $dst->gap->value);
+        $this->components->twoColumnDetail('On an ambiguous time', $dst->ambiguity->value);
+
+        if (! $dst->isStrict()) {
+            $this->components->twoColumnDetail(
+                '',
+                '<fg=gray>set dst.on_gap and dst.on_ambiguous to `throw` for bookings or payroll</>',
+            );
+        }
 
         foreach (['default', 'fallback'] as $key) {
             $value = (string) config('laranail.chrono.' . $key, 'UTC');
@@ -113,7 +148,9 @@ final class DoctorCommand extends Command
             $warned = true;
         }
 
-        if ($failed || ($warned && (bool) $this->option('strict'))) {
+        $strict = (bool) $this->option('strict') || (bool) config('laranail.chrono.doctor.strict', false);
+
+        if ($failed || ($warned && $strict)) {
             return self::FAILURE;
         }
 
