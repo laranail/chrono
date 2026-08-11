@@ -1,0 +1,5 @@
+# The image mounts the working tree, so the build context needs almost nothing. Keeping it small
+# matters more than usual here: the tz pin is copied in as its own layer so that moving the pin
+# rebuilds the extension and nothing else does.
+*
+!resources/tzdata-version.txt

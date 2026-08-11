@@ -1,0 +1,55 @@
+# Keeps the development container from rotting.
+#
+# It is nobody's daily path — CI itself uses setup-php, which is faster — so without a job that
+# builds it, the Dockerfile would quietly stop working and the next contributor who tried it would
+# find that out instead of us.
+#
+# Only runs when something it depends on moves: the image definition, or the tz release it pins.
+
+name: Dev container
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docker/**'
+      - 'compose.yaml'
+      - '.dockerignore'
+      - 'resources/tzdata-version.txt'
+      - '.github/workflows/docker.yml'
+  pull_request:
+    paths:
+      - 'docker/**'
+      - 'compose.yaml'
+      - '.dockerignore'
+      - 'resources/tzdata-version.txt'
+      - '.github/workflows/docker.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build and check the tz database
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # The image is a development tool, never published, so this builds and discards it.
+      - name: Build
+        run: docker build -f docker/Dockerfile -t chrono-dev .
+
+      # The Dockerfile already fails if timezonedb did not take, but that only proves the extension
+      # loaded. This proves the thing the image exists for: that the gate is real inside it.
+      - name: The generated-data gate is real in there
+        run: |
+          docker run --rm -v "$PWD:/app" -w /app -e CI=true chrono-dev \
+            php tools/sync-check.php
+
+      - name: Report what it carries
+        run: |
+          docker run --rm chrono-dev php -r \
+            'printf("php %s, tzdata %s, ICU %s\n", PHP_VERSION, timezone_version_get(), INTL_ICU_VERSION);'

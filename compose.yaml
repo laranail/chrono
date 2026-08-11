@@ -1,0 +1,29 @@
+# A development environment carrying the tz release this repository was generated against.
+#
+#   docker compose run --rm chrono composer test
+#   docker compose run --rm chrono composer sync-check
+#   docker compose run --rm chrono bash
+#
+# Nothing here is published or deployed. See docker/Dockerfile for why it exists at all.
+
+services:
+  chrono:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    # Runs as you, so `vendor/` and the test caches on the mounted tree do not come back owned by
+    # root. Compose substitutes nothing for an unset variable, hence the defaults.
+    user: "${UID:-1000}:${GID:-1000}"
+    volumes:
+      - .:/app
+      # Composer's cache is worth keeping between runs; the rest of the home directory is not.
+      - chrono-composer-cache:/tmp/composer-cache
+    environment:
+      COMPOSER_CACHE_DIR: /tmp/composer-cache
+      # The suite pins this itself, but a shell opened here should agree with it.
+      TZ: UTC
+    working_dir: /app
+    init: true
+
+volumes:
+  chrono-composer-cache:

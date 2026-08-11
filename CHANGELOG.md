@@ -5,6 +5,27 @@ All notable changes to `laranail/chrono` are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- A development container — `docker/Dockerfile` and `compose.yaml` — carrying the tz release this
+  repository was generated against, so `composer sync-check` and the generated-data tests are real
+  without installing anything on the host:
+
+  ```bash
+  docker compose run --rm chrono composer test
+  ```
+
+  It reads the pinned release from `resources/tzdata-version.txt` at build time rather than
+  restating it, and **fails to build** if the extension does not then report that release. An image
+  quietly carrying the wrong database would make every check inside it skip, which looks identical to
+  passing.
+
+  It is a development environment, not an artifact: nothing is published to a registry, and using
+  `laranail/chrono` never requires it. A `docker.yml` workflow builds it when the image or the pin
+  moves, so a tool nobody runs daily cannot rot unnoticed.
+
 ## [0.1.4] - 2026-08-11
 
 ### Added

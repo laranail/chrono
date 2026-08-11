@@ -61,7 +61,22 @@ so it is not run here.
 ### Running the real check locally
 
 Your PHP almost certainly bundles a different release, so `composer sync-check` reports and stops
-rather than comparing across two databases. Two commands make it a real check on your machine too:
+rather than comparing across two databases.
+
+The container carries the right one and changes nothing on your machine:
+
+```bash
+docker compose run --rm chrono composer sync-check
+docker compose run --rm chrono composer test
+```
+
+It reads the pinned release out of `resources/tzdata-version.txt` at build time rather than
+restating it, and **fails to build** if the extension does not then report that release — an image
+that quietly carried the wrong database would make every check inside it skip, which looks identical
+to passing. It is a development environment: nothing is published to a registry, and using
+`laranail/chrono` never requires it.
+
+Or install the release on your own PHP, which two commands do:
 
 ```bash
 pecl install timezonedb-2026.3
