@@ -5,6 +5,19 @@ All notable changes to `laranail/chrono` are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- `tools/tzdata-pin.php` and a weekly `tzdata-bump.yml`. The tz database pin has to move together
+  with the data it describes, and a two-part act gets half-done — so the workflow does both or
+  neither: it regenerates against the newest PECL release, moves every workflow pin with it, runs the
+  suite and `sync-check` against that release, and opens a pull request saying whether any identifier,
+  abbreviation or alias actually changed. The proof happens in the bump job because a pull request
+  raised by a workflow does not trigger CI itself.
+- Static analysis now runs `tools/tzdata-pin.php` first, so a pin that disagrees with
+  `resources/tzdata-version.txt` fails with that sentence rather than as a parity error later.
+
 ## [0.1.3] - 2026-08-11
 
 ### Changed

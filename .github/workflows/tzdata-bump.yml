@@ -1,0 +1,186 @@
+# Moves the tz database pin, and everything that has to move with it.
+#
+# The pin buys reproducibility: byte-for-byte parity is only a check against a fixed baseline, so
+# `composer sync-check` needs one. It costs freshness — the package sits on whatever release was
+# current when someone last looked, and IANA publishes several a year, often by government decree.
+#
+# Doing that by hand is a two-part act (regenerate, then move the pin) and the two can be separated
+# by a forgotten step. This does both together or neither, proves the result before proposing it, and
+# leaves a diff to read rather than a chore to remember.
+
+name: tz database bump
+
+on:
+  schedule:
+    - cron: '0 7 * * 1'   # Mondays 07:00 UTC, an hour after the drift job
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  bump:
+    name: Regenerate against the newest release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # No timezonedb yet: this call exists only to read what upstream publishes.
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.5'
+          extensions: dom, curl, libxml, mbstring, zip, fileinfo, intl, calendar
+          coverage: none
+          ini-values: date.timezone=UTC
+
+      - name: Compare the pin against PECL
+        id: check
+        run: |
+          CURRENT="$(cat resources/tzdata-version.txt)"
+          LATEST="$(php tools/tzdata-pin.php --latest)"
+
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+          echo "latest=$LATEST" >> "$GITHUB_OUTPUT"
+
+          if [ "$CURRENT" = "$LATEST" ]; then
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+            echo "Pinned to $CURRENT, which is the newest release. Nothing to do."
+          else
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+            echo "Pinned to $CURRENT; PECL publishes $LATEST."
+          fi
+
+      # Reconfigures the same PHP with the new database loaded. The generators read whatever the
+      # running binary carries, so this is what decides the content of the commit.
+      - name: Load the newer database
+        if: steps.check.outputs.needed == 'true'
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.5'
+          extensions: dom, curl, libxml, mbstring, zip, fileinfo, pdo, sqlite3, pdo_sqlite, intl, calendar, timezonedb-${{ steps.check.outputs.latest }}
+          coverage: none
+          ini-values: date.timezone=UTC
+
+      - name: Refuse to generate against the wrong database
+        if: steps.check.outputs.needed == 'true'
+        run: |
+          VERSION="$(php -r 'echo timezone_version_get();')"
+          if [ "$VERSION" != "${{ steps.check.outputs.latest }}" ]; then
+            echo "::error::Asked for timezonedb ${{ steps.check.outputs.latest }} but PHP reports '$VERSION'. Generating now would commit data labelled with a release it was not built from."
+            exit 1
+          fi
+
+      - name: Install dependencies
+        if: steps.check.outputs.needed == 'true'
+        run: composer update --prefer-stable --no-interaction --no-progress
+
+      - name: Regenerate, and move the pin with it
+        if: steps.check.outputs.needed == 'true'
+        run: |
+          php tools/generate-enums.php
+          php tools/generate-alias-map.php
+          php tools/tzdata-pin.php --set="${{ steps.check.outputs.latest }}"
+          php tools/tzdata-pin.php
+
+      # A pull request opened by a workflow does not itself trigger CI, so the proof has to happen
+      # here. Opening one that has not been checked would be worse than opening none.
+      - name: Prove the new state before proposing it
+        if: steps.check.outputs.needed == 'true'
+        env:
+          CI: 'true'
+        run: |
+          composer sync-check
+          vendor/bin/pest --no-coverage --colors=always
+          composer lint
+
+      - name: Describe what actually changed
+        if: steps.check.outputs.needed == 'true'
+        id: summary
+        run: |
+          {
+            echo 'summary<<SUMMARY_EOF'
+            if git diff --quiet -- src/Core/Enums src/Enums src/Core/Timezone/Support/AliasMap.php; then
+              echo 'No identifier, abbreviation or alias changed — this release altered transition'
+              echo 'rules only, so nothing in the generated catalogue moved.'
+            else
+              echo 'Generated data changed:'
+              echo ''
+              echo '```'
+              git diff --stat -- src/Core/Enums src/Enums src/Core/Timezone/Support/AliasMap.php
+              echo '```'
+              echo ''
+              echo 'Read the diff for added or removed identifiers and changed alias targets — both'
+              echo 'are user-visible and belong in the changelog.'
+            fi
+            echo 'SUMMARY_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Open the pull request
+        if: steps.check.outputs.needed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CURRENT: ${{ steps.check.outputs.current }}
+          LATEST: ${{ steps.check.outputs.latest }}
+          SUMMARY: ${{ steps.summary.outputs.summary }}
+        run: |
+          BRANCH="chore/tzdata-$LATEST"
+
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            echo "$BRANCH already exists - a bump for $LATEST has already been proposed."
+            exit 0
+          fi
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "$BRANCH"
+          git add -A
+
+          # Written through files rather than inline: a multi-line -m or --body argument would carry
+          # this block's indentation into the text, and four leading spaces make Markdown a code block.
+          cat > commit-message.txt <<'EOF'
+          Move the tz database from CURRENT_VERSION to LATEST_VERSION
+
+          Regenerated against timezonedb LATEST_VERSION and moved every workflow pin
+          with it, so the committed data and the database CI checks it against stay one
+          release.
+          EOF
+
+          cat > pr-body.md <<'EOF'
+          IANA published `LATEST_VERSION`; this repository was pinned to `CURRENT_VERSION`.
+
+          Regenerating and moving the pin are one act. Separated, CI either compares the committed data
+          against the wrong baseline or stops checking it altogether — and a gate that has stopped running
+          looks exactly like one that is passing.
+
+          SUMMARY_PLACEHOLDER
+
+          The suite, `composer sync-check` and `composer lint` all ran against `LATEST_VERSION` before this
+          was opened. A pull request raised by a workflow does not trigger CI itself, so that proof had to
+          happen in the bump job; re-run them locally if you want them under your own eye.
+          EOF
+
+          # Quoted heredocs above, so no shell expansion happened inside them and nothing in the
+          # generated summary can be interpreted as a command.
+          python3 - "$CURRENT" "$LATEST" <<'PY'
+          import os, pathlib, sys
+          current, latest = sys.argv[1], sys.argv[2]
+          summary = os.environ.get('SUMMARY', '')
+          for name in ('commit-message.txt', 'pr-body.md'):
+              p = pathlib.Path(name)
+              p.write_text(p.read_text()
+                  .replace('SUMMARY_PLACEHOLDER', summary)
+                  .replace('CURRENT_VERSION', current)
+                  .replace('LATEST_VERSION', latest))
+          PY
+
+          git commit -F commit-message.txt
+          rm -f commit-message.txt
+          git push -u origin "$BRANCH"
+
+          gh pr create \
+            --title "chore(tzdata): move from $CURRENT to $LATEST" \
+            --body-file pr-body.md

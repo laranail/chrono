@@ -62,5 +62,8 @@ jobs:
         run: vendor/bin/rector process --dry-run --no-progress-bar
 
       # Fails when the committed generated enums and maps disagree with the runner's tzdata.
+      - name: The pin agrees with the generated data
+        run: php tools/tzdata-pin.php
+
       - name: Generated data is in sync
         run: composer sync-check

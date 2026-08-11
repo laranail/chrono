@@ -72,7 +72,26 @@ extensions: intl, calendar, timezonedb-2026.1
 
 Moving to a newer database is therefore a deliberate, reviewable act: regenerate, which rewrites
 `resources/tzdata-version.txt`, and move the pin to match. The two cannot drift apart without CI
-saying so.
+saying so — `php tools/tzdata-pin.php` compares them and is the first thing static analysis runs, so
+a half-done bump fails with that sentence rather than as a confusing parity error later.
+
+### Moving it is automated
+
+Two-part acts get half-done, and the half that gets forgotten here is invisible. A weekly
+`tzdata-bump.yml` does both or neither:
+
+1. compares the pin against what PECL publishes, and stops if they match;
+2. loads the newer database and **refuses to continue** unless PHP confirms it;
+3. regenerates, and moves every workflow pin with it;
+4. runs the suite, `sync-check` and `lint` **against the new release**;
+5. opens a pull request describing what actually changed — whether any identifier, abbreviation or
+   alias moved, or whether the release only altered transition rules.
+
+Step 4 is there because a pull request opened by a workflow does not itself trigger CI. Proposing an
+unverified bump would be worse than proposing none, so the proof happens in the bump job and the
+pull request says so.
+
+Run it early with `gh workflow run tzdata-bump.yml`.
 
 ## Why the alias map is curated
 
