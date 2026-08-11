@@ -27,6 +27,8 @@ jobs:
         uses: ./.github/actions/container
 
       - name: Install dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         run: docker/run composer update --prefer-stable --no-interaction --no-progress
 
       - name: Record the container's date data

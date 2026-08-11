@@ -11,6 +11,10 @@
 #
 # Assumes the image is already built and tagged `chrono-dev`; in CI that is the container action's
 # job, and building here too would hide which step paid for it.
+#
+# COMPOSER_AUTH is forwarded because an unauthenticated Composer resolves against GitHub's anonymous
+# rate limit, which a busy runner IP can exhaust — and the error it produces then says "could not
+# authenticate", not "rate limited".
 
 set -euo pipefail
 
@@ -23,5 +27,6 @@ exec docker run --rm \
     --volume "$PWD:/app" \
     --workdir /app \
     --env CI \
+    --env COMPOSER_AUTH \
     chrono-dev \
     "$@"

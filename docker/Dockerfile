@@ -67,6 +67,12 @@ RUN { \
         echo 'date.timezone = UTC'; \
     } > "$PHP_INI_DIR/conf.d/zz-chrono.ini"
 
+# The mounted tree belongs to whoever checked it out, which is never this container's user. Git
+# refuses such a repository outright — "detected dubious ownership" — and Composer shells out to git,
+# so the failure surfaces as a resolution error with no mention of ownership. The image exists to
+# work on mounted trees; there is no tree here it should be suspicious of.
+RUN git config --global --add safe.directory '*'
+
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 ENV COMPOSER_ALLOW_SUPERUSER=1 \

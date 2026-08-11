@@ -40,6 +40,8 @@ jobs:
         uses: ./.github/actions/container
 
       - name: Install dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         run: |
           if [ "${{ matrix.dependency-versions }}" = "prefer-lowest" ]; then
             docker/run composer update --prefer-lowest --prefer-stable --no-interaction --no-progress
