@@ -25,7 +25,7 @@ use Simtabi\Laranail\Enumerator\Contracts\Enumerator;
  * localised name use `toTimezone()` and the formatter — ICU has translations for every locale, and
  * an English string frozen into a generated file does not.
  *
- * Generated against tzdata 2026.1. Regenerate with `laranail::chrono.sync`.
+ * Generated against tzdata 2026.3. Regenerate with `laranail::chrono.sync`.
  */
 enum TimezoneEnum: string implements Enumerator
 {

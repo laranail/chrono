@@ -21,7 +21,7 @@ use Simtabi\Laranail\Chrono\Core\Enums\Concerns\ListsTimezoneConstants;
  * strings, so they drop straight into array keys, validation rules, config files, database writes
  * and query builders without `->value` on the end.
  *
- * 419 constants, generated against tzdata 2026.1. Regenerate with
+ * 419 constants, generated against tzdata 2026.3. Regenerate with
  * `laranail::chrono.sync`; a parity test asserts every constant is a live identifier and that every
  * identifier has one.
  */
