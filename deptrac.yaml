@@ -1,0 +1,203 @@
+# The boundary. A convention is not a boundary; this is. Gated in CI via tools/deptrac-guard.php,
+# which also fails on parse errors — deptrac exits 0 when it cannot read a file, so a silent parse
+# failure would leave everything below unenforced.
+#
+# Two rules, both absolute:
+#
+#   1. src/Core is framework-free. It may not reference Illuminate, Carbon, or any other
+#      Simtabi\Laranail\* package. That is what keeps the domain extractable and unit-testable
+#      without booting Laravel.
+#   2. The modules form a DAG. Temporal is the root and depends on nothing; Timezone builds on it;
+#      everything else builds on those. Calendar can never reach into Business.
+#
+# Requires deptrac ^4.7 — version 3.0.0 cannot parse PHP 8.5 `clone ($this, [...])`.
+
+deptrac:
+  paths:
+    - ./src
+
+  layers:
+    # ---- Core modules, in dependency order --------------------------------------------------
+    - name: Temporal
+      collectors:
+        - type: directory
+          value: src/Core/Temporal/.*
+
+    - name: Timezone
+      collectors:
+        - type: directory
+          value: src/Core/Timezone/.*
+        # These sit in shared directories for discoverability but belong to this module: the
+        # resolver contract names Resolution types, and the enum concern returns the value
+        # object. Classifying them as Shared would have the shared layer depend on a module,
+        # which is the cycle the DAG exists to prevent.
+        - type: directory
+          value: src/Core/Contracts/TimezoneResolver\.php
+        - type: directory
+          value: src/Core/Enums/Concerns/.*
+        - type: directory
+          value: src/Core/Enums/(Timezone|TimezoneLegacy|TimezoneAbbreviation|TimezoneField|Tz)\.php
+        - type: directory
+          value: src/Core/Exception/(SkippedLocalTime|AmbiguousLocalTime)\.php
+        - type: directory
+          value: src/Core/Config/CatalogueOptions\.php
+        - type: directory
+          value: src/Core/Conversion/.*
+
+    # Presentation depends on Timezone and renders it; nothing depends on Presentation.
+    - name: Presentation
+      collectors:
+        - type: directory
+          value: src/Core/Presentation/.*
+        - type: directory
+          value: src/Core/Enums/(GroupBy|ZoneField|PresentationPreset)\.php
+
+    - name: Calendar
+      collectors:
+        - type: directory
+          value: src/Core/Calendar/.*
+
+    - name: Format
+      collectors:
+        - type: directory
+          value: src/Core/Format/.*
+
+    - name: Humanize
+      collectors:
+        - type: directory
+          value: src/Core/Humanize/.*
+
+    - name: Interval
+      collectors:
+        - type: directory
+          value: src/Core/Interval/.*
+
+    - name: Recurrence
+      collectors:
+        - type: directory
+          value: src/Core/Recurrence/.*
+
+    - name: Reporting
+      collectors:
+        - type: directory
+          value: src/Core/Reporting/.*
+
+    - name: Business
+      collectors:
+        - type: directory
+          value: src/Core/Business/.*
+
+    - name: Astronomy
+      collectors:
+        - type: directory
+          value: src/Core/Astronomy/.*
+
+    # Shared core scaffolding every module may use.
+    - name: Shared
+      collectors:
+        - type: directory
+          value: src/Core/(Intl|Support|Testing)/.*
+        - type: directory
+          value: src/Core/Exception/(ChronoExceptionBase|InvalidOffset|TimezoneNotFound|UnparsableDateTime)\.php
+        - type: directory
+          value: src/Core/Contracts/(ChronoException|Clock|TimezoneRepository)\.php
+        - type: directory
+          value: src/Core/Enums/(Region|TimezoneKind|OffsetFormat|GapPolicy|AmbiguityPolicy|LocalTimeKind|SelectShape|NamedFormat|TimeUnit)\.php
+
+    # The Laravel shell — everything outside src/Core.
+    - name: Shell
+      collectors:
+        - type: directory
+          value: src/(Actions|Adapters|Casts|Console|Contracts|Enums|Events|Facades|Http|Listeners|Models|Providers|Rules|Schedule|Services|Support|View)/.*
+
+    # ---- Forbidden tokens, declared only so Core can be forbidden from touching them ---------
+    - name: Illuminate
+      collectors:
+        - type: classNameRegex
+          value: '#^Illuminate\\#'
+
+    - name: Carbon
+      collectors:
+        - type: classNameRegex
+          value: '#^Carbon\\#'
+
+    - name: Laranail
+      collectors:
+        - type: classNameRegex
+          value: '#^Simtabi\\Laranail\\(?!Chrono)#'
+
+  ruleset:
+    Shared: ~
+    Temporal:
+      - Shared
+    Timezone:
+      - Shared
+      - Temporal
+    Presentation:
+      - Shared
+      - Temporal
+      - Timezone
+
+    Calendar:
+      - Shared
+      - Temporal
+      - Timezone
+    Format:
+      - Shared
+      - Temporal
+      - Timezone
+      - Calendar
+    Humanize:
+      - Shared
+      - Temporal
+      - Timezone
+      - Calendar
+      - Format
+    Interval:
+      - Shared
+      - Temporal
+      - Timezone
+    Recurrence:
+      - Shared
+      - Temporal
+      - Timezone
+      - Calendar
+      - Interval
+    Reporting:
+      - Shared
+      - Temporal
+      - Timezone
+      - Interval
+    Astronomy:
+      - Shared
+      - Temporal
+      - Timezone
+    Business:
+      - Shared
+      - Temporal
+      - Timezone
+      - Calendar
+      - Interval
+      - Recurrence
+      - Astronomy
+
+    # The shell is the only layer allowed to see the framework.
+    Shell:
+      - Shared
+      - Temporal
+      - Timezone
+      - Presentation
+      - Calendar
+      - Format
+      - Humanize
+      - Interval
+      - Recurrence
+      - Reporting
+      - Business
+      - Astronomy
+      - Illuminate
+      - Carbon
+      - Laranail
+
+    # Illuminate, Carbon and Laranail intentionally have NO allowed dependents beyond Shell —
+    # any reference from a Core module is a violation.

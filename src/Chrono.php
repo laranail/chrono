@@ -1,0 +1,101 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Simtabi\Laranail\Chrono;
+
+use DateTimeInterface;
+use NoDiscard;
+use Simtabi\Laranail\Chrono\Core\Conversion\TimeConverter;
+use Simtabi\Laranail\Chrono\Core\Format\DateFormatter;
+use Simtabi\Laranail\Chrono\Core\Format\DateParser;
+use Simtabi\Laranail\Chrono\Core\Humanize\Humanizer;
+use Simtabi\Laranail\Chrono\Core\Presentation\TimezonePresenter;
+use Simtabi\Laranail\Chrono\Core\Timezone\Timezones;
+use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
+
+/**
+ * The root service: one import that reaches every module.
+ *
+ * Each accessor returns the module's own service, so `Chrono::timezones()->query()` and a directly
+ * injected `Timezones` are the same object with the same configuration. This is a front door, not a
+ * layer — nothing is reimplemented here, and nothing routes through it that could not be reached by
+ * injecting the module directly.
+ *
+ * Modules land as they are built; `calendar()`, `holidays()` and `recur()` arrive in v0.2 and v0.3.
+ */
+final readonly class Chrono
+{
+    public function __construct(
+        private Timezones $timezones,
+        private DateFormatter $formatter,
+        private DateParser $parser,
+        private Humanizer $humanizer,
+    ) {}
+
+    /** Interpreting, fetching and querying timezones. */
+    public function timezones(): Timezones
+    {
+        return $this->timezones;
+    }
+
+    /** Rendering an instant for a locale. */
+    public function format(): DateFormatter
+    {
+        return $this->formatter;
+    }
+
+    /** Reading a string into an instant, with explicit daylight-saving policies. */
+    public function parse(): DateParser
+    {
+        return $this->parser;
+    }
+
+    /** Turning a span of time into a phrase, with correct plural rules. */
+    public function humanize(): Humanizer
+    {
+        return $this->humanizer;
+    }
+
+    /**
+     * A fluent presenter for pickers, APIs and form components.
+     *
+     * It lives here rather than on `Timezones` because presentation depends on the timezone module
+     * and not the other way round — an accessor there would be a backwards edge, which deptrac
+     * rejects.
+     */
+    #[NoDiscard]
+    public function present(): TimezonePresenter
+    {
+        return new TimezonePresenter($this->timezones->query());
+    }
+
+    /**
+     * "What time is that, over there?" — for one instant or many, in one zone or many.
+     *
+     *     Chrono::convert('2026-06-15 09:00')->from('Africa/Nairobi')->to('Europe/London')->first();
+     *     Chrono::convert($instants)->to(['Europe/London', 'Asia/Tokyo'])->table();
+     *
+     * @param string|DateTimeInterface|iterable<string|DateTimeInterface>|null $input
+     */
+    #[NoDiscard]
+    public function convert(string|DateTimeInterface|iterable|null $input = null): TimeConverter
+    {
+        $converter = new TimeConverter($this->timezones);
+
+        return $input === null ? $converter : $converter->of($input);
+    }
+
+    /** Shorthand for the single most common call. */
+    #[NoDiscard]
+    public function zone(mixed $input): Timezone
+    {
+        return $this->timezones->of($input);
+    }
+
+    /** PHP's tzdata release — the version every behavioural decision keys on. */
+    public function version(): string
+    {
+        return $this->timezones->version();
+    }
+}

@@ -1,0 +1,37 @@
+# src/Core is framework-free domain code and is held to a higher standard than the shell:
+# level 10 plus strict rules, and no baseline. A baseline is just permission to be wrong.
+includes:
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+
+parameters:
+    level: 10
+    paths:
+        - src/Core
+    treatPhpDocTypesAsCertain: true
+    reportUnmatchedIgnoredErrors: true
+
+    ignoreErrors:
+        # PHPStan's stubs type these as always returning an array. The manual types them
+        # `array|false`, and reality agrees: `(new DateTimeZone('+03:00'))->getTransitions(...)`
+        # returns false, as does the same call on an abbreviation zone like 'CEST'. There is a
+        # passing test for it. Since resolving a user-supplied '+03:00' deliberately produces such
+        # a zone, deleting these guards to satisfy the stub would reintroduce a `count(false)`
+        # TypeError on a live code path.
+        -
+            identifier: identical.alwaysFalse
+            message: '#between (list<array\{.*\}>|list<string>) and false will always evaluate to false#'
+        -
+            identifier: notIdentical.alwaysTrue
+            message: '#between list<array\{.*\}> and false will always evaluate to true#'
+
+        # IntlTimeZone::getIDForWindowsID needs ICU >= 52. PHPStan sees the method on the current
+        # build and calls the guard redundant; the guard is for the builds where it is absent.
+        -
+            identifier: function.alreadyNarrowedType
+            path: src/Core/Timezone/Resolver/WindowsResolver.php
+        -
+            identifier: identical.alwaysFalse
+            path: src/Core/Timezone/Resolver/WindowsResolver.php
+        -
+            identifier: booleanAnd.alwaysFalse
+            path: src/Core/Timezone/Resolver/WindowsResolver.php

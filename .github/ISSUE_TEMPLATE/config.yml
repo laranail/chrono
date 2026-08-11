@@ -1,0 +1,9 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: Documentation
+    url: https://opensource.simtabi.com/documentation/laranail/chrono/
+    about: The timezone catalogue, DST behaviour, calendars, formatting and configuration.
+  - name: Security vulnerability
+    url: https://github.com/laranail/chrono/blob/main/SECURITY.md
+    about: Do not open a public issue — email opensource@simtabi.com.

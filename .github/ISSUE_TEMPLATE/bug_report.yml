@@ -1,0 +1,45 @@
+name: Bug report
+description: Something behaves incorrectly.
+labels: [bug]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Date and timezone bugs depend heavily on the exact instant and the exact data version.
+        The two version fields below are usually what explains the difference between your machine
+        and ours.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you expected, and what you got instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction
+      description: The smallest snippet that shows it. Include the timezone identifier and the exact instant.
+      render: php
+    validations:
+      required: true
+
+  - type: input
+    id: versions
+    attributes:
+      label: Package, PHP and Laravel versions
+      placeholder: 'chrono 0.1.0, PHP 8.5.3, Laravel 13.2'
+    validations:
+      required: true
+
+  - type: input
+    id: datedata
+    attributes:
+      label: Date data versions
+      description: 'Run: php -r ''printf("php tzdata=%s icu=%s icu tzdata=%s\n", timezone_version_get(), INTL_ICU_VERSION, IntlTimeZone::getTZDataVersion());'''
+      placeholder: 'php tzdata=2025.3 icu=57.2 icu tzdata=2019a'
+    validations:
+      required: true

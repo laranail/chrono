@@ -1,0 +1,80 @@
+name: tzdata drift
+
+# The IANA database changes several times a year by government decree — Morocco's Ramadan shifts,
+# Iran, Chile, Egypt, Fiji. Those assertions live in the `tzdata` group, excluded from the main
+# suite so a runner-image bump mid-sprint cannot turn the build red. This job runs them weekly and
+# opens an issue instead of failing anyone's PR.
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'   # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  drift:
+    name: Decree-driven fixtures
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.5'
+          extensions: dom, curl, libxml, mbstring, zip, fileinfo, intl, calendar
+          coverage: none
+          ini-values: date.timezone=UTC
+
+      - name: Install dependencies
+        run: composer update --prefer-stable --no-interaction --no-progress
+
+      - name: Record the runner's date data
+        id: versions
+        run: |
+          {
+            echo "php_tzdata=$(php -r 'echo timezone_version_get();')"
+            echo "icu=$(php -r 'echo INTL_ICU_VERSION;')"
+            echo "icu_tzdata=$(php -r 'echo IntlTimeZone::getTZDataVersion();')"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Run the tzdata group
+        id: run
+        continue-on-error: true
+        run: composer test-tzdata
+
+      - name: Open an issue on drift
+        if: steps.run.outcome == 'failure'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const title = 'tzdata drift detected';
+            const body = [
+              'The weekly `tzdata` fixture run failed, which usually means the IANA database changed.',
+              '',
+              `- PHP tzdata: \`${{ steps.versions.outputs.php_tzdata }}\``,
+              `- ICU: \`${{ steps.versions.outputs.icu }}\` (ICU tzdata \`${{ steps.versions.outputs.icu_tzdata }}\`)`,
+              `- Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              '',
+              'Review the diff, then run `laranail::chrono.sync` and update the affected fixtures.',
+            ].join('\n');
+
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo, state: 'open', labels: 'tzdata',
+            });
+
+            if (existing.data.length > 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: existing.data[0].number, body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo, title, body, labels: ['tzdata'],
+              });
+            }

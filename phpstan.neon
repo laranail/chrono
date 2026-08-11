@@ -1,0 +1,12 @@
+# The Laravel shell. src/Core has its own, stricter config — see phpstan-core.neon.
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 8
+    paths:
+        - src
+    excludePaths:
+        - src/Core
+        - vendor
+    treatPhpDocTypesAsCertain: false
