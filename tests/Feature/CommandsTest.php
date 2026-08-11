@@ -37,7 +37,10 @@ it('reports on the health of the host', function (): void {
 
 it('confirms generated data is in sync', function (): void {
     $this->artisan('laranail::chrono.sync', ['--check' => true])->assertSuccessful();
-});
+})->skip(
+    fn (): bool => ! tzdataIsVersioned(),
+    'the host reads the OS tz database, which carries no release to compare against',
+);
 
 it('exposes short aliases alongside the namespaced names', function (string $alias): void {
     expect(array_keys($this->app[Kernel::class]->all()))->toContain($alias);

@@ -24,7 +24,10 @@ it('regenerates byte for byte against the runner\'s database', function (string 
 })->with([
     'alias map' => ['generate-alias-map.php'],
     'enums' => ['generate-enums.php'],
-]);
+])->skip(
+    fn (): bool => ! tzdataIsVersioned(),
+    'the host reads the OS tz database, which carries no release to compare against',
+);
 
 /**
  * An alias is an exact link, so its target must share its rules. This is what stops a curated entry

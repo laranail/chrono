@@ -209,6 +209,17 @@ final readonly class Timezones
         return $this->repository->fingerprint();
     }
 
+    /**
+     * Whether PHP reads the operating system's tz database rather than its own bundled copy.
+     *
+     * True on the official Docker images, Debian and Ubuntu — where `version()` returns `0.system`
+     * and there is no release to compare anything against.
+     */
+    public function usesSystemDatabase(): bool
+    {
+        return $this->repository->usesSystemDatabase();
+    }
+
     // ── reconfiguration ─────────────────────────────────────────────────────────────────────
 
     #[NoDiscard]

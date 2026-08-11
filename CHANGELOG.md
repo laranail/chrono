@@ -5,6 +5,38 @@ All notable changes to `laranail/chrono` are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- **A system-tzdata build put files in the timezone catalogue.** Built `--with-system-tzdata` — which
+  is how the official Docker images, Debian and Ubuntu all ship PHP — `listIdentifiers()` reports
+  whatever is in `/usr/share/zoneinfo`, including `tzdata.zi` and `leapseconds`. They reached a
+  picker as if they were places, and `new DateTimeZone('leapseconds')` throws, so a catalogue built
+  from the raw list was one `->of()` away from a fatal error on the most common production image
+  there is. Entries that name a file are filtered out.
+- **Every zone read as placeless on those same builds.** `Location` detected an absent location by
+  the bundled database's `??`/-90/-180 sentinel; a system build writes `0.0/0.0` with a `?` comment
+  instead, so rule-less zones came back as a location in the Gulf of Guinea. A zone with no country
+  is not a place, which is the only test that holds across builds.
+- `chrono:doctor` warned that tzdata was stale on every well-maintained Debian host, because
+  `timezone_version_get()` returns the literal `0.system` there and no comparison against it can
+  succeed. It now reports where the data comes from and says the OS package is what keeps it current.
+- `tools/generate-alias-map.php` died rather than stepping over a non-zone entry.
+
+### Added
+
+- `TimezoneRepository::usesSystemDatabase()`, surfaced as `Timezones::usesSystemDatabase()`.
+
+### Changed
+
+- `composer sync-check` and the generated-data tests skip on a host whose tz database carries no
+  release, instead of failing. Comparing files generated elsewhere byte for byte is not a check when
+  there is no version to compare against — it is a red build no commit caused. Drift is still caught
+  weekly by `tzdata.yml`.
+- The generated-enum parity test compares against the list the package exposes rather than PHP's raw
+  one, so it asserts what consumers actually get.
+
 ## [0.1.1] - 2026-08-11
 
 ### Added

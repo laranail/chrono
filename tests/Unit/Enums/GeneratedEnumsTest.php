@@ -6,6 +6,7 @@ use Simtabi\Laranail\Chrono\Core\Enums\Timezone as TimezoneEnum;
 use Simtabi\Laranail\Chrono\Core\Enums\TimezoneAbbreviation;
 use Simtabi\Laranail\Chrono\Core\Enums\TimezoneKind;
 use Simtabi\Laranail\Chrono\Core\Enums\TimezoneLegacy;
+use Simtabi\Laranail\Chrono\Core\Timezone\Repository\PhpTimezoneRepository;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,9 +31,13 @@ it('has a case for every canonical identifier, and no others', function (): void
 
 it('covers exactly the backward-compatible remainder', function (): void {
     $cases = array_map(static fn (TimezoneLegacy $c): string => $c->value, TimezoneLegacy::cases());
+    // Through the repository, not `listIdentifiers()` directly: on a system-tzdata build the raw
+    // list includes files from /usr/share/zoneinfo — `tzdata.zi`, `leapseconds` — and the enum is
+    // meant to mirror what the package offers, which is the filtered set.
+    $repository = new PhpTimezoneRepository;
     $live = array_values(array_diff(
-        DateTimeZone::listIdentifiers(DateTimeZone::ALL_WITH_BC),
-        DateTimeZone::listIdentifiers(DateTimeZone::ALL),
+        $repository->identifiers(includeDeprecated: true),
+        $repository->identifiers(),
     ));
 
     expect(array_diff($cases, $live))->toBe([])

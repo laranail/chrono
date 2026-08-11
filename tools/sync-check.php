@@ -9,6 +9,22 @@ declare(strict_types=1);
  * zone being added or removed. This is what catches that: it re-runs every generator in check mode
  * and compares byte for byte, so a stale enum or alias map cannot ship unnoticed.
  */
+// Built `--with-system-tzdata` — the official Docker images, Debian, Ubuntu, and therefore most CI —
+// PHP reads /usr/share/zoneinfo and `timezone_version_get()` returns the literal `0.system`. The data
+// is fine, often fresher than the bundled copy, but it names no release, so comparing files
+// generated on another machine byte for byte is not a check. It is a red build no commit caused.
+//
+// Drift is still caught: tzdata.yml runs weekly against a versioned host and opens an issue.
+if (! str_contains(timezone_version_get(), '.') || str_starts_with(timezone_version_get(), '0.')) {
+    fwrite(STDOUT, sprintf(
+        "sync-check skipped: this host reads the OS tz database (timezone_version_get() = %s),\n"
+        . "which carries no release to compare the generated files against.\n",
+        timezone_version_get(),
+    ));
+
+    exit(0);
+}
+
 $generators = [
     'alias map' => __DIR__ . '/generate-alias-map.php',
     'enums' => __DIR__ . '/generate-enums.php',

@@ -39,7 +39,7 @@ it('reports negative daylight saving as the database records it', function (): v
         ->and($dublin->isDst($july))->toBeFalse()
         ->and($dublin->abbreviation($january))->toBe('GMT')
         ->and($dublin->abbreviation($july))->toBe('IST');
-});
+})->group('tzdata');
 
 it('never assumes a daylight-saving shift is an hour', function (string $identifier, int $expected): void {
     expect(new Timezone($identifier)->dstSavings()->seconds)->toBe($expected);
@@ -95,6 +95,14 @@ it('measures the difference between two zones at an instant', function (): void 
  * name the same city as a row that had both.
  */
 describe('location follows an alias', function (): void {
+    beforeEach(function (): void {
+        // A system-tzdata build without zone1970.tab reports every zone as placeless. There is
+        // nothing to follow an alias *to* there, and asserting otherwise tests the host.
+        if (! tzdataHasLocations()) {
+            test()->markTestSkipped('the host ships no zone location tables');
+        }
+    });
+
     it('gives a deprecated zone the country of the zone it points at', function (): void {
         $calcutta = new Timezone('Asia/Calcutta', TimezoneKind::Link);
         $kolkata = new Timezone('Asia/Kolkata');
