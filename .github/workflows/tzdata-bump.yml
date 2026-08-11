@@ -183,6 +183,29 @@ jobs:
           rm -f commit-message.txt
           git push -u origin "$BRANCH"
 
-          gh pr create \
+          # The organisation may forbid workflow tokens from opening pull requests, and this job
+          # should still be worth running when it does: the branch is pushed and verified either
+          # way, so all that is left is a click. Failing here would throw that work away.
+          if gh pr create \
             --title "chore(tzdata): move from $CURRENT to $LATEST" \
-            --body-file pr-body.md
+            --body-file pr-body.md 2>pr-error.txt; then
+            echo "Opened a pull request for $BRANCH."
+          else
+            cat pr-error.txt
+
+            gh issue create \
+              --title "tz database $LATEST is ready to merge" \
+              --body "\`$BRANCH\` is pushed and verified — the suite, \`composer sync-check\` and \`composer lint\` all ran against \`$LATEST\` in [this run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID).
+
+          This workflow could not open the pull request itself; the token is not permitted to. Open it here:
+          $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/compare/main...$BRANCH?expand=1" \
+              --label tzdata
+          fi
+
+          {
+            echo "### tz database $CURRENT to $LATEST"
+            echo ""
+            cat pr-body.md
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          rm -f pr-body.md pr-error.txt

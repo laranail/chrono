@@ -13,7 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   newest PECL release, runs the suite, `sync-check` and `lint` against it, and opens a pull request
   saying whether any identifier, abbreviation or alias actually changed or whether the release only
   altered transition rules. The proof happens in the bump job because a pull request raised by a
-  workflow does not trigger CI itself, and an unverified proposal would be worse than none.
+  workflow does not trigger CI itself, and an unverified proposal would be worse than none. Where an
+  organisation forbids workflow tokens from opening pull requests, it pushes the verified branch and
+  files an issue with the link rather than throwing the work away.
+
+- The tz database moved from **2026.1 to 2026.3**. Nothing in the generated catalogue changed —
+  419 canonical identifiers, 179 legacy, 144 abbreviations and 128 curated aliases either side, with
+  only the version stamps differing. That release altered transition rules, not the set of zones.
 
 ### Changed
 
