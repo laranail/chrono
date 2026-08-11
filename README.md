@@ -82,7 +82,7 @@ Hosted at **[opensource.simtabi.com/documentation/laranail/chrono](https://opens
 
 ## Stability
 
-Pre-1.0. While pre-stable a single moving `v0.1.0` tag tracks the latest state, and constraints resolve `^0.1`. Calendars, recurrence, intervals and business days are planned for `v0.2` and `v0.3`; see [the roadmap](https://opensource.simtabi.com/documentation/laranail/chrono/architecture).
+Pre-1.0, with immutable tags — every release is its own `v0.1.x` and none is ever re-pointed, so a lockfile means something. Constraints resolve `^0.1`. Calendars, recurrence, intervals and business days are planned for `v0.2` and `v0.3`; see [the roadmap](https://opensource.simtabi.com/documentation/laranail/chrono/architecture).
 
 ## Contributing & security
 

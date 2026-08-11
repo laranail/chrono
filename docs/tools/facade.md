@@ -109,7 +109,7 @@ refuses to guess without the call site restating it.
 ```php
 timezones();                       // the Timezones service
 timezones('Asia/Calcutta');        // a resolved Timezone
-tz_offset('Africa/Nairobi');       // '+03:00'
+tz_offset('Africa/Nairobi');       // 'UTC +03:00' — the configured display.offset_format
 in_timezone($instant, 'Asia/Tokyo'); // the same instant, re-expressed
 ```
 

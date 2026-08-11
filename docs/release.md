@@ -4,9 +4,17 @@ How a version of this package is cut.
 
 ## Versioning
 
-Semantic versioning. While pre-1.0 the package follows the laranail convention of a single moving
-`v0.1.0` tag: the tag is re-pointed as work lands, consumers constrain on `^0.1`, and history stays
-a single `Initial release` commit. New SemVer versions begin at 1.0.
+Semantic versioning, with **immutable tags**. Every release gets its own `v0.1.x`, its own changelog
+section and its own GitHub release; a tag, once pushed, is never re-pointed.
+
+That is a deliberate departure from the moving-`v0.1.0` convention this file used to describe, and it
+was made the moment the package had more than one release in it. A moving tag means two machines
+resolving `^0.1` on the same day can get different code, and a `composer.lock` recording `v0.1.0`
+tells you nothing about what was installed — which is a strange property for a package whose entire
+argument is that reproducibility matters.
+
+Consumers still constrain on `^0.1`. What changed is that the tag they land on says which build it
+is. New SemVer minors begin at 1.0.
 
 ## The public surface
 

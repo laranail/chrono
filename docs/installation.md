@@ -53,7 +53,7 @@ overridden.
 ```php
 use Simtabi\Laranail\Chrono\Facades\Timezones;
 
-Timezones::version();            // '2025.3' — the tzdata release PHP is carrying
+Timezones::version();            // '2026.3' — the tzdata release PHP is carrying
 Timezones::of('Africa/Nairobi'); // a Timezone value object
 ```
 

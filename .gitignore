@@ -7,3 +7,10 @@ composer.lock
 .php-cs-fixer.cache
 .deptrac.cache
 .DS_Store
+
+# Scratch written by .github/workflows/tzdata-bump.yml while composing its commit and pull request.
+# Staged before they exist, and removed after — but a run that dies between the two would otherwise
+# leave them for the next `git add -A` to pick up.
+/commit-message.txt
+/pr-body.md
+/pr-error.txt

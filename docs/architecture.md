@@ -2,12 +2,16 @@
 
 How the package is put together, and the reasoning behind the parts that look unusual.
 
-## Two layers
+## The layers
 
 ```
-src/Core   the domain. No Illuminate, no Carbon, no other Simtabi\Laranail package.
-src/       the Laravel shell: provider, facades, helpers.
+src/Core            the domain. No Illuminate, no Carbon, no other Simtabi\Laranail package.
+src/Core/Concerns   consumer-facing traits. May reach every module; nothing may reach them.
+src/                the Laravel shell: provider, facades, helpers.
 ```
+
+`Concerns` is the framework-free twin of the shell — the same convenience offered through a `use`
+line rather than a container binding — which is why it sits outside the module DAG below.
 
 The boundary is enforced in CI by deptrac, not by convention. The point is not purity for its own
 sake: it means the whole domain is unit-testable without booting a container, and could be extracted

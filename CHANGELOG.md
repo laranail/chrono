@@ -9,6 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`tz_offset()` ignored `display.offset_format`.** It took `Offset::format()`'s own default, so the
+  same zone rendered `+03:00` through the helper and `UTC +03:00` through the picker, the API payload
+  and every converted time in the same application, with no setting that explained the difference. It
+  now reads the configured shape, and takes an optional third argument to override it for one call.
+- The three global helpers had no test of any kind despite being documented as supported surface.
+  They have one now; it is what found the bug above.
+- `README.md` and `docs/release.md` both promised "a single moving `v0.1.0` tag", which eight
+  immutable releases had already contradicted. A moving tag means two machines resolving `^0.1` on
+  the same day can get different code — a strange property for a package whose argument is that
+  reproducibility matters. The docs now describe what the package actually does, and why.
+- `config/chrono.php` pointed at `chrono::messages.placeholder` for the picker's placeholder; the
+  code reads `chrono::messages.select.placeholder`, so anyone following the comment would have
+  translated a key nothing looks up.
+- `docs/architecture.md` opened with "Two layers" and then documented a third; `docs/installation.md`
+  showed a tzdata release the package has moved off.
+- The dev-container workflow rebuilt the image from scratch instead of sharing the layer cache every
+  other workflow uses, and could drift onto a different base or a stale action pin.
+
 - CI's container jobs could not resolve dependencies. Two causes, both from moving into the
   container: the image runs as root against a checkout owned by the runner, which git refuses
   outright as "dubious ownership" — and because Composer shells out to git, that surfaced as a
