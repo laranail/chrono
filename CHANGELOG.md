@@ -5,6 +5,21 @@ All notable changes to `laranail/chrono` are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **`composer sync-check` is a real check in CI again.** The release the generated files were built
+  against is now committed in `resources/tzdata-version.txt`, written by the generators themselves,
+  and the workflows pin the PECL `timezonedb` to it. Previously the gate skipped on every CI run,
+  because Ubuntu's PHP reports `0.system` and there was nothing to compare against.
+- It now distinguishes two failures that look alike: *the data is stale* (the generators produce
+  something else on the right database) and *the host cannot tell* (the database is not the one the
+  files describe). The second is fatal in CI, where it means the pin has broken and the gate has
+  silently stopped running, and merely reported on a laptop whose PHP bundles a different release.
+- The weekly drift job asserts the pin loaded, rather than only that some version exists. A detector
+  that cannot measure should stop rather than report.
+
 ## [0.1.2] - 2026-08-11
 
 ### Fixed

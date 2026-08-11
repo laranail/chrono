@@ -365,6 +365,16 @@ if ($check) {
 
 file_put_contents($target, $contents);
 
+// The release every generated file in this repository corresponds to.
+//
+// Committed rather than inferred, because "is this data current?" and "can this host even tell?"
+// are different questions and only the first one matters. A checker that compares against whatever
+// database the runner happens to carry answers the second and calls it the first.
+file_put_contents(
+    dirname(__DIR__) . '/resources/tzdata-version.txt',
+    timezone_version_get() . "\n",
+);
+
 fwrite(STDOUT, sprintf(
     "Wrote %s — %d aliases, %d excluded as non-aliases, tzdata %s.\n",
     $target,

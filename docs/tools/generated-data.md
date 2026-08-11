@@ -28,20 +28,51 @@ php tools/generate-enums.php
 composer sync-check
 ```
 
-Re-runs every generator in check mode and compares byte for byte. It fails when the committed files
-disagree with the machine's tz database, and reports all three version numbers so the cause is
-obvious:
+Re-runs every generator in check mode and compares byte for byte. It runs in the static-analysis
+workflow, so a pull request cut against stale data cannot merge.
+
+### It only means something on the right database
+
+Byte-for-byte parity is a statement about one tz release. Run the same comparison on a host carrying
+a different one and it reports a difference no commit caused — which is how a real gate becomes a red
+build everybody learns to ignore.
+
+So the release the files were generated against is committed, in `resources/tzdata-version.txt`,
+written by the generators themselves rather than by hand. The check compares that against the
+running database and distinguishes two failures that look alike and are not:
+
+| | Meaning |
+|---|---|
+| **The data is stale** | The generators produce something else *on the right database*. Regenerate and commit. |
+| **The host cannot tell** | The database is not the one the files describe. Nothing is being checked. |
+
+The second is fatal in CI and merely reported elsewhere. In CI it means the pin has broken and the
+gate has silently stopped running, which is worth failing over. On a contributor's laptop it means
+their PHP bundles a different release — normal, and not theirs to fix:
 
 ```
-Generated data is stale.
+sync-check skipped.
 
-  enums:
-    Timezone.php is out of sync with the runner's tz database.
-
-The runner reports tzdata 2025.3 (ICU 57.2, ICU tzdata 2019a).
+This host carries tzdata 2026.3; the generated files were built against 2026.1.
+Byte-for-byte comparison across two releases reports a difference that no commit caused,
+so it is not run here.
 ```
 
-This runs in the static-analysis workflow, so a pull request cut against stale data cannot merge.
+### How CI gets the right database
+
+Ubuntu's PHP — and the official Docker images, and Debian's — is built `--with-system-tzdata`, so it
+reads `/usr/share/zoneinfo` and `timezone_version_get()` returns the literal `0.system`. There is no
+release to compare against, and for a while that meant this gate quietly skipped on every CI run.
+
+The workflows install the PECL `timezonedb`, **pinned to the same release**:
+
+```yaml
+extensions: intl, calendar, timezonedb-2026.1
+```
+
+Moving to a newer database is therefore a deliberate, reviewable act: regenerate, which rewrites
+`resources/tzdata-version.txt`, and move the pin to match. The two cannot drift apart without CI
+saying so.
 
 ## Why the alias map is curated
 
@@ -81,6 +112,10 @@ would be a fatal redeclaration. Across all 598 identifiers there are currently n
 A `tzdata.yml` workflow runs the decree-driven assertions weekly and opens an issue on drift.
 Regenerate, review the diff, and record anything user-visible in the changelog — a changed alias
 mapping or a removed identifier is a real upstream change.
+
+It runs against the pinned `timezonedb` too, and fails outright if that pin did not load. A drift
+detector that cannot measure should stop rather than report: run it on a `0.system` host and it will
+announce drift every week while detecting none of it.
 
 ---
 

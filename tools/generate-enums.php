@@ -318,6 +318,10 @@ if ($check) {
     exit(0);
 }
 
+// The release every generated file in this repository corresponds to. Written by both generators,
+// so it cannot drift from the data it describes.
+file_put_contents(dirname(__DIR__) . '/resources/tzdata-version.txt', $tzdata . "\n");
+
 fwrite(STDOUT, sprintf(
     "Wrote 3 enums + Tz + the enumerator bridge — %d canonical, %d legacy, %d abbreviations, %d constants, tzdata %s.\n",
     count($canonical),

@@ -31,7 +31,7 @@ jobs:
           # so timezone_version_get() returns the literal `0.system` and there is no release to
           # detect drift *from* — the run would report drift every week and measure none of it.
           # The PECL extension overrides the OS database with a versioned, current one.
-          extensions: dom, curl, libxml, mbstring, zip, fileinfo, intl, calendar, timezonedb
+          extensions: dom, curl, libxml, mbstring, zip, fileinfo, intl, calendar, timezonedb-2026.1
           coverage: none
           ini-values: date.timezone=UTC
 
@@ -47,14 +47,15 @@ jobs:
             echo "icu_tzdata=$(php -r 'echo IntlTimeZone::getTZDataVersion();')"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Fail if the database is still unversioned
+      - name: Fail if the pinned database did not load
         run: |
           VERSION="$(php -r 'echo timezone_version_get();')"
-          if [ "${VERSION#0.}" != "$VERSION" ] || ! printf '%s' "$VERSION" | grep -q '\.'; then
-            echo "::error::PHP reports tzdata '$VERSION' - timezonedb did not load, so this job cannot tell real drift from a host with no version. Failing loudly rather than reporting drift that was never measured."
+          EXPECTED="$(cat resources/tzdata-version.txt)"
+          if [ "$VERSION" != "$EXPECTED" ]; then
+            echo "::error::PHP reports tzdata '$VERSION' but the pin is '$EXPECTED'. Either timezonedb did not load, or the pin moved without the fixtures. Failing loudly rather than reporting drift never measured against the right baseline."
             exit 1
           fi
-          echo "tzdata $VERSION - versioned, so drift is measurable."
+          echo "tzdata $VERSION matches the pin - drift is measurable against the release the fixtures describe."
 
       - name: Run the tzdata group
         id: run

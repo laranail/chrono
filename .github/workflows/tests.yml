@@ -33,7 +33,11 @@ jobs:
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, fileinfo, pdo, sqlite3, pdo_sqlite, intl, calendar
+          # Pinned to the release the generated files were built against
+            # (resources/tzdata-version.txt). Ubuntu's PHP is built --with-system-tzdata and
+            # reports `0.system`, which no comparison can use; timezonedb replaces it with a
+            # versioned copy so `composer sync-check` is a real check rather than a skipped one.
+          extensions: dom, curl, libxml, mbstring, zip, fileinfo, pdo, sqlite3, pdo_sqlite, intl, calendar, timezonedb-2026.1
           coverage: none
           ini-values: error_reporting=E_ALL, date.timezone=UTC
 
