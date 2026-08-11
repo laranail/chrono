@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
+use Psr\SimpleCache\CacheInterface;
 use Simtabi\Laranail\Chrono\Core\Enums\Region;
+use Simtabi\Laranail\Chrono\Core\Timezone\Repository\CachedTimezoneRepository;
 use Simtabi\Laranail\Chrono\Core\Timezone\Repository\PhpTimezoneRepository;
 
 beforeEach(function (): void {
@@ -73,4 +75,69 @@ it('produces a stable fingerprint', function (): void {
     expect($this->repository->fingerprint())
         ->toHaveLength(12)
         ->toBe((new PhpTimezoneRepository)->fingerprint());
+});
+
+/**
+ * A cache is an optimisation, and one that can take a request down is not one. The store belongs to
+ * the application: it can be a database table nobody migrated, a Redis that is down, or a driver
+ * misconfigured in one environment. None of those are reasons for `Timezones::of()` to throw —
+ * reading the tz database directly is always correct, only slower.
+ *
+ * Found by running the suite in the development container, where the default store happened to be
+ * one with no table behind it.
+ */
+it('answers from the database when the cache throws', function (): void {
+    $broken = new class implements CacheInterface
+    {
+        public function get(string $key, mixed $default = null): mixed
+        {
+            throw new RuntimeException('no such table: cache');
+        }
+
+        public function set(string $key, mixed $value, null|int|DateInterval $ttl = null): bool
+        {
+            throw new RuntimeException('no such table: cache');
+        }
+
+        public function delete(string $key): bool
+        {
+            throw new RuntimeException('no such table: cache');
+        }
+
+        public function clear(): bool
+        {
+            throw new RuntimeException('no such table: cache');
+        }
+
+        public function getMultiple(iterable $keys, mixed $default = null): iterable
+        {
+            throw new RuntimeException('no such table: cache');
+        }
+
+        public function setMultiple(iterable $values, null|int|DateInterval $ttl = null): bool
+        {
+            throw new RuntimeException('no such table: cache');
+        }
+
+        public function deleteMultiple(iterable $keys): bool
+        {
+            throw new RuntimeException('no such table: cache');
+        }
+
+        public function has(string $key): bool
+        {
+            throw new RuntimeException('no such table: cache');
+        }
+    };
+
+    $repository = new CachedTimezoneRepository(new PhpTimezoneRepository, $broken);
+
+    expect($repository->abbreviations())->not->toBeEmpty()
+        ->and($repository->countryIndex())->toHaveKey('KE')
+        ->and($repository->countryOf('Africa/Nairobi'))->toBe('KE');
+
+    // Also best effort: an unreachable cache has nothing to clear.
+    $repository->flush();
+
+    expect($repository->version())->toBe(timezone_version_get());
 });

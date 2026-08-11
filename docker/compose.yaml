@@ -1,21 +1,28 @@
 # A development environment carrying the tz release this repository was generated against.
 #
-#   docker compose run --rm chrono composer test
-#   docker compose run --rm chrono composer sync-check
-#   docker compose run --rm chrono bash
+#   make docker-test
+#   make docker-check
+#   make docker-shell
+#
+# `make` sets UID/GID and points at this file; see the Makefile at the repository root.
 #
 # Nothing here is published or deployed. See docker/Dockerfile for why it exists at all.
+
+# Fixed, so the image is named `chrono-chrono` wherever this file is invoked from. Compose otherwise
+# derives it from the containing directory, which moving this file under docker/ silently changed.
+name: chrono
 
 services:
   chrono:
     build:
-      context: .
+      # The repository root, so the build can read resources/tzdata-version.txt.
+      context: ..
       dockerfile: docker/Dockerfile
     # Runs as you, so `vendor/` and the test caches on the mounted tree do not come back owned by
     # root. Compose substitutes nothing for an unset variable, hence the defaults.
     user: "${UID:-1000}:${GID:-1000}"
     volumes:
-      - .:/app
+      - ..:/app
       # Composer's cache is worth keeping between runs; the rest of the home directory is not.
       - chrono-composer-cache:/tmp/composer-cache
     environment:

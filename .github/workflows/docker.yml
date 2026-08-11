@@ -13,14 +13,12 @@ on:
     branches: [main]
     paths:
       - 'docker/**'
-      - 'compose.yaml'
       - '.dockerignore'
       - 'resources/tzdata-version.txt'
       - '.github/workflows/docker.yml'
   pull_request:
     paths:
       - 'docker/**'
-      - 'compose.yaml'
       - '.dockerignore'
       - 'resources/tzdata-version.txt'
       - '.github/workflows/docker.yml'

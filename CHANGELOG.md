@@ -5,10 +5,21 @@ All notable changes to `laranail/chrono` are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.1.5] - 2026-08-11
+
+### Fixed
+
+- **An unreachable cache took `Timezones` down with it.** `CachedTimezoneRepository` let a store
+  failure propagate, so a `cache` table nobody had migrated, a Redis that was down, or a driver
+  misconfigured in one environment turned `Timezones::of()` into a `QueryException`. A cache is an
+  optimisation, and one that can fail a request is not one; reads, writes and flushes now fall
+  through to the tz database, which is always correct and only slower. Found by running the suite in
+  the development container, where the default store had no table behind it.
 
 ### Added
 
+- A `Makefile` as the single entry point — `make` lists host targets and container targets
+  separately, with the pinned tz release named in the heading.
 - A development container — `docker/Dockerfile` and `compose.yaml` — carrying the tz release this
   repository was generated against, so `composer sync-check` and the generated-data tests are real
   without installing anything on the host:
@@ -25,6 +36,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   It is a development environment, not an artifact: nothing is published to a registry, and using
   `laranail/chrono` never requires it. A `docker.yml` workflow builds it when the image or the pin
   moves, so a tool nobody runs daily cannot rot unnoticed.
+
+  Built on Alpine — 253MB against the 906MB a Debian image cost — with `icu-data-full`, without
+  which `intl` loads, every call succeeds, and every locale silently renders in English.
 
 ## [0.1.4] - 2026-08-11
 

@@ -7,6 +7,7 @@ namespace Simtabi\Laranail\Chrono\Core\Timezone\Repository;
 use Psr\SimpleCache\CacheInterface;
 use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneRepository;
 use Simtabi\Laranail\Chrono\Core\Enums\Region;
+use Throwable;
 
 /**
  * A PSR-16 decorator over any repository.
@@ -114,12 +115,17 @@ final class CachedTimezoneRepository implements TimezoneRepository
     }
 
     /** Drop every cached entry for the current tz database. */
+    /** Best effort, for the same reason `remember()` is: an unreachable cache is already empty. */
     public function flush(): void
     {
-        $this->cache->deleteMultiple([
-            $this->key('abbreviations'),
-            $this->key('country-index'),
-        ]);
+        try {
+            $this->cache->deleteMultiple([
+                $this->key('abbreviations'),
+                $this->key('country-index'),
+            ]);
+        } catch (Throwable) {
+            // Nothing cached is nothing to clear.
+        }
     }
 
     /**
@@ -131,7 +137,17 @@ final class CachedTimezoneRepository implements TimezoneRepository
     private function remember(string $bucket, callable $compute): mixed
     {
         $key = $this->key($bucket);
-        $cached = $this->cache->get($key);
+
+        // A cache is an optimisation, and an optimisation that can take down a request is not one.
+        // The store is whatever the application configured, so it can be a database table that has
+        // not been migrated, a Redis that is down, or a driver misconfigured in one environment
+        // only — none of which are reasons for `Timezones::of()` to throw. Reading the tz database
+        // directly is always correct, only slower.
+        try {
+            $cached = $this->cache->get($key);
+        } catch (Throwable) {
+            return $compute();
+        }
 
         if ($cached !== null) {
             /** @var T $cached */
@@ -140,7 +156,11 @@ final class CachedTimezoneRepository implements TimezoneRepository
 
         $value = $compute();
 
-        $this->cache->set($key, $value, $this->ttl > 0 ? $this->ttl : null);
+        try {
+            $this->cache->set($key, $value, $this->ttl > 0 ? $this->ttl : null);
+        } catch (Throwable) {
+            // Nothing to do about it, and nothing that depends on it having worked.
+        }
 
         return $value;
     }

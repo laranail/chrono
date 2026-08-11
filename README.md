@@ -86,7 +86,7 @@ Pre-1.0. While pre-stable a single moving `v0.1.0` tag tracks the latest state, 
 
 ## Contributing & security
 
-Issues and PRs are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). Report vulnerabilities per
+Issues and PRs are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md); `make` lists every task. Report vulnerabilities per
 [SECURITY.md](SECURITY.md) (opensource@simtabi.com); participation follows the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## License

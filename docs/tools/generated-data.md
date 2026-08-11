@@ -66,8 +66,9 @@ rather than comparing across two databases.
 The container carries the right one and changes nothing on your machine:
 
 ```bash
-docker compose run --rm chrono composer sync-check
-docker compose run --rm chrono composer test
+make docker-sync-check
+make docker-test
+make docker-sync        # regenerate against the pinned release
 ```
 
 It reads the pinned release out of `resources/tzdata-version.txt` at build time rather than
@@ -75,6 +76,11 @@ restating it, and **fails to build** if the extension does not then report that 
 that quietly carried the wrong database would make every check inside it skip, which looks identical
 to passing. It is a development environment: nothing is published to a registry, and using
 `laranail/chrono` never requires it.
+
+> Alpine's `icu-libs` ships the root locale only. Without `icu-data-full` the `intl` extension loads,
+> every call succeeds, and `de_DE` renders `June 15, 2026` — English, with no error anywhere. The
+> image installs it; the point is that a missing translation which returns English is far worse than
+> one that throws, and it is exactly the failure this package exists to notice.
 
 Or install the release on your own PHP, which two commands do:
 

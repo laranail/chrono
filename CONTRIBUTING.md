@@ -5,10 +5,13 @@ Thanks for helping improve `laranail/chrono`.
 ## Getting set up
 
 ```bash
-composer install
-composer test
-composer lint
+make install
+make test
+make lint
 ```
+
+`make` with no target lists everything, host targets and container targets separately. The composer
+scripts underneath are unchanged if you prefer them.
 
 Requires PHP `^8.5` with `ext-intl` and `ext-calendar`. That is enough for everything except the
 generated-data checks, which need a tz database this repository can compare against — see below.
@@ -20,8 +23,8 @@ tz release the committed files were built against, and almost no host does. Ther
 that does:
 
 ```bash
-docker compose run --rm chrono composer test
-docker compose run --rm chrono composer sync-check
+make docker-test
+make docker-check     # lint, suite and sync-check, all against the pinned release
 ```
 
 It is a development environment, never published, and building it is not a prerequisite for using
