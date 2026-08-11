@@ -58,6 +58,22 @@ Byte-for-byte comparison across two releases reports a difference that no commit
 so it is not run here.
 ```
 
+### Running the real check locally
+
+Your PHP almost certainly bundles a different release, so `composer sync-check` reports and stops
+rather than comparing across two databases. Two commands make it a real check on your machine too:
+
+```bash
+pecl install timezonedb-2026.3
+echo 'extension=timezonedb.so' > "$(php-config --ini-dir)/99-timezonedb.ini"
+```
+
+Delete that `.ini` to go back to the database your PHP ships. The skip message prints both commands
+with the currently pinned release substituted in, so it stays right as the pin moves.
+
+Worth doing if you touch the generators or the alias map; unnecessary otherwise, since CI runs it on
+every push.
+
 ### How CI gets the right database
 
 Ubuntu's PHP — and the official Docker images, and Debian's — is built `--with-system-tzdata`, so it

@@ -52,9 +52,13 @@ if ($actual !== $expected) {
         exit(1);
     }
 
-    fwrite(STDOUT, "sync-check skipped.\n\n" . $message
-        . "\nThis is normal on a machine whose PHP bundles a different release; CI runs the real\n"
-        . 'check against ' . $expected . ".\n");
+    // Name the fix, not only the reason. A skip that explains itself and stops is a message people
+    // learn to scroll past; this one is two commands away from being a real check here as well.
+    fwrite(STDOUT, "sync-check skipped.\n\n" . $message . "\n"
+        . 'CI runs the real check against ' . $expected . ". To run it here too:\n\n"
+        . '  pecl install timezonedb-' . $expected . "\n"
+        . "  echo 'extension=timezonedb.so' > \"\$(php-config --ini-dir)/99-timezonedb.ini\"\n\n"
+        . "Delete that .ini file to go back to the database your PHP bundles.\n");
 
     exit(0);
 }

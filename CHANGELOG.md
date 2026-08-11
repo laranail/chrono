@@ -5,7 +5,7 @@ All notable changes to `laranail/chrono` are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.1.4] - 2026-08-11
 
 ### Added
 
@@ -23,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- When `composer sync-check` skips, it now prints the two commands that would make it run here —
+  `pecl install timezonedb-<pinned>` and the `.ini` line — with the pinned release substituted in. A
+  skip that explains itself and stops is a message people learn to scroll past.
 - The tz database pin is single-sourced. The workflows read `resources/tzdata-version.txt` at run
   time instead of restating the release, so regenerating *is* pinning and the two cannot drift.
   Previously the version appeared in three workflow files, which made a bump a change to
