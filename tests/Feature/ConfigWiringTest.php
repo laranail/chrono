@@ -194,15 +194,20 @@ describe('resolution.canonicalise', function (): void {
 });
 
 describe('doctor.strict', function (): void {
+    /**
+     * The warning used is the process-default mismatch rather than a stale tzdata, because a
+     * system-tzdata host has no version to be stale — and a test that only warns on some machines
+     * is testing the machine.
+     */
     it('turns a warning into a failure without the flag', function (): void {
-        config()->set('laranail.chrono.doctor.min_tzdata', '2099.1');
+        config()->set('app.timezone', 'Africa/Nairobi');
         config()->set('laranail.chrono.doctor.strict', true);
 
         $this->artisan('laranail::chrono.doctor')->assertExitCode(1);
     });
 
     it('reports a warning and still passes when lenient', function (): void {
-        config()->set('laranail.chrono.doctor.min_tzdata', '2099.1');
+        config()->set('app.timezone', 'Africa/Nairobi');
         config()->set('laranail.chrono.doctor.strict', false);
 
         $this->artisan('laranail::chrono.doctor')->assertExitCode(0);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Chrono\Core\Timezone\Repository;
 
 use DateTimeZone;
+use Exception;
 use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneRepository;
 use Simtabi\Laranail\Chrono\Core\Enums\Region;
 use Simtabi\Laranail\Chrono\Core\Timezone\Support\AliasMap;
@@ -41,10 +42,28 @@ final class PhpTimezoneRepository implements TimezoneRepository
     public function identifiers(bool $includeDeprecated = false): array
     {
         if ($includeDeprecated) {
-            return $this->withDeprecated ??= DateTimeZone::listIdentifiers(DateTimeZone::ALL_WITH_BC);
+            return $this->withDeprecated ??= $this->onlyZones(
+                DateTimeZone::listIdentifiers(DateTimeZone::ALL_WITH_BC),
+            );
         }
 
-        return $this->canonical ??= DateTimeZone::listIdentifiers(DateTimeZone::ALL);
+        return $this->canonical ??= $this->onlyZones(DateTimeZone::listIdentifiers(DateTimeZone::ALL));
+    }
+
+    /**
+     * Whether PHP is reading the operating system's tz database rather than its own bundled copy.
+     *
+     * Built `--with-system-tzdata` — which is how the official Docker images, Debian and Ubuntu all
+     * ship PHP — `timezone_version_get()` returns the literal string `0.system` instead of a release
+     * like `2026.1`. Nothing can be compared against that, so anything asserting a minimum version,
+     * or checking generated data byte for byte, has to know the ground has moved.
+     *
+     * The data itself is fine, and often fresher than the bundled copy. It is the *metadata* that is
+     * missing.
+     */
+    public function usesSystemDatabase(): bool
+    {
+        return ! str_contains($this->version(), '.') || str_starts_with($this->version(), '0.');
     }
 
     public function isCanonical(string $identifier): bool
@@ -153,6 +172,47 @@ final class PhpTimezoneRepository implements TimezoneRepository
     public function version(): string
     {
         return timezone_version_get();
+    }
+
+    /**
+     * Drop entries that name a file rather than a zone.
+     *
+     * On a system-tzdata build `listIdentifiers()` reports whatever is in `/usr/share/zoneinfo`,
+     * which includes `tzdata.zi` and `leapseconds`. They reach a picker as if they were places, and
+     * `new DateTimeZone('leapseconds')` throws — so a catalogue built from the raw list is one
+     * `->of()` away from a fatal error on the most common production image there is.
+     *
+     * No IANA identifier contains a dot, which removes the `.zi` and `.tab` files outright. The
+     * remainder is only checked when it has no `/`, because a region zone is always well-formed and
+     * that keeps this to a handful of constructor calls rather than six hundred.
+     *
+     * @param list<string> $identifiers
+     * @return list<string>
+     */
+    private function onlyZones(array $identifiers): array
+    {
+        $zones = [];
+
+        foreach ($identifiers as $identifier) {
+            if (str_contains($identifier, '.')) {
+                continue;
+            }
+
+            if (str_contains($identifier, '/')) {
+                $zones[] = $identifier;
+
+                continue;
+            }
+
+            try {
+                new DateTimeZone($identifier);
+                $zones[] = $identifier;
+            } catch (Exception) {
+                // A file, not a zone.
+            }
+        }
+
+        return $zones;
     }
 
     /**

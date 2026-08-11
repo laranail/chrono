@@ -40,8 +40,11 @@ final readonly class Location implements JsonSerializable
         $latitude = $location['latitude'];
         $longitude = $location['longitude'];
 
-        // The sentinel every rule-less zone carries.
-        if ($country === '??' && $latitude === -90.0 && $longitude === -180.0) {
+        // A zone with no country is not a place, and that is the only test that holds across builds.
+        // The coordinates used to be checked too, against the bundled database's `-90/-180`
+        // sentinel — but a system-tzdata build writes `0.0/0.0` with a `?` comment instead, so the
+        // pair check quietly passed rule-less zones through as a location in the Gulf of Guinea.
+        if ($country === '??' || $country === '') {
             return null;
         }
 
