@@ -64,16 +64,26 @@ Ubuntu's PHP — and the official Docker images, and Debian's — is built `--wi
 reads `/usr/share/zoneinfo` and `timezone_version_get()` returns the literal `0.system`. There is no
 release to compare against, and for a while that meant this gate quietly skipped on every CI run.
 
-The workflows install the PECL `timezonedb`, **pinned to the same release**:
+The workflows install the PECL `timezonedb`, **pinned to that same release** — read from the file
+rather than restated:
 
 ```yaml
-extensions: intl, calendar, timezonedb-2026.1
+- run: echo "version=$(cat resources/tzdata-version.txt)" >> "$GITHUB_OUTPUT"
+  id: tzdata
+
+- uses: shivammathur/setup-php@…
+  with:
+    extensions: intl, calendar, timezonedb-${{ steps.tzdata.outputs.version }}
 ```
 
-Moving to a newer database is therefore a deliberate, reviewable act: regenerate, which rewrites
-`resources/tzdata-version.txt`, and move the pin to match. The two cannot drift apart without CI
-saying so — `php tools/tzdata-pin.php` compares them and is the first thing static analysis runs, so
-a half-done bump fails with that sentence rather than as a confusing parity error later.
+One source of truth, deliberately. An earlier version wrote the release into each workflow, which
+made regenerating and pinning two acts that had to agree — and the half that gets forgotten there is
+invisible, because CI then compares the data against a database that is not the one it describes.
+Reading the file makes that structurally impossible rather than merely checked.
+
+It also made the automated bump possible at all: the default `GITHUB_TOKEN` is not permitted to push
+changes to `.github/workflows/*`, so a bump that had to edit three of them could do everything except
+the last step.
 
 ### Moving it is automated
 

@@ -4,9 +4,9 @@
 # `composer sync-check` needs one. It costs freshness — the package sits on whatever release was
 # current when someone last looked, and IANA publishes several a year, often by government decree.
 #
-# Doing that by hand is a two-part act (regenerate, then move the pin) and the two can be separated
-# by a forgotten step. This does both together or neither, proves the result before proposing it, and
-# leaves a diff to read rather than a chore to remember.
+# The pin is single-sourced in resources/tzdata-version.txt, which the generators write, so
+# regenerating *is* moving the pin — there is no second step to forget. This proves the result before
+# proposing it, and leaves a diff to read rather than a chore to remember.
 
 name: tz database bump
 
@@ -41,7 +41,7 @@ jobs:
         id: check
         run: |
           CURRENT="$(cat resources/tzdata-version.txt)"
-          LATEST="$(php tools/tzdata-pin.php --latest)"
+          LATEST="$(php tools/tzdata-release.php --latest)"
 
           echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
           echo "latest=$LATEST" >> "$GITHUB_OUTPUT"
@@ -78,13 +78,15 @@ jobs:
         if: steps.check.outputs.needed == 'true'
         run: composer update --prefer-stable --no-interaction --no-progress
 
-      - name: Regenerate, and move the pin with it
+      - name: Regenerate against it
         if: steps.check.outputs.needed == 'true'
         run: |
           php tools/generate-enums.php
           php tools/generate-alias-map.php
-          php tools/tzdata-pin.php --set="${{ steps.check.outputs.latest }}"
-          php tools/tzdata-pin.php
+
+          # The generators rewrite resources/tzdata-version.txt, and the workflows read that at run
+          # time — so moving the pin is not a separate step and cannot be the one that gets forgotten.
+          test "$(cat resources/tzdata-version.txt)" = "${{ steps.check.outputs.latest }}"
 
       # A pull request opened by a workflow does not itself trigger CI, so the proof has to happen
       # here. Opening one that has not been checked would be worse than opening none.

@@ -9,14 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `tools/tzdata-pin.php` and a weekly `tzdata-bump.yml`. The tz database pin has to move together
-  with the data it describes, and a two-part act gets half-done — so the workflow does both or
-  neither: it regenerates against the newest PECL release, moves every workflow pin with it, runs the
-  suite and `sync-check` against that release, and opens a pull request saying whether any identifier,
-  abbreviation or alias actually changed. The proof happens in the bump job because a pull request
-  raised by a workflow does not trigger CI itself.
-- Static analysis now runs `tools/tzdata-pin.php` first, so a pin that disagrees with
-  `resources/tzdata-version.txt` fails with that sentence rather than as a parity error later.
+- A weekly `tzdata-bump.yml` and `tools/tzdata-release.php`. The workflow regenerates against the
+  newest PECL release, runs the suite, `sync-check` and `lint` against it, and opens a pull request
+  saying whether any identifier, abbreviation or alias actually changed or whether the release only
+  altered transition rules. The proof happens in the bump job because a pull request raised by a
+  workflow does not trigger CI itself, and an unverified proposal would be worse than none.
+
+### Changed
+
+- The tz database pin is single-sourced. The workflows read `resources/tzdata-version.txt` at run
+  time instead of restating the release, so regenerating *is* pinning and the two cannot drift.
+  Previously the version appeared in three workflow files, which made a bump a change to
+  `.github/workflows/*` — something the default `GITHUB_TOKEN` may not push, so the automation could
+  do everything except the last step. Two things that must agree are worse than one thing.
 
 ## [0.1.3] - 2026-08-11
 

@@ -23,6 +23,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      - name: Read the pinned tz release
+        id: tzdata
+        run: echo "version=$(cat resources/tzdata-version.txt)" >> "$GITHUB_OUTPUT"
+
       - name: Setup PHP
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
         with:
@@ -31,7 +35,7 @@ jobs:
           # so timezone_version_get() returns the literal `0.system` and there is no release to
           # detect drift *from* — the run would report drift every week and measure none of it.
           # The PECL extension overrides the OS database with a versioned, current one.
-          extensions: dom, curl, libxml, mbstring, zip, fileinfo, intl, calendar, timezonedb-2026.1
+          extensions: dom, curl, libxml, mbstring, zip, fileinfo, intl, calendar, timezonedb-${{ steps.tzdata.outputs.version }}
           coverage: none
           ini-values: date.timezone=UTC
 
