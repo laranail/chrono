@@ -15,6 +15,7 @@ use Simtabi\Laranail\Chrono\Console\SyncCommand;
 use Simtabi\Laranail\Chrono\Core\Config\CatalogueOptions;
 use Simtabi\Laranail\Chrono\Core\Config\DisplayOptions;
 use Simtabi\Laranail\Chrono\Core\Config\DstPolicy;
+use Simtabi\Laranail\Chrono\Core\Config\SelectOptions;
 use Simtabi\Laranail\Chrono\Core\Contracts\Clock;
 use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneRepository;
 use Simtabi\Laranail\Chrono\Core\Format\DateFormatter;
@@ -124,6 +125,10 @@ final class ChronoServiceProvider extends PackageServiceProvider
         // without reaching into every consumer that happens to render a date.
         $this->app->singleton(DstPolicy::class, static fn (): DstPolicy => DstPolicy::fromArray(
             (array) config('laranail.chrono.dst', []),
+        ));
+
+        $this->app->singleton(SelectOptions::class, static fn (): SelectOptions => SelectOptions::fromArray(
+            (array) config('laranail.chrono.select', []),
         ));
 
         $this->app->singleton(DisplayOptions::class, static fn (): DisplayOptions => DisplayOptions::fromArray([

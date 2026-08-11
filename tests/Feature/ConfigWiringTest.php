@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Blade;
 use Simtabi\Laranail\Chrono\Chrono as ChronoService;
+use Simtabi\Laranail\Chrono\Core\Concerns\PresentsTimezones;
 use Simtabi\Laranail\Chrono\Core\Config\DisplayOptions;
 use Simtabi\Laranail\Chrono\Core\Config\DstPolicy;
+use Simtabi\Laranail\Chrono\Core\Config\SelectOptions;
 use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
 use Simtabi\Laranail\Chrono\Core\Enums\SelectShape;
 use Simtabi\Laranail\Chrono\Core\Exception\AmbiguousLocalTime;
@@ -58,6 +60,66 @@ describe('every documented key is reachable from the code', function (): void {
         }
 
         expect($unread)->toBe([], 'These keys are documented but nothing reads them: ' . implode(', ', $unread));
+    });
+});
+
+/**
+ * `ServiceResolver` returns null for anything the container does not hold, and every trait then
+ * quietly constructs a default. That is the right behaviour outside a framework and a trap inside
+ * one: a service nobody bound makes the trait ignore configuration while still working, which is
+ * indistinguishable from working correctly.
+ *
+ * `SelectOptions` was exactly that. `PresentsTimezones::zoneOptions()` documented itself as
+ * returning "the configured picker shape" and returned the default one, because the provider bound
+ * every other value object and not that one.
+ */
+it('binds every service the traits look up', function (): void {
+    $concerns = glob(dirname(__DIR__, 2) . '/src/Core/Concerns/*.php') ?: [];
+    $unbound = [];
+
+    foreach ($concerns as $file) {
+        $source = (string) file_get_contents($file);
+
+        preg_match_all('/ServiceResolver::resolve\((\w+)::class\)/', $source, $lookups);
+        preg_match_all('/^use ([^;]+);$/m', $source, $imports);
+
+        $fqcn = [];
+
+        foreach ($imports[1] as $import) {
+            $fqcn[substr((string) strrchr('\\' . $import, '\\'), 1)] = $import;
+        }
+
+        foreach (array_unique($lookups[1]) as $short) {
+            $class = $fqcn[$short] ?? null;
+
+            if ($class !== null && ! app()->bound($class)) {
+                $unbound[] = basename($file) . ' asks for ' . $short;
+            }
+        }
+    }
+
+    expect($unbound)->toBe([], implode('; ', $unbound));
+});
+
+describe('select.shape reaches the trait, not just the component', function (): void {
+    it('is what the trait returns', function (): void {
+        config()->set('laranail.chrono.select.shape', 'flat');
+        app()->forgetInstance(SelectOptions::class);
+
+        $consumer = new class
+        {
+            use PresentsTimezones;
+
+            /** @return array<array-key, mixed> */
+            public function options(): array
+            {
+                return $this->zoneOptions();
+            }
+        };
+
+        // Flat means identifiers at the top level; grouped would key by continent.
+        expect($consumer->options())->toHaveKey('Africa/Nairobi')
+            ->and($consumer->options())->not->toHaveKey('Africa');
     });
 });
 

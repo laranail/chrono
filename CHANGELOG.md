@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`SelectOptions` was never bound, so `PresentsTimezones` ignored `select.shape`.**
+  `ServiceResolver` returns null for anything the container does not hold and every trait then
+  constructs a default — right outside a framework, a trap inside one. `zoneOptions()` documented
+  itself as returning "the configured picker shape" and returned the default one. The Blade component
+  was unaffected because it reads the config directly, which is why nothing noticed.
+- A test now asserts that **every** service the traits look up is bound, so the next unbound one
+  fails immediately rather than degrading quietly. Verified by removing the binding and watching it
+  fail.
+
 - **`tz_offset()` ignored `display.offset_format`.** It took `Offset::format()`'s own default, so the
   same zone rendered `+03:00` through the helper and `UTC +03:00` through the picker, the API payload
   and every converted time in the same application, with no setting that explained the difference. It
