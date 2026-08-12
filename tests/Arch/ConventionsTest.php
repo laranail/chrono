@@ -96,13 +96,13 @@ arch('only the system clock reads the wall clock')
 it('keeps each facade in step with the service behind it', function (string $facade, string $service): void {
     $declared = [];
 
-    $docblock = (string) (new ReflectionClass($facade))->getDocComment();
+    $docblock = (string) new ReflectionClass($facade)->getDocComment();
     preg_match_all('/@method\s+static\s+.*?\s(\w+)\(/', $docblock, $matches);
     $declared = $matches[1];
 
     $public = array_map(
         static fn (ReflectionMethod $m): string => $m->getName(),
-        (new ReflectionClass($service))->getMethods(ReflectionMethod::IS_PUBLIC),
+        new ReflectionClass($service)->getMethods(ReflectionMethod::IS_PUBLIC),
     );
 
     $public = array_values(array_filter(
