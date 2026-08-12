@@ -7,6 +7,12 @@ namespace Simtabi\Laranail\Chrono\Facades;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Illuminate\Support\Facades\Facade;
+use Psr\Clock\ClockInterface;
+use Simtabi\Laranail\Chrono\Core\Config\CatalogueOptions;
+use Simtabi\Laranail\Chrono\Core\Config\DstPolicy;
+use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneRepository;
+use Simtabi\Laranail\Chrono\Core\Enums\AmbiguityPolicy;
+use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
 use Simtabi\Laranail\Chrono\Core\Enums\Region;
 use Simtabi\Laranail\Chrono\Core\Timezone\Collection\TimezoneCollection;
 use Simtabi\Laranail\Chrono\Core\Timezone\Query\TimezoneQuery;
@@ -36,10 +42,22 @@ use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
  * @method static Timezone fallback()
  * @method static Timezone system()
  * @method static array<string, string> aliases()
+ * @method static TimezoneQuery unrestrictedQuery()
  * @method static DateTimeImmutable now(mixed $zone = null)
  * @method static DateTimeImmutable convert(DateTimeInterface $instant, mixed $to)
  * @method static string version()
  * @method static string fingerprint()
+ * @method static bool usesSystemDatabase()
+ * @method static TimezonesService withClock(ClockInterface $clock)
+ * @method static TimezonesService withRepository(TimezoneRepository $repository)
+ * @method static TimezonesService preferring(string ...$countryCodes)
+ * @method static TimezonesService withCatalogue(CatalogueOptions $catalogue)
+ * @method static TimezonesService withDst(DstPolicy $policy)
+ * @method static TimezonesService onGap(GapPolicy $policy)
+ * @method static TimezonesService onAmbiguity(AmbiguityPolicy $policy)
+ * @method static TimezonesService preservingAliases(bool $preserve = true)
+ * @method static TimezonesService lenient()
+ * @method static TimezonesService allowingAbbreviations(bool $allow = true)
  *
  * @see TimezonesService
  */

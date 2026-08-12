@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- The `Timezones` facade's `@method` block had drifted by twelve methods — every reconfiguration verb
+  the service grew, including the eight `docs/tools/facade.md` demonstrates. The calls worked at
+  runtime and were invisible to static analysis and IDE completion, so the docs promised something
+  the type surface denied.
+- A reflection test now asserts each facade matches the service behind it in both directions, so
+  adding a public method fails until the facade catches up. Verified by deleting a `@method` line and
+  watching it fail.
+
 - **`SelectOptions` was never bound, so `PresentsTimezones` ignored `select.shape`.**
   `ServiceResolver` returns null for anything the container does not hold and every trait then
   constructs a default — right outside a framework, a trap inside one. `zoneOptions()` documented
