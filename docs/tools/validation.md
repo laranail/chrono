@@ -160,7 +160,7 @@ It resolves the zone first, so an alias of a matching zone passes.
 php artisan vendor:publish --tag=laranail::chrono-translations
 ```
 
-That writes to `lang/vendor/laranail/chrono/{locale}/validation.php`. Keys are `timezone`,
+That writes to `lang/vendor/laranail-chrono/{locale}/validation.php`. Keys are `timezone`,
 `timezone_canonical` and `timezone_allowed`.
 
 ---

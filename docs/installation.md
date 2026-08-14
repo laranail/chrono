@@ -45,7 +45,7 @@ set.
 php artisan vendor:publish --tag=laranail::chrono-translations
 ```
 
-That writes to `lang/vendor/laranail/chrono/{locale}/`, which is where validation messages are
+That writes to `lang/vendor/laranail-chrono/{locale}/`, which is where validation messages are
 overridden.
 
 ## Check the installation
