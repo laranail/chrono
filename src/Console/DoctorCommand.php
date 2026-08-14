@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Chrono\Console;
 
 use IntlTimeZone;
+use Override;
 use Simtabi\Laranail\Chrono\Core\Config\CatalogueOptions;
 use Simtabi\Laranail\Chrono\Core\Config\DstPolicy;
 use Simtabi\Laranail\Chrono\Core\Timezone\Timezones;
@@ -26,10 +27,13 @@ final class DoctorCommand extends Command
     use SupportsNamespacedNames;
 
     /** @var list<string> */
+    #[Override]
     protected array $commandAliases = ['chrono:doctor'];
 
+    #[Override]
     protected $signature = 'laranail::chrono.doctor {--strict : Treat warnings as failures, as doctor.strict does permanently}';
 
+    #[Override]
     protected $description = 'Check the health of this host\'s timezone data and configuration.';
 
     public function handle(Timezones $timezones): int

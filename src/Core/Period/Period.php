@@ -343,7 +343,11 @@ final readonly class Period implements JsonSerializable, Stringable
         );
     }
 
-    /** Every moment in the period, one step of its precision apart. */
+    /**
+     * Every moment in the period, one step of its precision apart.
+     *
+     * @return list<DateTimeImmutable>
+     */
     public function moments(): array
     {
         $moments = [];

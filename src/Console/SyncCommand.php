@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Console;
 
+use Override;
 use Simtabi\Laranail\Console\Tools\Commands\Command;
 use Simtabi\Laranail\Console\Tools\Commands\Concerns\SupportsNamespacedNames;
 
@@ -18,10 +19,13 @@ final class SyncCommand extends Command
     use SupportsNamespacedNames;
 
     /** @var list<string> */
+    #[Override]
     protected array $commandAliases = ['chrono:sync'];
 
+    #[Override]
     protected $signature = 'laranail::chrono.sync {--check : Report drift without writing}';
 
+    #[Override]
     protected $description = 'Regenerate the generated timezone enums and alias map from live tzdata.';
 
     public function handle(): int

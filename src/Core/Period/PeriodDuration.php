@@ -51,7 +51,7 @@ final readonly class PeriodDuration implements JsonSerializable, Stringable
     {
         return [
             'steps' => $this->steps,
-            'precision' => $this->precision->value === 0 ? 'second' : strtolower($this->precision->name),
+            'precision' => strtolower($this->precision->name),
             'days' => (int) $this->interval->days,
             'human' => (string) $this,
         ];

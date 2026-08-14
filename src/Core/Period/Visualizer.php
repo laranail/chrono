@@ -38,7 +38,10 @@ final readonly class Visualizer
             return '';
         }
 
-        $labelWidth = max(array_map(strlen(...), array_keys($blocks)) ?: [0]);
+        // Keys arrive as int|string, because PHP normalises a numeric string key
+        // to an integer however the caller wrote it.
+        $widths = array_map(strlen(...), array_map(strval(...), array_keys($blocks)));
+        $labelWidth = $widths === [] ? 0 : max($widths);
         $lines = [];
 
         foreach ($blocks as $label => $block) {
@@ -46,7 +49,7 @@ final readonly class Visualizer
 
             $lines[] = sprintf(
                 '%s %s',
-                str_pad((string) $label, $labelWidth),
+                str_pad($label, $labelWidth),
                 $this->row($periods, $bounds),
             );
         }
@@ -54,7 +57,11 @@ final readonly class Visualizer
         return implode("\n", $lines);
     }
 
-    /** One row: a blank line with a bar drawn wherever a period covers it. */
+    /**
+     * One row: a blank line with a bar drawn wherever a period covers it.
+     *
+     * @param list<Period> $periods
+     */
     private function row(array $periods, Period $bounds): string
     {
         $row = str_repeat(' ', $this->width);
