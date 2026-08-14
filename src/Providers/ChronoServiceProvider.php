@@ -50,9 +50,9 @@ final class ChronoServiceProvider extends PackageServiceProvider
             ->name('laranail/chrono')
             ->setPublishTagId('chrono')
             ->hasConfigFile('chrono')
-            ->hasTranslations('chrono')
-            ->hasViews('chrono')
-            ->hasBladeComponentNamespace('Simtabi\\Laranail\\Chrono\\View\\Components', 'chrono')
+            ->hasTranslations('laranail-chrono')
+            ->hasViews('laranail-chrono')
+            ->hasBladeComponentNamespace('Simtabi\\Laranail\\Chrono\\View\\Components', 'laranail-chrono')
             ->hasCommands([
                 ListTimezonesCommand::class,
                 ShowTimezoneCommand::class,

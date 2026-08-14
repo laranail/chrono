@@ -4,7 +4,7 @@ A timezone select that works before its JavaScript does — and becomes a search
 loads.
 
 ```blade
-<x-chrono::timezone-select name="timezone" :selected="$user->timezone" />
+<x-laranail-chrono::timezone-select name="timezone" :selected="$user->timezone" />
 ```
 
 ## Progressive enhancement, not a replacement
@@ -98,19 +98,19 @@ Anything else is merged onto the wrapper, so `class` and `x-data` pass through.
 
 ```blade
 {{-- Grouped by country, with flags and the local time in each label --}}
-<x-chrono::timezone-select
+<x-laranail-chrono::timezone-select
     name="timezone"
     group="country"
     label-template="{flag} {city} — {time} ({gmt})" />
 
 {{-- A plain select, no enhancement --}}
-<x-chrono::timezone-select name="timezone" :searchable="false" />
+<x-laranail-chrono::timezone-select name="timezone" :searchable="false" />
 
 {{-- Right-to-left --}}
-<x-chrono::timezone-select name="timezone" locale="ar" />
+<x-laranail-chrono::timezone-select name="timezone" locale="ar" />
 
 {{-- One flat field in an application whose default shape is grouped --}}
-<x-chrono::timezone-select name="timezone" shape="flat" />
+<x-laranail-chrono::timezone-select name="timezone" shape="flat" />
 ```
 
 ## Styling

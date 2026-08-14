@@ -63,7 +63,7 @@ final class TimezoneSelect extends Component
         // larastan cannot resolve a package-namespaced view during analysis; the view exists and
         // is asserted by BladeComponentTest.
         /** @var view-string $view */
-        $view = 'chrono::components.select';
+        $view = 'laranail-chrono::components.select';
 
         return view($view, [
             'fieldId' => $this->id ?? 'chrono-tz-' . substr(md5($this->name), 0, 8),
@@ -72,9 +72,9 @@ final class TimezoneSelect extends Component
             'direction' => $this->isRightToLeft($this->localeFor()) ? 'rtl' : 'ltr',
             'placeholderText' => $this->placeholder
                 ?? $options->placeholder
-                ?? __('chrono::messages.select.placeholder'),
-            'searchPlaceholderText' => $this->searchPlaceholder ?? __('chrono::messages.select.search'),
-            'emptyText' => $this->emptyMessage ?? __('chrono::messages.select.empty'),
+                ?? __('laranail-chrono::messages.select.placeholder'),
+            'searchPlaceholderText' => $this->searchPlaceholder ?? __('laranail-chrono::messages.select.search'),
+            'emptyText' => $this->emptyMessage ?? __('laranail-chrono::messages.select.empty'),
         ]);
     }
 

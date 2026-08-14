@@ -49,7 +49,7 @@ try {
     $instant = $zone->at($input);
 } catch (SkippedLocalTime|AmbiguousLocalTime $e) {
     report($e);   // context() carries the zone, the reading and the candidates
-    throw ValidationException::withMessages(['starts_at' => __('chrono::validation.dst')]);
+    throw ValidationException::withMessages(['starts_at' => __('laranail-chrono::validation.dst')]);
 }
 ```
 

@@ -195,7 +195,7 @@ describe('select.shape and select.placeholder', function (): void {
         config()->set('laranail.chrono.select.placeholder', 'Pick a zone');
         rebootChrono();
 
-        $html = Blade::render('<x-chrono::timezone-select name="tz" />');
+        $html = Blade::render('<x-laranail-chrono::timezone-select name="tz" />');
 
         expect($html)->toContain('Pick a zone')
             // Flat means no optgroups at all — the shape reached the markup, not just the presenter.
@@ -206,7 +206,7 @@ describe('select.shape and select.placeholder', function (): void {
         config()->set('laranail.chrono.select.shape', 'flat');
         rebootChrono();
 
-        expect(Blade::render('<x-chrono::timezone-select name="tz" shape="grouped" />'))
+        expect(Blade::render('<x-laranail-chrono::timezone-select name="tz" shape="grouped" />'))
             ->toContain('<optgroup');
     });
 

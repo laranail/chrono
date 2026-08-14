@@ -139,7 +139,7 @@ Read the resolved set with `Chrono::display()`.
 | Key | Env | Default |
 |---|---|---|
 | `select.shape` | `CHRONO_SELECT_SHAPE` | `grouped` |
-| `select.placeholder` | — | `null`, meaning `trans('chrono::messages.select.placeholder')` |
+| `select.placeholder` | — | `null`, meaning `trans('laranail-chrono::messages.select.placeholder')` |
 
 The shape sets grouping and label template together, so the Blade component and anything calling
 `Chrono::present()->toShape()` agree without either restating it:
@@ -154,7 +154,7 @@ The shape sets grouping and label template together, so the Blade component and 
 One field can override the application default:
 
 ```blade
-<x-chrono::timezone-select name="tz" shape="flat" />
+<x-laranail-chrono::timezone-select name="tz" shape="flat" />
 ```
 
 See [the Blade component](tools/blade.md) and [Presentation](tools/presentation.md).

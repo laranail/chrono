@@ -37,13 +37,13 @@ final readonly class TimezoneOffset implements ValidationRule
         };
 
         if ($seconds === null) {
-            $fail('chrono::validation.timezone_offset')->translate(['attribute' => $attribute]);
+            $fail('laranail-chrono::validation.timezone_offset')->translate(['attribute' => $attribute]);
 
             return;
         }
 
         if ($this->mustBeInUse && ! $this->anyZoneUses($seconds)) {
-            $fail('chrono::validation.timezone_offset_in_use')->translate(['attribute' => $attribute]);
+            $fail('laranail-chrono::validation.timezone_offset_in_use')->translate(['attribute' => $attribute]);
         }
     }
 

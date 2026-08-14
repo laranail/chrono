@@ -37,7 +37,7 @@ final class TimezoneInCountry implements DataAwareRule, ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (! is_string($value) || $value === '') {
-            $fail('chrono::validation.timezone')->translate(['attribute' => $attribute]);
+            $fail('laranail-chrono::validation.timezone')->translate(['attribute' => $attribute]);
 
             return;
         }
@@ -55,7 +55,7 @@ final class TimezoneInCountry implements DataAwareRule, ValidationRule
         $zone = $timezones->tryOf($value);
 
         if ($zone === null) {
-            $fail('chrono::validation.timezone')->translate(['attribute' => $attribute]);
+            $fail('laranail-chrono::validation.timezone')->translate(['attribute' => $attribute]);
 
             return;
         }
@@ -63,7 +63,7 @@ final class TimezoneInCountry implements DataAwareRule, ValidationRule
         $allowed = $timezones->inCountry($country)->identifiers();
 
         if (! in_array($zone->identifier, $allowed, true)) {
-            $fail('chrono::validation.timezone_country')->translate([
+            $fail('laranail-chrono::validation.timezone_country')->translate([
                 'attribute' => $attribute,
                 'country' => strtoupper($country),
             ]);

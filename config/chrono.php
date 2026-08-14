@@ -179,7 +179,7 @@ return [
 
     'select' => [
         'shape' => env('CHRONO_SELECT_SHAPE', SelectShape::Grouped->value),
-        'placeholder' => null, // null = trans('chrono::messages.select.placeholder')
+        'placeholder' => null, // null = trans('laranail-chrono::messages.select.placeholder')
     ],
 
     /*

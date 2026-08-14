@@ -26,7 +26,7 @@ final readonly class CanonicalTimezone implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (! is_string($value) || $value === '') {
-            $fail('chrono::validation.timezone')->translate(['attribute' => $attribute]);
+            $fail('laranail-chrono::validation.timezone')->translate(['attribute' => $attribute]);
 
             return;
         }
@@ -35,7 +35,7 @@ final readonly class CanonicalTimezone implements ValidationRule
         $timezones = app(Timezones::class);
 
         if ($timezones->tryOf($value) === null) {
-            $fail('chrono::validation.timezone')->translate(['attribute' => $attribute]);
+            $fail('laranail-chrono::validation.timezone')->translate(['attribute' => $attribute]);
 
             return;
         }
@@ -43,7 +43,7 @@ final readonly class CanonicalTimezone implements ValidationRule
         $canonical = $timezones->canonicalise($value);
 
         if ($canonical !== $value) {
-            $fail('chrono::validation.timezone_canonical')->translate([
+            $fail('laranail-chrono::validation.timezone_canonical')->translate([
                 'attribute' => $attribute,
                 'canonical' => $canonical,
             ]);

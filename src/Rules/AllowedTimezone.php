@@ -25,7 +25,7 @@ final readonly class AllowedTimezone implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (! is_string($value) || $value === '') {
-            $fail('chrono::validation.timezone')->translate(['attribute' => $attribute]);
+            $fail('laranail-chrono::validation.timezone')->translate(['attribute' => $attribute]);
 
             return;
         }
@@ -36,7 +36,7 @@ final readonly class AllowedTimezone implements ValidationRule
         $resolved = $timezones->tryOf($value);
 
         if ($resolved === null) {
-            $fail('chrono::validation.timezone')->translate(['attribute' => $attribute]);
+            $fail('laranail-chrono::validation.timezone')->translate(['attribute' => $attribute]);
 
             return;
         }
@@ -44,7 +44,7 @@ final readonly class AllowedTimezone implements ValidationRule
         $allowed = $this->allowed !== [] ? $this->allowed : $timezones->query()->identifiers();
 
         if (! in_array($resolved->identifier, $allowed, true)) {
-            $fail('chrono::validation.timezone_allowed')->translate(['attribute' => $attribute]);
+            $fail('laranail-chrono::validation.timezone_allowed')->translate(['attribute' => $attribute]);
         }
     }
 }

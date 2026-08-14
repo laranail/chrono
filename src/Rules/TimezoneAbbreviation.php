@@ -24,7 +24,7 @@ final readonly class TimezoneAbbreviation implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (! is_string($value) || AbbreviationEnum::tryFrom(strtoupper($value)) === null) {
-            $fail('chrono::validation.timezone_abbr')->translate(['attribute' => $attribute]);
+            $fail('laranail-chrono::validation.timezone_abbr')->translate(['attribute' => $attribute]);
         }
     }
 }

@@ -10,7 +10,7 @@ use Illuminate\Support\ServiceProvider;
  * about the markup a browser with scripting disabled would receive.
  */
 it('renders a real select with real optgroups', function (): void {
-    $html = Blade::render('<x-chrono::timezone-select name="timezone" />');
+    $html = Blade::render('<x-laranail-chrono::timezone-select name="timezone" />');
 
     expect($html)->toContain('<select')
         ->toContain('name="timezone"')
@@ -19,13 +19,13 @@ it('renders a real select with real optgroups', function (): void {
 });
 
 it('marks the current value as selected', function (): void {
-    $html = Blade::render('<x-chrono::timezone-select name="tz" selected="Asia/Tokyo" />');
+    $html = Blade::render('<x-laranail-chrono::timezone-select name="tz" selected="Asia/Tokyo" />');
 
     expect($html)->toMatch('/value="Asia\/Tokyo"[^>]*selected/');
 });
 
 it('carries its configuration in data attributes, not inline script', function (): void {
-    $html = Blade::render('<x-chrono::timezone-select name="tz" />');
+    $html = Blade::render('<x-laranail-chrono::timezone-select name="tz" />');
 
     expect($html)->toContain('data-chrono-select')
         ->toContain('data-chrono-select-input')
@@ -36,7 +36,7 @@ it('carries its configuration in data attributes, not inline script', function (
 
 /** A JSON block rather than an assignment, so a strict CSP needs no 'unsafe-inline'. */
 it('embeds its options as inert JSON', function (): void {
-    $html = Blade::render('<x-chrono::timezone-select name="tz" />');
+    $html = Blade::render('<x-laranail-chrono::timezone-select name="tz" />');
 
     expect($html)->toContain('<script type="application/json" data-chrono-options>')
         ->and($html)->not->toContain('<script>');
@@ -49,7 +49,7 @@ it('embeds its options as inert JSON', function (): void {
 });
 
 it('groups by whatever it is told to', function (string $group, string $expected): void {
-    $html = Blade::render('<x-chrono::timezone-select name="tz" group="' . $group . '" />');
+    $html = Blade::render('<x-laranail-chrono::timezone-select name="tz" group="' . $group . '" />');
 
     expect($html)->toContain($expected);
 })->with([
@@ -59,17 +59,17 @@ it('groups by whatever it is told to', function (string $group, string $expected
 ]);
 
 it('can be rendered without the search layer', function (): void {
-    expect(Blade::render('<x-chrono::timezone-select name="tz" :searchable="false" />'))
+    expect(Blade::render('<x-laranail-chrono::timezone-select name="tz" :searchable="false" />'))
         ->toContain('data-chrono-searchable="false"');
 });
 
 it('sets direction from the locale', function (): void {
-    expect(Blade::render('<x-chrono::timezone-select name="tz" locale="ar" />'))->toContain('dir="rtl"')
-        ->and(Blade::render('<x-chrono::timezone-select name="tz" locale="en" />'))->toContain('dir="ltr"');
+    expect(Blade::render('<x-laranail-chrono::timezone-select name="tz" locale="ar" />'))->toContain('dir="rtl"')
+        ->and(Blade::render('<x-laranail-chrono::timezone-select name="tz" locale="en" />'))->toContain('dir="ltr"');
 });
 
 it('honours required and disabled', function (): void {
-    $html = Blade::render('<x-chrono::timezone-select name="tz" :required="true" :disabled="true" />');
+    $html = Blade::render('<x-laranail-chrono::timezone-select name="tz" :required="true" :disabled="true" />');
 
     expect($html)->toContain('required')->toContain('disabled');
 });
