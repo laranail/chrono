@@ -36,8 +36,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   immutable releases had already contradicted. A moving tag means two machines resolving `^0.1` on
   the same day can get different code — a strange property for a package whose argument is that
   reproducibility matters. The docs now describe what the package actually does, and why.
-- `config/chrono.php` pointed at `chrono::messages.placeholder` for the picker's placeholder; the
-  code reads `chrono::messages.select.placeholder`, so anyone following the comment would have
+- `config/chrono.php` pointed at `laranail-chrono::messages.placeholder` for the picker's placeholder; the
+  code reads `laranail-chrono::messages.select.placeholder`, so anyone following the comment would have
   translated a key nothing looks up.
 - `docs/architecture.md` opened with "Two layers" and then documented a third; `docs/installation.md`
   showed a tzdata release the package has moved off.
@@ -211,7 +211,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   provider installs at boot, and nothing in `Core` that knows what a container is.
 - `TimeConverter::to()` now accepts anything the resolver does, matching `Timezones::of()`.
 - `select.shape` on the presenter and the Blade component: one setting carries a picker's grouping
-  and label template together, and `<x-chrono::timezone-select shape="flat" />` overrides it for one
+  and label template together, and `<x-laranail-chrono::timezone-select shape="flat" />` overrides it for one
   field. `TimezonePresenter::shape()` and `toShape()` expose the same four shapes to code.
 - `DstPolicy`, `DisplayOptions` and `SelectOptions` — the configured daylight-saving pair, offset
   shape and picker defaults as value objects, bound in the container and reachable through
