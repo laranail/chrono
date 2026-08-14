@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Console;
 
-use Override;
 use Simtabi\Laranail\Chrono\Core\Enums\GroupBy;
 use Simtabi\Laranail\Chrono\Core\Enums\PresentationPreset;
 use Simtabi\Laranail\Chrono\Core\Enums\ZoneField;
@@ -25,10 +24,8 @@ final class ListTimezonesCommand extends Command
     use SupportsNamespacedNames;
 
     /** @var list<string> */
-    #[Override]
     protected array $commandAliases = ['chrono:list'];
 
-    #[Override]
     protected $signature = 'laranail::chrono.list
         {--region= : Restrict to a continent, e.g. Africa}
         {--country=* : Restrict to ISO 3166-1 alpha-2 codes}

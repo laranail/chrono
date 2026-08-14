@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Console;
 
-use Override;
 use Simtabi\Laranail\Chrono\Core\Enums\OffsetFormat;
 use Simtabi\Laranail\Chrono\Core\Timezone\Timezones;
 use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
@@ -23,13 +22,10 @@ final class ShowTimezoneCommand extends Command
     use SupportsNamespacedNames;
 
     /** @var list<string> */
-    #[Override]
     protected array $commandAliases = ['chrono:show'];
 
-    #[Override]
     protected $signature = 'laranail::chrono.show {zone : An identifier, alias, offset, country code or Windows id}';
 
-    #[Override]
     protected $description = 'Show offsets, daylight saving and transitions for one timezone.';
 
     public function handle(Timezones $timezones): int
