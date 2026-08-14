@@ -62,6 +62,7 @@ Hosted at **[opensource.simtabi.com/documentation/laranail/chrono](https://opens
 - [Converting between zones](docs/tools/conversion.md) — one instant or many, one zone or many
 - [Presentation](docs/tools/presentation.md) — optgroups, labels, field sets and output shapes
 - [Temporal value types](docs/tools/temporal.md) — dates, times, durations PHP lacks
+- [Periods](docs/tools/periods.md) — spans that compare, overlap, subtract and draw
 - [The `Timezone` object](docs/tools/timezone.md) — offsets, transitions, wall-clock readings
 - [Formatting and parsing](docs/tools/format.md) — named formats, ICU skeletons, the parsing traps
 - [Humanised time](docs/tools/humanize.md) — relative phrasing with correct plural rules

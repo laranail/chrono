@@ -11,6 +11,10 @@ use Simtabi\Laranail\Chrono\Core\Conversion\TimeConverter;
 use Simtabi\Laranail\Chrono\Core\Format\DateFormatter;
 use Simtabi\Laranail\Chrono\Core\Format\DateParser;
 use Simtabi\Laranail\Chrono\Core\Humanize\Humanizer;
+use Simtabi\Laranail\Chrono\Core\Period\Period;
+use Simtabi\Laranail\Chrono\Core\Period\PeriodBuilder;
+use Simtabi\Laranail\Chrono\Core\Period\PeriodCollection;
+use Simtabi\Laranail\Chrono\Core\Period\Visualizer;
 use Simtabi\Laranail\Chrono\Core\Presentation\TimezonePresenter;
 use Simtabi\Laranail\Chrono\Core\Timezone\Timezones;
 use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
@@ -110,6 +114,34 @@ final readonly class Chrono
     public function display(): DisplayOptions
     {
         return $this->display;
+    }
+
+    /**
+     * Start describing a span of time.
+     *
+     *     Chrono::period()->from('2026-01-01')->to('2026-03-31')->months()->build();
+     *
+     * A fresh builder each call, since a builder is mutable while it is being
+     * filled in and sharing one would let two call sites overwrite each other.
+     */
+    #[NoDiscard]
+    public function period(): PeriodBuilder
+    {
+        return new PeriodBuilder;
+    }
+
+    /** Several spans, operated on together. */
+    #[NoDiscard]
+    public function periods(Period ...$periods): PeriodCollection
+    {
+        return new PeriodCollection(...$periods);
+    }
+
+    /** Draw periods on a shared timeline, for a test failure or a dump. */
+    #[NoDiscard]
+    public function visualize(int $width = 27): Visualizer
+    {
+        return new Visualizer($width);
     }
 
     /** PHP's tzdata release — the version every behavioural decision keys on. */
