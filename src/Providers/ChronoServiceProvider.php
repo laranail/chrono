@@ -166,7 +166,7 @@ final class ChronoServiceProvider extends PackageServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '/../../resources/js' => public_path('vendor/laranail/chrono'),
+                $this->packagePath('resources/js') => public_path('vendor/laranail/chrono'),
             ], 'laranail::chrono-assets');
         }
 

@@ -125,11 +125,16 @@ describe('publishing', function (): void {
         expect($groups)->toHaveKeys(['laranail::chrono-config', 'laranail::chrono-translations'])
             ->and(implode('', $groups['laranail::chrono-config']))->toContain('config/laranail/chrono.php')
             // `laranail-chrono`, not `laranail/chrono`: package-tools now
-            // vendor-scopes the translation namespace by default, because
-            // Laravel keeps those in a flat map and a bare one is a collision
-            // waiting for a second package. The publish destination moved with
+            // names the translation namespace after the composer package by
+            // default, because Laravel keeps those in a flat map and a bare one
+            // is a collision waiting for a second package. hasTranslations('x')
+            // registers x as an ADDITIONAL alias rather than overriding the
+            // namespace, so the canonical one -- and this destination -- is
+            // laranail/chrono even though the package passes a dashed argument.
+            // Laravel reads overrides from lang/vendor/{namespace}, so the
+            // nesting is exactly where it looks. The publish destination moved with
             // it, so a published override belongs under the hyphenated path.
-            ->and(implode('', $groups['laranail::chrono-translations']))->toContain('lang/vendor/laranail-chrono');
+            ->and(implode('', $groups['laranail::chrono-translations']))->toContain('lang/vendor/laranail/chrono');
     });
 });
 
