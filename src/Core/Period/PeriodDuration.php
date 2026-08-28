@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Period;
 
+use Stringable;
 use DateInterval;
 use JsonSerializable;
-use Stringable;
 
 /**
  * How long a period is, as a calendar interval plus a comparable length.
@@ -24,6 +24,15 @@ final readonly class PeriodDuration implements JsonSerializable, Stringable
         public int $steps,
         public Precision $precision,
     ) {}
+
+    public function __toString(): string
+    {
+        $unit = strtolower($this->precision->name);
+
+        return $this->steps === 1
+            ? "1 {$unit}"
+            : "{$this->steps} {$unit}s";
+    }
 
     /** Whole steps of the period's own precision, the unit `length()` counts in. */
     public function inSteps(): int
@@ -50,10 +59,10 @@ final readonly class PeriodDuration implements JsonSerializable, Stringable
     public function toArray(): array
     {
         return [
-            'steps' => $this->steps,
+            'steps'     => $this->steps,
             'precision' => strtolower($this->precision->name),
-            'days' => (int) $this->interval->days,
-            'human' => (string) $this,
+            'days'      => (int) $this->interval->days,
+            'human'     => (string) $this,
         ];
     }
 
@@ -61,15 +70,6 @@ final readonly class PeriodDuration implements JsonSerializable, Stringable
     public function jsonSerialize(): array
     {
         return $this->toArray();
-    }
-
-    public function __toString(): string
-    {
-        $unit = strtolower($this->precision->name);
-
-        return $this->steps === 1
-            ? "1 {$unit}"
-            : "{$this->steps} {$unit}s";
     }
 
     /**

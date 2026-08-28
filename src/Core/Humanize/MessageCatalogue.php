@@ -25,8 +25,75 @@ use Simtabi\Laranail\Chrono\Core\Enums\TimeUnit;
  */
 final readonly class MessageCatalogue
 {
+    /** @var array<string, array<string, string>> */
+    private const array BUILT_IN = [
+        'en' => [
+            'second'    => '{n, plural, one {# second} other {# seconds}}',
+            'minute'    => '{n, plural, one {# minute} other {# minutes}}',
+            'hour'      => '{n, plural, one {# hour} other {# hours}}',
+            'day'       => '{n, plural, one {# day} other {# days}}',
+            'week'      => '{n, plural, one {# week} other {# weeks}}',
+            'month'     => '{n, plural, one {# month} other {# months}}',
+            'year'      => '{n, plural, one {# year} other {# years}}',
+            'past'      => '{value} ago',
+            'future'    => 'in {value}',
+            'now'       => 'just now',
+            'separator' => ' ',
+        ],
+        'sw' => [
+            'second'    => '{n, plural, one {sekunde #} other {sekunde #}}',
+            'minute'    => '{n, plural, one {dakika #} other {dakika #}}',
+            'hour'      => '{n, plural, one {saa #} other {masaa #}}',
+            'day'       => '{n, plural, one {siku #} other {siku #}}',
+            'week'      => '{n, plural, one {wiki #} other {wiki #}}',
+            'month'     => '{n, plural, one {mwezi #} other {miezi #}}',
+            'year'      => '{n, plural, one {mwaka #} other {miaka #}}',
+            'past'      => 'tangu {value}',
+            'future'    => 'baada ya {value}',
+            'now'       => 'sasa hivi',
+            'separator' => ' ',
+        ],
+        'ar' => [
+            'second'    => '{n, plural, zero {# ثانية} one {ثانية واحدة} two {ثانيتان} few {# ثوانٍ} many {# ثانية} other {# ثانية}}',
+            'minute'    => '{n, plural, zero {# دقيقة} one {دقيقة واحدة} two {دقيقتان} few {# دقائق} many {# دقيقة} other {# دقيقة}}',
+            'hour'      => '{n, plural, zero {# ساعة} one {ساعة واحدة} two {ساعتان} few {# ساعات} many {# ساعة} other {# ساعة}}',
+            'day'       => '{n, plural, zero {# يوم} one {يوم واحد} two {يومان} few {# أيام} many {# يوماً} other {# يوم}}',
+            'week'      => '{n, plural, zero {# أسبوع} one {أسبوع واحد} two {أسبوعان} few {# أسابيع} many {# أسبوعاً} other {# أسبوع}}',
+            'month'     => '{n, plural, zero {# شهر} one {شهر واحد} two {شهران} few {# أشهر} many {# شهراً} other {# شهر}}',
+            'year'      => '{n, plural, zero {# سنة} one {سنة واحدة} two {سنتان} few {# سنوات} many {# سنة} other {# سنة}}',
+            'past'      => 'منذ {value}',
+            'future'    => 'خلال {value}',
+            'now'       => 'الآن',
+            'separator' => ' و',
+        ],
+        'fr' => [
+            'second'    => '{n, plural, one {# seconde} other {# secondes}}',
+            'minute'    => '{n, plural, one {# minute} other {# minutes}}',
+            'hour'      => '{n, plural, one {# heure} other {# heures}}',
+            'day'       => '{n, plural, one {# jour} other {# jours}}',
+            'week'      => '{n, plural, one {# semaine} other {# semaines}}',
+            'month'     => '{n, plural, one {# mois} other {# mois}}',
+            'year'      => '{n, plural, one {# an} other {# ans}}',
+            'past'      => 'il y a {value}',
+            'future'    => 'dans {value}',
+            'now'       => "à l'instant",
+            'separator' => ' ',
+        ],
+    ];
+
     /** @param array<string, array<string, string>> $overrides locale => key => ICU pattern */
     public function __construct(private array $overrides = []) {}
+
+    /** @return list<string> the locales with built-in patterns */
+    public static function builtInLocales(): array
+    {
+        return array_keys(self::BUILT_IN);
+    }
+
+    public static function keyFor(TimeUnit $unit): string
+    {
+        return $unit->value;
+    }
 
     /**
      * Register or replace patterns for a locale.
@@ -91,72 +158,5 @@ final readonly class MessageCatalogue
             [$normalised, $primary === false ? null : $primary, 'en'],
             static fn (?string $candidate): bool => $candidate !== null && $candidate !== '',
         )));
-    }
-
-    /** @var array<string, array<string, string>> */
-    private const array BUILT_IN = [
-        'en' => [
-            'second' => '{n, plural, one {# second} other {# seconds}}',
-            'minute' => '{n, plural, one {# minute} other {# minutes}}',
-            'hour' => '{n, plural, one {# hour} other {# hours}}',
-            'day' => '{n, plural, one {# day} other {# days}}',
-            'week' => '{n, plural, one {# week} other {# weeks}}',
-            'month' => '{n, plural, one {# month} other {# months}}',
-            'year' => '{n, plural, one {# year} other {# years}}',
-            'past' => '{value} ago',
-            'future' => 'in {value}',
-            'now' => 'just now',
-            'separator' => ' ',
-        ],
-        'sw' => [
-            'second' => '{n, plural, one {sekunde #} other {sekunde #}}',
-            'minute' => '{n, plural, one {dakika #} other {dakika #}}',
-            'hour' => '{n, plural, one {saa #} other {masaa #}}',
-            'day' => '{n, plural, one {siku #} other {siku #}}',
-            'week' => '{n, plural, one {wiki #} other {wiki #}}',
-            'month' => '{n, plural, one {mwezi #} other {miezi #}}',
-            'year' => '{n, plural, one {mwaka #} other {miaka #}}',
-            'past' => 'tangu {value}',
-            'future' => 'baada ya {value}',
-            'now' => 'sasa hivi',
-            'separator' => ' ',
-        ],
-        'ar' => [
-            'second' => '{n, plural, zero {# ثانية} one {ثانية واحدة} two {ثانيتان} few {# ثوانٍ} many {# ثانية} other {# ثانية}}',
-            'minute' => '{n, plural, zero {# دقيقة} one {دقيقة واحدة} two {دقيقتان} few {# دقائق} many {# دقيقة} other {# دقيقة}}',
-            'hour' => '{n, plural, zero {# ساعة} one {ساعة واحدة} two {ساعتان} few {# ساعات} many {# ساعة} other {# ساعة}}',
-            'day' => '{n, plural, zero {# يوم} one {يوم واحد} two {يومان} few {# أيام} many {# يوماً} other {# يوم}}',
-            'week' => '{n, plural, zero {# أسبوع} one {أسبوع واحد} two {أسبوعان} few {# أسابيع} many {# أسبوعاً} other {# أسبوع}}',
-            'month' => '{n, plural, zero {# شهر} one {شهر واحد} two {شهران} few {# أشهر} many {# شهراً} other {# شهر}}',
-            'year' => '{n, plural, zero {# سنة} one {سنة واحدة} two {سنتان} few {# سنوات} many {# سنة} other {# سنة}}',
-            'past' => 'منذ {value}',
-            'future' => 'خلال {value}',
-            'now' => 'الآن',
-            'separator' => ' و',
-        ],
-        'fr' => [
-            'second' => '{n, plural, one {# seconde} other {# secondes}}',
-            'minute' => '{n, plural, one {# minute} other {# minutes}}',
-            'hour' => '{n, plural, one {# heure} other {# heures}}',
-            'day' => '{n, plural, one {# jour} other {# jours}}',
-            'week' => '{n, plural, one {# semaine} other {# semaines}}',
-            'month' => '{n, plural, one {# mois} other {# mois}}',
-            'year' => '{n, plural, one {# an} other {# ans}}',
-            'past' => 'il y a {value}',
-            'future' => 'dans {value}',
-            'now' => "à l'instant",
-            'separator' => ' ',
-        ],
-    ];
-
-    /** @return list<string> the locales with built-in patterns */
-    public static function builtInLocales(): array
-    {
-        return array_keys(self::BUILT_IN);
-    }
-
-    public static function keyFor(TimeUnit $unit): string
-    {
-        return $unit->value;
     }
 }

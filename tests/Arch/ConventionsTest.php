@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
 use Simtabi\Laranail\Chrono\Chrono;
-use Simtabi\Laranail\Chrono\Core\Enums\DayOfWeek;
-use Simtabi\Laranail\Chrono\Core\Enums\Month;
+use Illuminate\Support\Facades\Facade;
 use Simtabi\Laranail\Chrono\Core\Enums\Tz;
-use Simtabi\Laranail\Chrono\Core\Exception\ChronoExceptionBase;
-use Simtabi\Laranail\Chrono\Core\Timezone\Support\SystemClock;
+use Simtabi\Laranail\Chrono\Core\Enums\Month;
 use Simtabi\Laranail\Chrono\Facades\Timezones;
+use Simtabi\Laranail\Chrono\Core\Enums\DayOfWeek;
+use Simtabi\Laranail\Chrono\Core\Timezone\Support\SystemClock;
+use Simtabi\Laranail\Chrono\Core\Exception\ChronoExceptionBase;
 
 arch('the core never sees the framework')
     ->expect('Simtabi\Laranail\Chrono\Core')
@@ -113,7 +113,7 @@ it('keeps each facade in step with the service behind it', function (string $fac
     expect(array_values(array_diff($public, $declared)))->toBe([], 'missing from the facade')
         ->and(array_values(array_diff($declared, $public)))->toBe([], 'declared but not on the service');
 })->with([
-    'Chrono' => [Simtabi\Laranail\Chrono\Facades\Chrono::class, Chrono::class],
+    'Chrono'    => [Simtabi\Laranail\Chrono\Facades\Chrono::class, Chrono::class],
     'Timezones' => [
         Timezones::class,
         Simtabi\Laranail\Chrono\Core\Timezone\Timezones::class,

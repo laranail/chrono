@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Period;
 
-use ArrayIterator;
 use Closure;
 use Countable;
-use IteratorAggregate;
-use JsonSerializable;
-use Simtabi\Laranail\Chrono\Core\Exception\InvalidPeriod;
 use Stringable;
 use Traversable;
+use ArrayIterator;
+use JsonSerializable;
+use IteratorAggregate;
+use Simtabi\Laranail\Chrono\Core\Exception\InvalidPeriod;
 
 /**
  * Several periods, operated on together.
@@ -31,6 +31,11 @@ final readonly class PeriodCollection implements Countable, IteratorAggregate, J
     public function __construct(Period ...$periods)
     {
         $this->periods = array_values($periods);
+    }
+
+    public function __toString(): string
+    {
+        return implode(', ', array_map(static fn (Period $p): string => (string) $p, $this->periods));
     }
 
     /** @return list<Period> */
@@ -252,11 +257,6 @@ final readonly class PeriodCollection implements Countable, IteratorAggregate, J
     public function jsonSerialize(): array
     {
         return $this->toArray();
-    }
-
-    public function __toString(): string
-    {
-        return implode(', ', array_map(static fn (Period $p): string => (string) $p, $this->periods));
     }
 
     /** The overlap between this collection and one other. */

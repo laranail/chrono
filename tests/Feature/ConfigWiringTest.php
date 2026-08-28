@@ -3,17 +3,17 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Blade;
-use Simtabi\Laranail\Chrono\Chrono as ChronoService;
-use Simtabi\Laranail\Chrono\Core\Concerns\PresentsTimezones;
-use Simtabi\Laranail\Chrono\Core\Config\DisplayOptions;
-use Simtabi\Laranail\Chrono\Core\Config\DstPolicy;
-use Simtabi\Laranail\Chrono\Core\Config\SelectOptions;
-use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
-use Simtabi\Laranail\Chrono\Core\Enums\SelectShape;
-use Simtabi\Laranail\Chrono\Core\Exception\AmbiguousLocalTime;
-use Simtabi\Laranail\Chrono\Core\Exception\SkippedLocalTime;
-use Simtabi\Laranail\Chrono\Core\Timezone\Timezones as TimezonesService;
 use Simtabi\Laranail\Chrono\Facades\Chrono;
+use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
+use Simtabi\Laranail\Chrono\Core\Config\DstPolicy;
+use Simtabi\Laranail\Chrono\Core\Enums\SelectShape;
+use Simtabi\Laranail\Chrono\Chrono as ChronoService;
+use Simtabi\Laranail\Chrono\Core\Config\SelectOptions;
+use Simtabi\Laranail\Chrono\Core\Config\DisplayOptions;
+use Simtabi\Laranail\Chrono\Core\Concerns\PresentsTimezones;
+use Simtabi\Laranail\Chrono\Core\Exception\SkippedLocalTime;
+use Simtabi\Laranail\Chrono\Core\Exception\AmbiguousLocalTime;
+use Simtabi\Laranail\Chrono\Core\Timezone\Timezones as TimezonesService;
 
 /**
  * A configuration key that nothing reads is worse than one that does not exist.
@@ -42,7 +42,7 @@ describe('every documented key is reachable from the code', function (): void {
      */
     it('names no setting the source never mentions', function (): void {
         $source = collect(
-            (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(dirname(__DIR__, 2) . '/src')))
+            (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(dirname(__DIR__, 2) . '/src'))),
         )->filter(static fn (SplFileInfo $file): bool => $file->getExtension() === 'php')
             ->map(static fn (SplFileInfo $file): string => (string) file_get_contents($file->getPathname()))
             ->implode("\n");
@@ -289,6 +289,7 @@ describe('doctor.strict', function (): void {
  * Flatten a config array to dotted leaf paths, treating a list as a leaf.
  *
  * @param array<string, mixed> $config
+ *
  * @return list<string>
  */
 function leafKeys(array $config, string $prefix = ''): array

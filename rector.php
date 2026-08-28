@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-use Rector\DeadCode\Rector\Expression\RemoveDeadStmtRector;
 use Rector\Set\ValueObject\SetList;
+use Rector\DeadCode\Rector\Expression\RemoveDeadStmtRector;
 
 /**
  * Pinned to the php85 set, unlike the rest of the laranail family which pins php83.

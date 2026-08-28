@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Timezone\Value;
 
-use DateTimeImmutable;
-use JsonSerializable;
 use NoDiscard;
-use Simtabi\Laranail\Chrono\Core\Enums\AmbiguityPolicy;
+use JsonSerializable;
+use DateTimeImmutable;
 use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
 use Simtabi\Laranail\Chrono\Core\Enums\LocalTimeKind;
-use Simtabi\Laranail\Chrono\Core\Exception\AmbiguousLocalTime;
+use Simtabi\Laranail\Chrono\Core\Enums\AmbiguityPolicy;
 use Simtabi\Laranail\Chrono\Core\Exception\SkippedLocalTime;
+use Simtabi\Laranail\Chrono\Core\Exception\AmbiguousLocalTime;
 
 /**
  * The result of asking "what instant is this wall-clock reading, in this zone?" — including the
@@ -70,14 +70,34 @@ final readonly class LocalTime implements JsonSerializable
         AmbiguityPolicy $ambiguity = AmbiguityPolicy::Earlier,
     ): DateTimeImmutable {
         return match ($this->kind) {
-            LocalTimeKind::Valid => $this->candidates[0],
+            LocalTimeKind::Valid     => $this->candidates[0],
             LocalTimeKind::Ambiguous => match ($ambiguity) {
                 AmbiguityPolicy::Earlier => $this->candidates[0],
-                AmbiguityPolicy::Later => $this->candidates[count($this->candidates) - 1],
-                AmbiguityPolicy::Throw => throw AmbiguousLocalTime::for($this->localTime, $this->identifier, $this->candidates),
+                AmbiguityPolicy::Later   => $this->candidates[count($this->candidates) - 1],
+                AmbiguityPolicy::Throw   => throw AmbiguousLocalTime::for($this->localTime, $this->identifier, $this->candidates),
             },
             LocalTimeKind::Gap => $this->resolveGap($gap),
         };
+    }
+
+    /** @return array{kind: string, local_time: string, identifier: string, candidates: list<string>} */
+    public function toArray(): array
+    {
+        return [
+            'kind'       => $this->kind->value,
+            'local_time' => $this->localTime,
+            'identifier' => $this->identifier,
+            'candidates' => array_map(
+                static fn (DateTimeImmutable $candidate): string => $candidate->format('c'),
+                $this->candidates,
+            ),
+        ];
+    }
+
+    /** @return array{kind: string, local_time: string, identifier: string, candidates: list<string>} */
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 
     private function resolveGap(GapPolicy $policy): DateTimeImmutable
@@ -94,25 +114,5 @@ final readonly class LocalTime implements JsonSerializable
             : $this->transition->offsetAfter->seconds;   // shift backward before it
 
         return new DateTimeImmutable('@' . ($naive - $offset));
-    }
-
-    /** @return array{kind: string, local_time: string, identifier: string, candidates: list<string>} */
-    public function toArray(): array
-    {
-        return [
-            'kind' => $this->kind->value,
-            'local_time' => $this->localTime,
-            'identifier' => $this->identifier,
-            'candidates' => array_map(
-                static fn (DateTimeImmutable $candidate): string => $candidate->format('c'),
-                $this->candidates,
-            ),
-        ];
-    }
-
-    /** @return array{kind: string, local_time: string, identifier: string, candidates: list<string>} */
-    public function jsonSerialize(): array
-    {
-        return $this->toArray();
     }
 }

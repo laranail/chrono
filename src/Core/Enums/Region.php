@@ -28,28 +28,28 @@ enum Region: string
     case Utc = 'UTC';
     case Etc = 'Etc';
 
-    public function mask(): int
-    {
-        return match ($this) {
-            self::Africa => DateTimeZone::AFRICA,
-            self::America => DateTimeZone::AMERICA,
-            self::Antarctica => DateTimeZone::ANTARCTICA,
-            self::Arctic => DateTimeZone::ARCTIC,
-            self::Asia => DateTimeZone::ASIA,
-            self::Atlantic => DateTimeZone::ATLANTIC,
-            self::Australia => DateTimeZone::AUSTRALIA,
-            self::Europe => DateTimeZone::EUROPE,
-            self::Indian => DateTimeZone::INDIAN,
-            self::Pacific => DateTimeZone::PACIFIC,
-            self::Utc, self::Etc => DateTimeZone::UTC,
-        };
-    }
-
     public static function fromIdentifier(string $identifier): ?self
     {
         $head = str_contains($identifier, '/') ? strstr($identifier, '/', true) : $identifier;
 
         return self::tryFrom((string) $head);
+    }
+
+    public function mask(): int
+    {
+        return match ($this) {
+            self::Africa         => DateTimeZone::AFRICA,
+            self::America        => DateTimeZone::AMERICA,
+            self::Antarctica     => DateTimeZone::ANTARCTICA,
+            self::Arctic         => DateTimeZone::ARCTIC,
+            self::Asia           => DateTimeZone::ASIA,
+            self::Atlantic       => DateTimeZone::ATLANTIC,
+            self::Australia      => DateTimeZone::AUSTRALIA,
+            self::Europe         => DateTimeZone::EUROPE,
+            self::Indian         => DateTimeZone::INDIAN,
+            self::Pacific        => DateTimeZone::PACIFIC,
+            self::Utc, self::Etc => DateTimeZone::UTC,
+        };
     }
 
     /** Regions that name a real place, so a picker can omit UTC and Etc from its groups. */

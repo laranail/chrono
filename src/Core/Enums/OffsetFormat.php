@@ -53,11 +53,11 @@ enum OffsetFormat: string
         $remainder = $absolute % 60;
 
         return match ($this) {
-            self::Colon => $sign . self::pad($hours, $minutes, $remainder, ':'),
+            self::Colon   => $sign . self::pad($hours, $minutes, $remainder, ':'),
             self::Compact => $sign . self::pad($hours, $minutes, $remainder, ''),
-            self::Short => self::short($sign, $hours, $minutes, $remainder),
-            self::Gmt => $seconds === 0 ? 'GMT' : 'GMT' . $sign . self::pad($hours, $minutes, $remainder, ':'),
-            self::Utc => $seconds === 0 ? 'UTC' : 'UTC ' . $sign . self::pad($hours, $minutes, $remainder, ':'),
+            self::Short   => self::short($sign, $hours, $minutes, $remainder),
+            self::Gmt     => $seconds === 0 ? 'GMT' : 'GMT' . $sign . self::pad($hours, $minutes, $remainder, ':'),
+            self::Utc     => $seconds === 0 ? 'UTC' : 'UTC ' . $sign . self::pad($hours, $minutes, $remainder, ':'),
             self::Iso8601 => $seconds === 0 ? 'Z' : $sign . self::pad($hours, $minutes, $remainder, ':'),
         };
     }

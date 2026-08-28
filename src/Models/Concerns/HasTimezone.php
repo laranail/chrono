@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Models\Concerns;
 
-use DateTimeInterface;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use NoDiscard;
+use DateTimeInterface;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Simtabi\Laranail\Chrono\Casts\AsTimezone;
-use Simtabi\Laranail\Chrono\Core\Concerns\InteractsWithTimezones;
 use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
+use Simtabi\Laranail\Chrono\Core\Concerns\InteractsWithTimezones;
 
 /**
  * A model that belongs to a timezone — a user, a venue, a tenant, a store.

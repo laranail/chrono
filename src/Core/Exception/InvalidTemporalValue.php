@@ -18,7 +18,10 @@ final class InvalidTemporalValue extends ChronoExceptionBase
     {
         $exception = new self(sprintf(
             'Day %d does not exist in month %d of %d, which has %d days.',
-            $day, $month, $year, $length,
+            $day,
+            $month,
+            $year,
+            $length,
         ));
         $exception->context = ['day' => $day, 'month' => $month, 'year' => $year, 'length' => $length];
 
@@ -29,7 +32,9 @@ final class InvalidTemporalValue extends ChronoExceptionBase
     {
         $exception = new self(sprintf(
             '%02d:%02d:%02d is not a valid time of day.',
-            $hour, $minute, $second,
+            $hour,
+            $minute,
+            $second,
         ));
         $exception->context = ['hour' => $hour, 'minute' => $minute, 'second' => $second];
 

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Exception;
 
+use Throwable;
 use DateTimeInterface;
 use Simtabi\Laranail\Chrono\Core\Period\Precision;
-use Throwable;
 
 final class InvalidPeriod extends ChronoExceptionBase
 {
@@ -19,7 +19,7 @@ final class InvalidPeriod extends ChronoExceptionBase
         ));
         $exception->context = [
             'start' => $start->format(DateTimeInterface::ATOM),
-            'end' => $end->format(DateTimeInterface::ATOM),
+            'end'   => $end->format(DateTimeInterface::ATOM),
         ];
 
         return $exception;

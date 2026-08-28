@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Temporal;
 
-use DateInterval;
-use DateTimeInterface;
-use JsonSerializable;
 use NoDiscard;
-use Simtabi\Laranail\Chrono\Core\Exception\InvalidTemporalValue;
 use Stringable;
+use DateInterval;
+use JsonSerializable;
+use DateTimeInterface;
+use Simtabi\Laranail\Chrono\Core\Exception\InvalidTemporalValue;
 
 /**
  * An elapsed length of time, in seconds.
@@ -25,6 +25,11 @@ use Stringable;
 final readonly class Duration implements JsonSerializable, Stringable
 {
     private function __construct(public int $seconds) {}
+
+    public function __toString(): string
+    {
+        return $this->toIso8601();
+    }
 
     public static function ofSeconds(int $seconds): self
     {
@@ -154,8 +159,8 @@ final readonly class Duration implements JsonSerializable, Stringable
         $remaining = abs($this->seconds);
 
         return [
-            'days' => intdiv($remaining, 86400),
-            'hours' => intdiv($remaining % 86400, 3600),
+            'days'    => intdiv($remaining, 86400),
+            'hours'   => intdiv($remaining % 86400, 3600),
             'minutes' => intdiv($remaining % 3600, 60),
             'seconds' => $remaining % 60,
         ];
@@ -199,11 +204,6 @@ final readonly class Duration implements JsonSerializable, Stringable
             $parts['minutes'],
             $parts['seconds'],
         );
-    }
-
-    public function __toString(): string
-    {
-        return $this->toIso8601();
     }
 
     public function jsonSerialize(): int

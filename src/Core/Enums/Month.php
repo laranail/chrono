@@ -20,6 +20,12 @@ enum Month: int
     case November = 11;
     case December = 12;
 
+    /** Divisible by 4, except centuries, except every fourth century. */
+    public static function isLeapYear(int $year): bool
+    {
+        return ($year % 4 === 0 && $year % 100 !== 0) || $year % 400 === 0;
+    }
+
     /**
      * How many days this month has in a given year.
      *
@@ -29,9 +35,9 @@ enum Month: int
     public function length(int $year): int
     {
         return match ($this) {
-            self::February => self::isLeapYear($year) ? 29 : 28,
+            self::February                                           => self::isLeapYear($year) ? 29 : 28,
             self::April, self::June, self::September, self::November => 30,
-            default => 31,
+            default                                                  => 31,
         };
     }
 
@@ -48,11 +54,5 @@ enum Month: int
     public function previous(): self
     {
         return self::from($this->value === 1 ? 12 : $this->value - 1);
-    }
-
-    /** Divisible by 4, except centuries, except every fourth century. */
-    public static function isLeapYear(int $year): bool
-    {
-        return ($year % 4 === 0 && $year % 100 !== 0) || $year % 400 === 0;
     }
 }

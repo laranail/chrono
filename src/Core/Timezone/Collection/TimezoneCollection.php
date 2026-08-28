@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Timezone\Collection;
 
-use ArrayIterator;
 use Countable;
-use DateTimeInterface;
 use Generator;
-use IteratorAggregate;
-use JsonSerializable;
 use NoDiscard;
-use Simtabi\Laranail\Chrono\Core\Enums\OffsetFormat;
+use Traversable;
+use ArrayIterator;
+use JsonSerializable;
+use DateTimeInterface;
+use IteratorAggregate;
 use Simtabi\Laranail\Chrono\Core\Enums\SelectShape;
+use Simtabi\Laranail\Chrono\Core\Enums\OffsetFormat;
 use Simtabi\Laranail\Chrono\Core\Enums\TimezoneField;
 use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
-use Traversable;
 
 /**
  * An immutable list of timezones, keyed by identifier.
@@ -130,6 +130,7 @@ final readonly class TimezoneCollection implements Countable, IteratorAggregate,
      * @template T
      *
      * @param callable(Timezone): T $callback
+     *
      * @return list<T>
      */
     public function map(callable $callback): array
@@ -169,9 +170,9 @@ final readonly class TimezoneCollection implements Countable, IteratorAggregate,
         bool $rtl = false,
     ): array {
         return match ($shape) {
-            SelectShape::Flat => $this->flatOptions($at),
+            SelectShape::Flat    => $this->flatOptions($at),
             SelectShape::Grouped => $this->groupedOptions($at, useIdentifier: false),
-            SelectShape::Formed => $this->groupedOptions($at, useIdentifier: true),
+            SelectShape::Formed  => $this->groupedOptions($at, useIdentifier: true),
             SelectShape::Payload => $this->payloadOptions($at, $rtl),
         };
     }
@@ -247,15 +248,15 @@ final readonly class TimezoneCollection implements Countable, IteratorAggregate,
             $country = $timezone->countryCode();
 
             return [
-                'id' => $timezone->identifier,
-                'label' => sprintf('%s (%s)', $timezone->city(), $offset->format(OffsetFormat::Utc)),
-                'city' => $timezone->city(),
-                'region' => $timezone->region()?->value,
-                'country' => $country,
-                'offset' => $offset->seconds,
+                'id'           => $timezone->identifier,
+                'label'        => sprintf('%s (%s)', $timezone->city(), $offset->format(OffsetFormat::Utc)),
+                'city'         => $timezone->city(),
+                'region'       => $timezone->region()?->value,
+                'country'      => $country,
+                'offset'       => $offset->seconds,
                 'offset_label' => $offset->format(),
                 'abbreviation' => $timezone->abbreviation($at),
-                'dst' => $timezone->isDst($at),
+                'dst'          => $timezone->isDst($at),
                 // Lowercased so a client-side filter can match without normalising first.
                 'search' => strtolower(implode(' ', array_filter(
                     [$timezone->identifier, $timezone->city(), $country, $timezone->abbreviation($at), $offset->format()],

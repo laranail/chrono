@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Temporal;
 
-use DateTimeImmutable;
-use DateTimeInterface;
+use NoDiscard;
+use Stringable;
 use DateTimeZone;
 use JsonSerializable;
-use NoDiscard;
-use Simtabi\Laranail\Chrono\Core\Enums\DayOfWeek;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Simtabi\Laranail\Chrono\Core\Enums\Month;
+use Simtabi\Laranail\Chrono\Core\Enums\DayOfWeek;
 use Simtabi\Laranail\Chrono\Core\Exception\InvalidTemporalValue;
-use Stringable;
 
 /**
  * A date with no time and no timezone — a birthday, an invoice date, a public holiday.
@@ -31,6 +31,11 @@ final readonly class LocalDate implements JsonSerializable, Stringable
         public int $month,
         public int $day,
     ) {}
+
+    public function __toString(): string
+    {
+        return $this->toIso8601();
+    }
 
     /** @throws InvalidTemporalValue when the date does not exist, e.g. 31 February */
     public static function of(int $year, int $month, int $day): self
@@ -251,11 +256,6 @@ final readonly class LocalDate implements JsonSerializable, Stringable
     public function format(string $pattern): string
     {
         return $this->toDateTime()->format($pattern);
-    }
-
-    public function __toString(): string
-    {
-        return $this->toIso8601();
     }
 
     public function jsonSerialize(): string

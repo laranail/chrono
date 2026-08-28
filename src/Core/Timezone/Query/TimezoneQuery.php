@@ -5,23 +5,23 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Chrono\Core\Timezone\Query;
 
 use Countable;
-use DateTimeInterface;
 use Generator;
-use IteratorAggregate;
 use NoDiscard;
+use Traversable;
+use DateTimeInterface;
+use IteratorAggregate;
 use Psr\Clock\ClockInterface;
-use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneRepository;
 use Simtabi\Laranail\Chrono\Core\Enums\Region;
 use Simtabi\Laranail\Chrono\Core\Enums\SelectShape;
-use Simtabi\Laranail\Chrono\Core\Enums\TimezoneField;
 use Simtabi\Laranail\Chrono\Core\Enums\TimezoneKind;
-use Simtabi\Laranail\Chrono\Core\Exception\TimezoneNotFound;
-use Simtabi\Laranail\Chrono\Core\Timezone\Collection\TimezoneCollection;
+use Simtabi\Laranail\Chrono\Core\Enums\TimezoneField;
+use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
 use Simtabi\Laranail\Chrono\Core\Timezone\Support\AliasMap;
+use Simtabi\Laranail\Chrono\Core\Exception\TimezoneNotFound;
+use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneRepository;
 use Simtabi\Laranail\Chrono\Core\Timezone\Support\OffsetParser;
 use Simtabi\Laranail\Chrono\Core\Timezone\Support\TransitionScanner;
-use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
-use Traversable;
+use Simtabi\Laranail\Chrono\Core\Timezone\Collection\TimezoneCollection;
 
 /**
  * A fluent, immutable query over the timezone catalogue.

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Period;
 
+use Exception;
+use Stringable;
+use JsonSerializable;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Exception;
-use JsonSerializable;
 use Simtabi\Laranail\Chrono\Core\Exception\InvalidPeriod;
-use Stringable;
 
 /**
  * A span of time between two moments, at a stated precision.
@@ -48,6 +48,13 @@ final readonly class Period implements JsonSerializable, Stringable
         $this->includedEnd = $boundaries->endExcluded()
             ? $end->modify('-' . ltrim($precision->interval(), '+'))
             : $end;
+    }
+
+    public function __toString(): string
+    {
+        $format = $this->precision === Precision::Day ? 'Y-m-d' : 'Y-m-d H:i:s';
+
+        return '[' . $this->includedStart->format($format) . ', ' . $this->includedEnd->format($format) . ']';
     }
 
     /**
@@ -365,9 +372,9 @@ final readonly class Period implements JsonSerializable, Stringable
     public function toArray(): array
     {
         return [
-            'start' => $this->start->format(DateTimeInterface::ATOM),
-            'end' => $this->end->format(DateTimeInterface::ATOM),
-            'precision' => strtolower($this->precision->name),
+            'start'      => $this->start->format(DateTimeInterface::ATOM),
+            'end'        => $this->end->format(DateTimeInterface::ATOM),
+            'precision'  => strtolower($this->precision->name),
             'boundaries' => $this->boundaries->name,
         ];
     }
@@ -378,11 +385,20 @@ final readonly class Period implements JsonSerializable, Stringable
         return $this->toArray();
     }
 
-    public function __toString(): string
+    /**
+     * @throws InvalidPeriod
+     */
+    private static function moment(DateTimeInterface|string $value): DateTimeImmutable
     {
-        $format = $this->precision === Precision::Day ? 'Y-m-d' : 'Y-m-d H:i:s';
+        if ($value instanceof DateTimeInterface) {
+            return DateTimeImmutable::createFromInterface($value);
+        }
 
-        return '[' . $this->includedStart->format($format) . ', ' . $this->includedEnd->format($format) . ']';
+        try {
+            return new DateTimeImmutable($value);
+        } catch (Exception $exception) {
+            throw InvalidPeriod::unparsable($value, $exception);
+        }
     }
 
     /** The overlap with one other period, or null. */
@@ -413,22 +429,6 @@ final readonly class Period implements JsonSerializable, Stringable
     {
         if ($this->precision !== $other->precision) {
             throw InvalidPeriod::precisionMismatch($this->precision, $other->precision);
-        }
-    }
-
-    /**
-     * @throws InvalidPeriod
-     */
-    private static function moment(DateTimeInterface|string $value): DateTimeImmutable
-    {
-        if ($value instanceof DateTimeInterface) {
-            return DateTimeImmutable::createFromInterface($value);
-        }
-
-        try {
-            return new DateTimeImmutable($value);
-        } catch (Exception $exception) {
-            throw InvalidPeriod::unparsable($value, $exception);
         }
     }
 }

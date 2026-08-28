@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Chrono\Core\Timezone\Resolver;
 
 use BackedEnum;
-use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneResolver;
-use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
 use Stringable;
+use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
+use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneResolver;
 
 /**
  * Tries each strategy in turn and takes the first confident answer.
@@ -83,6 +83,30 @@ final readonly class ResolverChain implements TimezoneResolver
         return $context->strict && $best->confidence <= 0.0 ? null : $best;
     }
 
+    /** @return list<string> */
+    public function keys(): array
+    {
+        return array_map(static fn (TimezoneResolver $r): string => $r->key(), $this->resolvers);
+    }
+
+    /** Narrow the chain to a configured subset, preserving the configured order. */
+    public function only(string ...$keys): self
+    {
+        $wanted = array_values($keys);
+
+        $filtered = [];
+
+        foreach ($wanted as $key) {
+            foreach ($this->resolvers as $resolver) {
+                if ($resolver->key() === $key) {
+                    $filtered[] = $resolver;
+                }
+            }
+        }
+
+        return new self(...$filtered);
+    }
+
     /**
      * Reduce a wrapper to the string inside it, then let the chain judge that string.
      *
@@ -107,29 +131,5 @@ final readonly class ResolverChain implements TimezoneResolver
         }
 
         return $input;
-    }
-
-    /** @return list<string> */
-    public function keys(): array
-    {
-        return array_map(static fn (TimezoneResolver $r): string => $r->key(), $this->resolvers);
-    }
-
-    /** Narrow the chain to a configured subset, preserving the configured order. */
-    public function only(string ...$keys): self
-    {
-        $wanted = array_values($keys);
-
-        $filtered = [];
-
-        foreach ($wanted as $key) {
-            foreach ($this->resolvers as $resolver) {
-                if ($resolver->key() === $key) {
-                    $filtered[] = $resolver;
-                }
-            }
-        }
-
-        return new self(...$filtered);
     }
 }

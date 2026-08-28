@@ -30,422 +30,840 @@ final class Tz
     use ListsTimezoneConstants;
 
     public const string AFRICA_ABIDJAN = 'Africa/Abidjan';
+
     public const string AFRICA_ACCRA = 'Africa/Accra';
+
     public const string AFRICA_ADDIS_ABABA = 'Africa/Addis_Ababa';
+
     public const string AFRICA_ALGIERS = 'Africa/Algiers';
+
     public const string AFRICA_ASMARA = 'Africa/Asmara';
+
     public const string AFRICA_BAMAKO = 'Africa/Bamako';
+
     public const string AFRICA_BANGUI = 'Africa/Bangui';
+
     public const string AFRICA_BANJUL = 'Africa/Banjul';
+
     public const string AFRICA_BISSAU = 'Africa/Bissau';
+
     public const string AFRICA_BLANTYRE = 'Africa/Blantyre';
+
     public const string AFRICA_BRAZZAVILLE = 'Africa/Brazzaville';
+
     public const string AFRICA_BUJUMBURA = 'Africa/Bujumbura';
+
     public const string AFRICA_CAIRO = 'Africa/Cairo';
+
     public const string AFRICA_CASABLANCA = 'Africa/Casablanca';
+
     public const string AFRICA_CEUTA = 'Africa/Ceuta';
+
     public const string AFRICA_CONAKRY = 'Africa/Conakry';
+
     public const string AFRICA_DAKAR = 'Africa/Dakar';
+
     public const string AFRICA_DAR_ES_SALAAM = 'Africa/Dar_es_Salaam';
+
     public const string AFRICA_DJIBOUTI = 'Africa/Djibouti';
+
     public const string AFRICA_DOUALA = 'Africa/Douala';
+
     public const string AFRICA_EL_AAIUN = 'Africa/El_Aaiun';
+
     public const string AFRICA_FREETOWN = 'Africa/Freetown';
+
     public const string AFRICA_GABORONE = 'Africa/Gaborone';
+
     public const string AFRICA_HARARE = 'Africa/Harare';
+
     public const string AFRICA_JOHANNESBURG = 'Africa/Johannesburg';
+
     public const string AFRICA_JUBA = 'Africa/Juba';
+
     public const string AFRICA_KAMPALA = 'Africa/Kampala';
+
     public const string AFRICA_KHARTOUM = 'Africa/Khartoum';
+
     public const string AFRICA_KIGALI = 'Africa/Kigali';
+
     public const string AFRICA_KINSHASA = 'Africa/Kinshasa';
+
     public const string AFRICA_LAGOS = 'Africa/Lagos';
+
     public const string AFRICA_LIBREVILLE = 'Africa/Libreville';
+
     public const string AFRICA_LOME = 'Africa/Lome';
+
     public const string AFRICA_LUANDA = 'Africa/Luanda';
+
     public const string AFRICA_LUBUMBASHI = 'Africa/Lubumbashi';
+
     public const string AFRICA_LUSAKA = 'Africa/Lusaka';
+
     public const string AFRICA_MALABO = 'Africa/Malabo';
+
     public const string AFRICA_MAPUTO = 'Africa/Maputo';
+
     public const string AFRICA_MASERU = 'Africa/Maseru';
+
     public const string AFRICA_MBABANE = 'Africa/Mbabane';
+
     public const string AFRICA_MOGADISHU = 'Africa/Mogadishu';
+
     public const string AFRICA_MONROVIA = 'Africa/Monrovia';
+
     public const string AFRICA_NAIROBI = 'Africa/Nairobi';
+
     public const string AFRICA_NDJAMENA = 'Africa/Ndjamena';
+
     public const string AFRICA_NIAMEY = 'Africa/Niamey';
+
     public const string AFRICA_NOUAKCHOTT = 'Africa/Nouakchott';
+
     public const string AFRICA_OUAGADOUGOU = 'Africa/Ouagadougou';
+
     public const string AFRICA_PORTO_MINUS_NOVO = 'Africa/Porto-Novo';
+
     public const string AFRICA_SAO_TOME = 'Africa/Sao_Tome';
+
     public const string AFRICA_TRIPOLI = 'Africa/Tripoli';
+
     public const string AFRICA_TUNIS = 'Africa/Tunis';
+
     public const string AFRICA_WINDHOEK = 'Africa/Windhoek';
+
     public const string AMERICA_ADAK = 'America/Adak';
+
     public const string AMERICA_ANCHORAGE = 'America/Anchorage';
+
     public const string AMERICA_ANGUILLA = 'America/Anguilla';
+
     public const string AMERICA_ANTIGUA = 'America/Antigua';
+
     public const string AMERICA_ARAGUAINA = 'America/Araguaina';
+
     public const string AMERICA_ARGENTINA_BUENOS_AIRES = 'America/Argentina/Buenos_Aires';
+
     public const string AMERICA_ARGENTINA_CATAMARCA = 'America/Argentina/Catamarca';
+
     public const string AMERICA_ARGENTINA_CORDOBA = 'America/Argentina/Cordoba';
+
     public const string AMERICA_ARGENTINA_JUJUY = 'America/Argentina/Jujuy';
+
     public const string AMERICA_ARGENTINA_LA_RIOJA = 'America/Argentina/La_Rioja';
+
     public const string AMERICA_ARGENTINA_MENDOZA = 'America/Argentina/Mendoza';
+
     public const string AMERICA_ARGENTINA_RIO_GALLEGOS = 'America/Argentina/Rio_Gallegos';
+
     public const string AMERICA_ARGENTINA_SALTA = 'America/Argentina/Salta';
+
     public const string AMERICA_ARGENTINA_SAN_JUAN = 'America/Argentina/San_Juan';
+
     public const string AMERICA_ARGENTINA_SAN_LUIS = 'America/Argentina/San_Luis';
+
     public const string AMERICA_ARGENTINA_TUCUMAN = 'America/Argentina/Tucuman';
+
     public const string AMERICA_ARGENTINA_USHUAIA = 'America/Argentina/Ushuaia';
+
     public const string AMERICA_ARUBA = 'America/Aruba';
+
     public const string AMERICA_ASUNCION = 'America/Asuncion';
+
     public const string AMERICA_ATIKOKAN = 'America/Atikokan';
+
     public const string AMERICA_BAHIA = 'America/Bahia';
+
     public const string AMERICA_BAHIA_BANDERAS = 'America/Bahia_Banderas';
+
     public const string AMERICA_BARBADOS = 'America/Barbados';
+
     public const string AMERICA_BELEM = 'America/Belem';
+
     public const string AMERICA_BELIZE = 'America/Belize';
+
     public const string AMERICA_BLANC_MINUS_SABLON = 'America/Blanc-Sablon';
+
     public const string AMERICA_BOA_VISTA = 'America/Boa_Vista';
+
     public const string AMERICA_BOGOTA = 'America/Bogota';
+
     public const string AMERICA_BOISE = 'America/Boise';
+
     public const string AMERICA_CAMBRIDGE_BAY = 'America/Cambridge_Bay';
+
     public const string AMERICA_CAMPO_GRANDE = 'America/Campo_Grande';
+
     public const string AMERICA_CANCUN = 'America/Cancun';
+
     public const string AMERICA_CARACAS = 'America/Caracas';
+
     public const string AMERICA_CAYENNE = 'America/Cayenne';
+
     public const string AMERICA_CAYMAN = 'America/Cayman';
+
     public const string AMERICA_CHICAGO = 'America/Chicago';
+
     public const string AMERICA_CHIHUAHUA = 'America/Chihuahua';
+
     public const string AMERICA_CIUDAD_JUAREZ = 'America/Ciudad_Juarez';
+
     public const string AMERICA_COSTA_RICA = 'America/Costa_Rica';
+
     public const string AMERICA_COYHAIQUE = 'America/Coyhaique';
+
     public const string AMERICA_CRESTON = 'America/Creston';
+
     public const string AMERICA_CUIABA = 'America/Cuiaba';
+
     public const string AMERICA_CURACAO = 'America/Curacao';
+
     public const string AMERICA_DANMARKSHAVN = 'America/Danmarkshavn';
+
     public const string AMERICA_DAWSON = 'America/Dawson';
+
     public const string AMERICA_DAWSON_CREEK = 'America/Dawson_Creek';
+
     public const string AMERICA_DENVER = 'America/Denver';
+
     public const string AMERICA_DETROIT = 'America/Detroit';
+
     public const string AMERICA_DOMINICA = 'America/Dominica';
+
     public const string AMERICA_EDMONTON = 'America/Edmonton';
+
     public const string AMERICA_EIRUNEPE = 'America/Eirunepe';
+
     public const string AMERICA_EL_SALVADOR = 'America/El_Salvador';
+
     public const string AMERICA_FORT_NELSON = 'America/Fort_Nelson';
+
     public const string AMERICA_FORTALEZA = 'America/Fortaleza';
+
     public const string AMERICA_GLACE_BAY = 'America/Glace_Bay';
+
     public const string AMERICA_GOOSE_BAY = 'America/Goose_Bay';
+
     public const string AMERICA_GRAND_TURK = 'America/Grand_Turk';
+
     public const string AMERICA_GRENADA = 'America/Grenada';
+
     public const string AMERICA_GUADELOUPE = 'America/Guadeloupe';
+
     public const string AMERICA_GUATEMALA = 'America/Guatemala';
+
     public const string AMERICA_GUAYAQUIL = 'America/Guayaquil';
+
     public const string AMERICA_GUYANA = 'America/Guyana';
+
     public const string AMERICA_HALIFAX = 'America/Halifax';
+
     public const string AMERICA_HAVANA = 'America/Havana';
+
     public const string AMERICA_HERMOSILLO = 'America/Hermosillo';
+
     public const string AMERICA_INDIANA_INDIANAPOLIS = 'America/Indiana/Indianapolis';
+
     public const string AMERICA_INDIANA_KNOX = 'America/Indiana/Knox';
+
     public const string AMERICA_INDIANA_MARENGO = 'America/Indiana/Marengo';
+
     public const string AMERICA_INDIANA_PETERSBURG = 'America/Indiana/Petersburg';
+
     public const string AMERICA_INDIANA_TELL_CITY = 'America/Indiana/Tell_City';
+
     public const string AMERICA_INDIANA_VEVAY = 'America/Indiana/Vevay';
+
     public const string AMERICA_INDIANA_VINCENNES = 'America/Indiana/Vincennes';
+
     public const string AMERICA_INDIANA_WINAMAC = 'America/Indiana/Winamac';
+
     public const string AMERICA_INUVIK = 'America/Inuvik';
+
     public const string AMERICA_IQALUIT = 'America/Iqaluit';
+
     public const string AMERICA_JAMAICA = 'America/Jamaica';
+
     public const string AMERICA_JUNEAU = 'America/Juneau';
+
     public const string AMERICA_KENTUCKY_LOUISVILLE = 'America/Kentucky/Louisville';
+
     public const string AMERICA_KENTUCKY_MONTICELLO = 'America/Kentucky/Monticello';
+
     public const string AMERICA_KRALENDIJK = 'America/Kralendijk';
+
     public const string AMERICA_LA_PAZ = 'America/La_Paz';
+
     public const string AMERICA_LIMA = 'America/Lima';
+
     public const string AMERICA_LOS_ANGELES = 'America/Los_Angeles';
+
     public const string AMERICA_LOWER_PRINCES = 'America/Lower_Princes';
+
     public const string AMERICA_MACEIO = 'America/Maceio';
+
     public const string AMERICA_MANAGUA = 'America/Managua';
+
     public const string AMERICA_MANAUS = 'America/Manaus';
+
     public const string AMERICA_MARIGOT = 'America/Marigot';
+
     public const string AMERICA_MARTINIQUE = 'America/Martinique';
+
     public const string AMERICA_MATAMOROS = 'America/Matamoros';
+
     public const string AMERICA_MAZATLAN = 'America/Mazatlan';
+
     public const string AMERICA_MENOMINEE = 'America/Menominee';
+
     public const string AMERICA_MERIDA = 'America/Merida';
+
     public const string AMERICA_METLAKATLA = 'America/Metlakatla';
+
     public const string AMERICA_MEXICO_CITY = 'America/Mexico_City';
+
     public const string AMERICA_MIQUELON = 'America/Miquelon';
+
     public const string AMERICA_MONCTON = 'America/Moncton';
+
     public const string AMERICA_MONTERREY = 'America/Monterrey';
+
     public const string AMERICA_MONTEVIDEO = 'America/Montevideo';
+
     public const string AMERICA_MONTSERRAT = 'America/Montserrat';
+
     public const string AMERICA_NASSAU = 'America/Nassau';
+
     public const string AMERICA_NEW_YORK = 'America/New_York';
+
     public const string AMERICA_NOME = 'America/Nome';
+
     public const string AMERICA_NORONHA = 'America/Noronha';
+
     public const string AMERICA_NORTH_DAKOTA_BEULAH = 'America/North_Dakota/Beulah';
+
     public const string AMERICA_NORTH_DAKOTA_CENTER = 'America/North_Dakota/Center';
+
     public const string AMERICA_NORTH_DAKOTA_NEW_SALEM = 'America/North_Dakota/New_Salem';
+
     public const string AMERICA_NUUK = 'America/Nuuk';
+
     public const string AMERICA_OJINAGA = 'America/Ojinaga';
+
     public const string AMERICA_PANAMA = 'America/Panama';
+
     public const string AMERICA_PARAMARIBO = 'America/Paramaribo';
+
     public const string AMERICA_PHOENIX = 'America/Phoenix';
+
     public const string AMERICA_PORT_MINUS_AU_MINUS_PRINCE = 'America/Port-au-Prince';
+
     public const string AMERICA_PORT_OF_SPAIN = 'America/Port_of_Spain';
+
     public const string AMERICA_PORTO_VELHO = 'America/Porto_Velho';
+
     public const string AMERICA_PUERTO_RICO = 'America/Puerto_Rico';
+
     public const string AMERICA_PUNTA_ARENAS = 'America/Punta_Arenas';
+
     public const string AMERICA_RANKIN_INLET = 'America/Rankin_Inlet';
+
     public const string AMERICA_RECIFE = 'America/Recife';
+
     public const string AMERICA_REGINA = 'America/Regina';
+
     public const string AMERICA_RESOLUTE = 'America/Resolute';
+
     public const string AMERICA_RIO_BRANCO = 'America/Rio_Branco';
+
     public const string AMERICA_SANTAREM = 'America/Santarem';
+
     public const string AMERICA_SANTIAGO = 'America/Santiago';
+
     public const string AMERICA_SANTO_DOMINGO = 'America/Santo_Domingo';
+
     public const string AMERICA_SAO_PAULO = 'America/Sao_Paulo';
+
     public const string AMERICA_SCORESBYSUND = 'America/Scoresbysund';
+
     public const string AMERICA_SITKA = 'America/Sitka';
+
     public const string AMERICA_ST_BARTHELEMY = 'America/St_Barthelemy';
+
     public const string AMERICA_ST_JOHNS = 'America/St_Johns';
+
     public const string AMERICA_ST_KITTS = 'America/St_Kitts';
+
     public const string AMERICA_ST_LUCIA = 'America/St_Lucia';
+
     public const string AMERICA_ST_THOMAS = 'America/St_Thomas';
+
     public const string AMERICA_ST_VINCENT = 'America/St_Vincent';
+
     public const string AMERICA_SWIFT_CURRENT = 'America/Swift_Current';
+
     public const string AMERICA_TEGUCIGALPA = 'America/Tegucigalpa';
+
     public const string AMERICA_THULE = 'America/Thule';
+
     public const string AMERICA_TIJUANA = 'America/Tijuana';
+
     public const string AMERICA_TORONTO = 'America/Toronto';
+
     public const string AMERICA_TORTOLA = 'America/Tortola';
+
     public const string AMERICA_VANCOUVER = 'America/Vancouver';
+
     public const string AMERICA_WHITEHORSE = 'America/Whitehorse';
+
     public const string AMERICA_WINNIPEG = 'America/Winnipeg';
+
     public const string AMERICA_YAKUTAT = 'America/Yakutat';
+
     public const string ANTARCTICA_CASEY = 'Antarctica/Casey';
+
     public const string ANTARCTICA_DAVIS = 'Antarctica/Davis';
+
     public const string ANTARCTICA_DUMONTDURVILLE = 'Antarctica/DumontDUrville';
+
     public const string ANTARCTICA_MACQUARIE = 'Antarctica/Macquarie';
+
     public const string ANTARCTICA_MAWSON = 'Antarctica/Mawson';
+
     public const string ANTARCTICA_MCMURDO = 'Antarctica/McMurdo';
+
     public const string ANTARCTICA_PALMER = 'Antarctica/Palmer';
+
     public const string ANTARCTICA_ROTHERA = 'Antarctica/Rothera';
+
     public const string ANTARCTICA_SYOWA = 'Antarctica/Syowa';
+
     public const string ANTARCTICA_TROLL = 'Antarctica/Troll';
+
     public const string ANTARCTICA_VOSTOK = 'Antarctica/Vostok';
+
     public const string ARCTIC_LONGYEARBYEN = 'Arctic/Longyearbyen';
+
     public const string ASIA_ADEN = 'Asia/Aden';
+
     public const string ASIA_ALMATY = 'Asia/Almaty';
+
     public const string ASIA_AMMAN = 'Asia/Amman';
+
     public const string ASIA_ANADYR = 'Asia/Anadyr';
+
     public const string ASIA_AQTAU = 'Asia/Aqtau';
+
     public const string ASIA_AQTOBE = 'Asia/Aqtobe';
+
     public const string ASIA_ASHGABAT = 'Asia/Ashgabat';
+
     public const string ASIA_ATYRAU = 'Asia/Atyrau';
+
     public const string ASIA_BAGHDAD = 'Asia/Baghdad';
+
     public const string ASIA_BAHRAIN = 'Asia/Bahrain';
+
     public const string ASIA_BAKU = 'Asia/Baku';
+
     public const string ASIA_BANGKOK = 'Asia/Bangkok';
+
     public const string ASIA_BARNAUL = 'Asia/Barnaul';
+
     public const string ASIA_BEIRUT = 'Asia/Beirut';
+
     public const string ASIA_BISHKEK = 'Asia/Bishkek';
+
     public const string ASIA_BRUNEI = 'Asia/Brunei';
+
     public const string ASIA_CHITA = 'Asia/Chita';
+
     public const string ASIA_COLOMBO = 'Asia/Colombo';
+
     public const string ASIA_DAMASCUS = 'Asia/Damascus';
+
     public const string ASIA_DHAKA = 'Asia/Dhaka';
+
     public const string ASIA_DILI = 'Asia/Dili';
+
     public const string ASIA_DUBAI = 'Asia/Dubai';
+
     public const string ASIA_DUSHANBE = 'Asia/Dushanbe';
+
     public const string ASIA_FAMAGUSTA = 'Asia/Famagusta';
+
     public const string ASIA_GAZA = 'Asia/Gaza';
+
     public const string ASIA_HEBRON = 'Asia/Hebron';
+
     public const string ASIA_HO_CHI_MINH = 'Asia/Ho_Chi_Minh';
+
     public const string ASIA_HONG_KONG = 'Asia/Hong_Kong';
+
     public const string ASIA_HOVD = 'Asia/Hovd';
+
     public const string ASIA_IRKUTSK = 'Asia/Irkutsk';
+
     public const string ASIA_JAKARTA = 'Asia/Jakarta';
+
     public const string ASIA_JAYAPURA = 'Asia/Jayapura';
+
     public const string ASIA_JERUSALEM = 'Asia/Jerusalem';
+
     public const string ASIA_KABUL = 'Asia/Kabul';
+
     public const string ASIA_KAMCHATKA = 'Asia/Kamchatka';
+
     public const string ASIA_KARACHI = 'Asia/Karachi';
+
     public const string ASIA_KATHMANDU = 'Asia/Kathmandu';
+
     public const string ASIA_KHANDYGA = 'Asia/Khandyga';
+
     public const string ASIA_KOLKATA = 'Asia/Kolkata';
+
     public const string ASIA_KRASNOYARSK = 'Asia/Krasnoyarsk';
+
     public const string ASIA_KUALA_LUMPUR = 'Asia/Kuala_Lumpur';
+
     public const string ASIA_KUCHING = 'Asia/Kuching';
+
     public const string ASIA_KUWAIT = 'Asia/Kuwait';
+
     public const string ASIA_MACAU = 'Asia/Macau';
+
     public const string ASIA_MAGADAN = 'Asia/Magadan';
+
     public const string ASIA_MAKASSAR = 'Asia/Makassar';
+
     public const string ASIA_MANILA = 'Asia/Manila';
+
     public const string ASIA_MUSCAT = 'Asia/Muscat';
+
     public const string ASIA_NICOSIA = 'Asia/Nicosia';
+
     public const string ASIA_NOVOKUZNETSK = 'Asia/Novokuznetsk';
+
     public const string ASIA_NOVOSIBIRSK = 'Asia/Novosibirsk';
+
     public const string ASIA_OMSK = 'Asia/Omsk';
+
     public const string ASIA_ORAL = 'Asia/Oral';
+
     public const string ASIA_PHNOM_PENH = 'Asia/Phnom_Penh';
+
     public const string ASIA_PONTIANAK = 'Asia/Pontianak';
+
     public const string ASIA_PYONGYANG = 'Asia/Pyongyang';
+
     public const string ASIA_QATAR = 'Asia/Qatar';
+
     public const string ASIA_QOSTANAY = 'Asia/Qostanay';
+
     public const string ASIA_QYZYLORDA = 'Asia/Qyzylorda';
+
     public const string ASIA_RIYADH = 'Asia/Riyadh';
+
     public const string ASIA_SAKHALIN = 'Asia/Sakhalin';
+
     public const string ASIA_SAMARKAND = 'Asia/Samarkand';
+
     public const string ASIA_SEOUL = 'Asia/Seoul';
+
     public const string ASIA_SHANGHAI = 'Asia/Shanghai';
+
     public const string ASIA_SINGAPORE = 'Asia/Singapore';
+
     public const string ASIA_SREDNEKOLYMSK = 'Asia/Srednekolymsk';
+
     public const string ASIA_TAIPEI = 'Asia/Taipei';
+
     public const string ASIA_TASHKENT = 'Asia/Tashkent';
+
     public const string ASIA_TBILISI = 'Asia/Tbilisi';
+
     public const string ASIA_TEHRAN = 'Asia/Tehran';
+
     public const string ASIA_THIMPHU = 'Asia/Thimphu';
+
     public const string ASIA_TOKYO = 'Asia/Tokyo';
+
     public const string ASIA_TOMSK = 'Asia/Tomsk';
+
     public const string ASIA_ULAANBAATAR = 'Asia/Ulaanbaatar';
+
     public const string ASIA_URUMQI = 'Asia/Urumqi';
+
     public const string ASIA_UST_MINUS_NERA = 'Asia/Ust-Nera';
+
     public const string ASIA_VIENTIANE = 'Asia/Vientiane';
+
     public const string ASIA_VLADIVOSTOK = 'Asia/Vladivostok';
+
     public const string ASIA_YAKUTSK = 'Asia/Yakutsk';
+
     public const string ASIA_YANGON = 'Asia/Yangon';
+
     public const string ASIA_YEKATERINBURG = 'Asia/Yekaterinburg';
+
     public const string ASIA_YEREVAN = 'Asia/Yerevan';
+
     public const string ATLANTIC_AZORES = 'Atlantic/Azores';
+
     public const string ATLANTIC_BERMUDA = 'Atlantic/Bermuda';
+
     public const string ATLANTIC_CANARY = 'Atlantic/Canary';
+
     public const string ATLANTIC_CAPE_VERDE = 'Atlantic/Cape_Verde';
+
     public const string ATLANTIC_FAROE = 'Atlantic/Faroe';
+
     public const string ATLANTIC_MADEIRA = 'Atlantic/Madeira';
+
     public const string ATLANTIC_REYKJAVIK = 'Atlantic/Reykjavik';
+
     public const string ATLANTIC_SOUTH_GEORGIA = 'Atlantic/South_Georgia';
+
     public const string ATLANTIC_ST_HELENA = 'Atlantic/St_Helena';
+
     public const string ATLANTIC_STANLEY = 'Atlantic/Stanley';
+
     public const string AUSTRALIA_ADELAIDE = 'Australia/Adelaide';
+
     public const string AUSTRALIA_BRISBANE = 'Australia/Brisbane';
+
     public const string AUSTRALIA_BROKEN_HILL = 'Australia/Broken_Hill';
+
     public const string AUSTRALIA_DARWIN = 'Australia/Darwin';
+
     public const string AUSTRALIA_EUCLA = 'Australia/Eucla';
+
     public const string AUSTRALIA_HOBART = 'Australia/Hobart';
+
     public const string AUSTRALIA_LINDEMAN = 'Australia/Lindeman';
+
     public const string AUSTRALIA_LORD_HOWE = 'Australia/Lord_Howe';
+
     public const string AUSTRALIA_MELBOURNE = 'Australia/Melbourne';
+
     public const string AUSTRALIA_PERTH = 'Australia/Perth';
+
     public const string AUSTRALIA_SYDNEY = 'Australia/Sydney';
+
     public const string EUROPE_AMSTERDAM = 'Europe/Amsterdam';
+
     public const string EUROPE_ANDORRA = 'Europe/Andorra';
+
     public const string EUROPE_ASTRAKHAN = 'Europe/Astrakhan';
+
     public const string EUROPE_ATHENS = 'Europe/Athens';
+
     public const string EUROPE_BELGRADE = 'Europe/Belgrade';
+
     public const string EUROPE_BERLIN = 'Europe/Berlin';
+
     public const string EUROPE_BRATISLAVA = 'Europe/Bratislava';
+
     public const string EUROPE_BRUSSELS = 'Europe/Brussels';
+
     public const string EUROPE_BUCHAREST = 'Europe/Bucharest';
+
     public const string EUROPE_BUDAPEST = 'Europe/Budapest';
+
     public const string EUROPE_BUSINGEN = 'Europe/Busingen';
+
     public const string EUROPE_CHISINAU = 'Europe/Chisinau';
+
     public const string EUROPE_COPENHAGEN = 'Europe/Copenhagen';
+
     public const string EUROPE_DUBLIN = 'Europe/Dublin';
+
     public const string EUROPE_GIBRALTAR = 'Europe/Gibraltar';
+
     public const string EUROPE_GUERNSEY = 'Europe/Guernsey';
+
     public const string EUROPE_HELSINKI = 'Europe/Helsinki';
+
     public const string EUROPE_ISLE_OF_MAN = 'Europe/Isle_of_Man';
+
     public const string EUROPE_ISTANBUL = 'Europe/Istanbul';
+
     public const string EUROPE_JERSEY = 'Europe/Jersey';
+
     public const string EUROPE_KALININGRAD = 'Europe/Kaliningrad';
+
     public const string EUROPE_KIROV = 'Europe/Kirov';
+
     public const string EUROPE_KYIV = 'Europe/Kyiv';
+
     public const string EUROPE_LISBON = 'Europe/Lisbon';
+
     public const string EUROPE_LJUBLJANA = 'Europe/Ljubljana';
+
     public const string EUROPE_LONDON = 'Europe/London';
+
     public const string EUROPE_LUXEMBOURG = 'Europe/Luxembourg';
+
     public const string EUROPE_MADRID = 'Europe/Madrid';
+
     public const string EUROPE_MALTA = 'Europe/Malta';
+
     public const string EUROPE_MARIEHAMN = 'Europe/Mariehamn';
+
     public const string EUROPE_MINSK = 'Europe/Minsk';
+
     public const string EUROPE_MONACO = 'Europe/Monaco';
+
     public const string EUROPE_MOSCOW = 'Europe/Moscow';
+
     public const string EUROPE_OSLO = 'Europe/Oslo';
+
     public const string EUROPE_PARIS = 'Europe/Paris';
+
     public const string EUROPE_PODGORICA = 'Europe/Podgorica';
+
     public const string EUROPE_PRAGUE = 'Europe/Prague';
+
     public const string EUROPE_RIGA = 'Europe/Riga';
+
     public const string EUROPE_ROME = 'Europe/Rome';
+
     public const string EUROPE_SAMARA = 'Europe/Samara';
+
     public const string EUROPE_SAN_MARINO = 'Europe/San_Marino';
+
     public const string EUROPE_SARAJEVO = 'Europe/Sarajevo';
+
     public const string EUROPE_SARATOV = 'Europe/Saratov';
+
     public const string EUROPE_SIMFEROPOL = 'Europe/Simferopol';
+
     public const string EUROPE_SKOPJE = 'Europe/Skopje';
+
     public const string EUROPE_SOFIA = 'Europe/Sofia';
+
     public const string EUROPE_STOCKHOLM = 'Europe/Stockholm';
+
     public const string EUROPE_TALLINN = 'Europe/Tallinn';
+
     public const string EUROPE_TIRANE = 'Europe/Tirane';
+
     public const string EUROPE_ULYANOVSK = 'Europe/Ulyanovsk';
+
     public const string EUROPE_VADUZ = 'Europe/Vaduz';
+
     public const string EUROPE_VATICAN = 'Europe/Vatican';
+
     public const string EUROPE_VIENNA = 'Europe/Vienna';
+
     public const string EUROPE_VILNIUS = 'Europe/Vilnius';
+
     public const string EUROPE_VOLGOGRAD = 'Europe/Volgograd';
+
     public const string EUROPE_WARSAW = 'Europe/Warsaw';
+
     public const string EUROPE_ZAGREB = 'Europe/Zagreb';
+
     public const string EUROPE_ZURICH = 'Europe/Zurich';
+
     public const string INDIAN_ANTANANARIVO = 'Indian/Antananarivo';
+
     public const string INDIAN_CHAGOS = 'Indian/Chagos';
+
     public const string INDIAN_CHRISTMAS = 'Indian/Christmas';
+
     public const string INDIAN_COCOS = 'Indian/Cocos';
+
     public const string INDIAN_COMORO = 'Indian/Comoro';
+
     public const string INDIAN_KERGUELEN = 'Indian/Kerguelen';
+
     public const string INDIAN_MAHE = 'Indian/Mahe';
+
     public const string INDIAN_MALDIVES = 'Indian/Maldives';
+
     public const string INDIAN_MAURITIUS = 'Indian/Mauritius';
+
     public const string INDIAN_MAYOTTE = 'Indian/Mayotte';
+
     public const string INDIAN_REUNION = 'Indian/Reunion';
+
     public const string PACIFIC_APIA = 'Pacific/Apia';
+
     public const string PACIFIC_AUCKLAND = 'Pacific/Auckland';
+
     public const string PACIFIC_BOUGAINVILLE = 'Pacific/Bougainville';
+
     public const string PACIFIC_CHATHAM = 'Pacific/Chatham';
+
     public const string PACIFIC_CHUUK = 'Pacific/Chuuk';
+
     public const string PACIFIC_EASTER = 'Pacific/Easter';
+
     public const string PACIFIC_EFATE = 'Pacific/Efate';
+
     public const string PACIFIC_FAKAOFO = 'Pacific/Fakaofo';
+
     public const string PACIFIC_FIJI = 'Pacific/Fiji';
+
     public const string PACIFIC_FUNAFUTI = 'Pacific/Funafuti';
+
     public const string PACIFIC_GALAPAGOS = 'Pacific/Galapagos';
+
     public const string PACIFIC_GAMBIER = 'Pacific/Gambier';
+
     public const string PACIFIC_GUADALCANAL = 'Pacific/Guadalcanal';
+
     public const string PACIFIC_GUAM = 'Pacific/Guam';
+
     public const string PACIFIC_HONOLULU = 'Pacific/Honolulu';
+
     public const string PACIFIC_KANTON = 'Pacific/Kanton';
+
     public const string PACIFIC_KIRITIMATI = 'Pacific/Kiritimati';
+
     public const string PACIFIC_KOSRAE = 'Pacific/Kosrae';
+
     public const string PACIFIC_KWAJALEIN = 'Pacific/Kwajalein';
+
     public const string PACIFIC_MAJURO = 'Pacific/Majuro';
+
     public const string PACIFIC_MARQUESAS = 'Pacific/Marquesas';
+
     public const string PACIFIC_MIDWAY = 'Pacific/Midway';
+
     public const string PACIFIC_NAURU = 'Pacific/Nauru';
+
     public const string PACIFIC_NIUE = 'Pacific/Niue';
+
     public const string PACIFIC_NORFOLK = 'Pacific/Norfolk';
+
     public const string PACIFIC_NOUMEA = 'Pacific/Noumea';
+
     public const string PACIFIC_PAGO_PAGO = 'Pacific/Pago_Pago';
+
     public const string PACIFIC_PALAU = 'Pacific/Palau';
+
     public const string PACIFIC_PITCAIRN = 'Pacific/Pitcairn';
+
     public const string PACIFIC_POHNPEI = 'Pacific/Pohnpei';
+
     public const string PACIFIC_PORT_MORESBY = 'Pacific/Port_Moresby';
+
     public const string PACIFIC_RAROTONGA = 'Pacific/Rarotonga';
+
     public const string PACIFIC_SAIPAN = 'Pacific/Saipan';
+
     public const string PACIFIC_TAHITI = 'Pacific/Tahiti';
+
     public const string PACIFIC_TARAWA = 'Pacific/Tarawa';
+
     public const string PACIFIC_TONGATAPU = 'Pacific/Tongatapu';
+
     public const string PACIFIC_WAKE = 'Pacific/Wake';
+
     public const string PACIFIC_WALLIS = 'Pacific/Wallis';
+
     public const string UTC = 'UTC';
 }

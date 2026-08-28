@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use Psr\SimpleCache\CacheInterface;
 use Simtabi\Laranail\Chrono\Core\Enums\Region;
-use Simtabi\Laranail\Chrono\Core\Timezone\Repository\CachedTimezoneRepository;
 use Simtabi\Laranail\Chrono\Core\Timezone\Repository\PhpTimezoneRepository;
+use Simtabi\Laranail\Chrono\Core\Timezone\Repository\CachedTimezoneRepository;
 
 beforeEach(function (): void {
     $this->repository = new PhpTimezoneRepository;

@@ -6,11 +6,11 @@ namespace Simtabi\Laranail\Chrono\Console;
 
 use Override;
 use Simtabi\Laranail\Chrono\Core\Enums\GroupBy;
-use Simtabi\Laranail\Chrono\Core\Enums\PresentationPreset;
 use Simtabi\Laranail\Chrono\Core\Enums\ZoneField;
-use Simtabi\Laranail\Chrono\Core\Presentation\TimezonePresenter;
 use Simtabi\Laranail\Chrono\Core\Timezone\Timezones;
 use Simtabi\Laranail\Console\Tools\Commands\Command;
+use Simtabi\Laranail\Chrono\Core\Enums\PresentationPreset;
+use Simtabi\Laranail\Chrono\Core\Presentation\TimezonePresenter;
 use Simtabi\Laranail\Console\Tools\Commands\Concerns\SupportsNamespacedNames;
 
 /**
@@ -66,9 +66,9 @@ final class ListTimezonesCommand extends Command
         }
 
         match ($this->stringOption('format')) {
-            'json' => $this->line($presenter->forJson(JSON_PRETTY_PRINT)),
-            'ids' => $this->line(implode(PHP_EOL, $presenter->forIdentifiers())),
-            'csv' => $this->csv($presenter),
+            'json'  => $this->line($presenter->forJson(JSON_PRETTY_PRINT)),
+            'ids'   => $this->line(implode(PHP_EOL, $presenter->forIdentifiers())),
+            'csv'   => $this->csv($presenter),
             default => $this->rows($presenter),
         };
 

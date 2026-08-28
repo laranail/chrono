@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Timezone\Repository;
 
-use Psr\SimpleCache\CacheInterface;
-use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneRepository;
-use Simtabi\Laranail\Chrono\Core\Enums\Region;
 use Throwable;
+use Psr\SimpleCache\CacheInterface;
+use Simtabi\Laranail\Chrono\Core\Enums\Region;
+use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneRepository;
 
 /**
  * A PSR-16 decorator over any repository.
@@ -132,6 +132,7 @@ final class CachedTimezoneRepository implements TimezoneRepository
      * @template T
      *
      * @param callable(): T $compute
+     *
      * @return T
      */
     private function remember(string $bucket, callable $compute): mixed

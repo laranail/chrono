@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Timezone\Value;
 
+use NoDiscard;
+use Stringable;
 use DateTimeZone;
 use JsonSerializable;
-use NoDiscard;
 use Simtabi\Laranail\Chrono\Core\Enums\OffsetFormat;
 use Simtabi\Laranail\Chrono\Core\Exception\InvalidOffset;
-use Stringable;
 
 /**
  * A UTC offset in seconds.
@@ -29,6 +29,20 @@ final readonly class Offset implements JsonSerializable, Stringable
         if ($seconds < -self::MAX_SECONDS || $seconds > self::MAX_SECONDS) {
             throw InvalidOffset::outOfRange($seconds, self::MAX_SECONDS);
         }
+    }
+
+    public function __toString(): string
+    {
+        return $this->format();
+    }
+
+    /** @return array<string, string> */
+    public function __debugInfo(): array
+    {
+        return [
+            'offset'  => $this->format(),
+            'seconds' => (string) $this->seconds,
+        ];
     }
 
     public static function fromSeconds(int $seconds): self
@@ -156,27 +170,13 @@ final readonly class Offset implements JsonSerializable, Stringable
     {
         return [
             'seconds' => $this->seconds,
-            'label' => $this->format(),
-            'hours' => $this->hours(),
+            'label'   => $this->format(),
+            'hours'   => $this->hours(),
         ];
     }
 
     public function jsonSerialize(): string
     {
         return $this->format();
-    }
-
-    public function __toString(): string
-    {
-        return $this->format();
-    }
-
-    /** @return array<string, string> */
-    public function __debugInfo(): array
-    {
-        return [
-            'offset' => $this->format(),
-            'seconds' => (string) $this->seconds,
-        ];
     }
 }

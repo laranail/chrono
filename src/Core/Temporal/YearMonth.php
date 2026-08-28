@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Temporal;
 
-use DateTimeInterface;
-use JsonSerializable;
 use NoDiscard;
+use Stringable;
+use JsonSerializable;
+use DateTimeInterface;
 use Simtabi\Laranail\Chrono\Core\Enums\Month;
 use Simtabi\Laranail\Chrono\Core\Exception\InvalidTemporalValue;
-use Stringable;
 
 /**
  * A month of a year — a billing period, a card expiry, a reporting bucket.
@@ -24,6 +24,11 @@ final readonly class YearMonth implements JsonSerializable, Stringable
         public int $year,
         public int $month,
     ) {}
+
+    public function __toString(): string
+    {
+        return $this->toIso8601();
+    }
 
     /** @throws InvalidTemporalValue */
     public static function of(int $year, int $month): self
@@ -141,11 +146,6 @@ final readonly class YearMonth implements JsonSerializable, Stringable
     public function toIso8601(): string
     {
         return sprintf('%04d-%02d', $this->year, $this->month);
-    }
-
-    public function __toString(): string
-    {
-        return $this->toIso8601();
     }
 
     public function jsonSerialize(): string

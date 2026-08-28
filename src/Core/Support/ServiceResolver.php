@@ -61,6 +61,7 @@ final class ServiceResolver
      * @template T of object
      *
      * @param class-string<T> $service
+     *
      * @return T|null
      */
     public static function resolve(string $service): ?object

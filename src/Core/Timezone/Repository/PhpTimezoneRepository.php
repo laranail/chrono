@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Timezone\Repository;
 
-use DateTimeZone;
 use Exception;
-use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneRepository;
+use DateTimeZone;
 use Simtabi\Laranail\Chrono\Core\Enums\Region;
 use Simtabi\Laranail\Chrono\Core\Timezone\Support\AliasMap;
+use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneRepository;
 
 /**
  * The default repository, reading PHP's bundled tz database directly.
@@ -187,6 +187,7 @@ final class PhpTimezoneRepository implements TimezoneRepository
      * that keeps this to a handful of constructor calls rather than six hundred.
      *
      * @param list<string> $identifiers
+     *
      * @return list<string>
      */
     private function onlyZones(array $identifiers): array

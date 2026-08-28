@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Format;
 
+use NoDiscard;
+use DateTimeZone;
 use DateTimeImmutable;
 use DateTimeInterface;
-use DateTimeZone;
 use IntlDateFormatter;
-use NoDiscard;
 use Simtabi\Laranail\Chrono\Core\Enums\NamedFormat;
 
 /**
@@ -100,6 +100,29 @@ final readonly class DateFormatter
     }
 
     /**
+     * Every named format at once — useful for a debug panel or an API that offers choices.
+     *
+     * @return array<string, string>
+     */
+    #[NoDiscard]
+    public function all(DateTimeInterface $instant, ?DateTimeZone $zone = null, ?string $locale = null): array
+    {
+        $formatted = [];
+
+        foreach (NamedFormat::cases() as $case) {
+            $formatted[$case->value] = $this->format($instant, $case, $zone, $locale);
+        }
+
+        return $formatted;
+    }
+
+    #[NoDiscard]
+    public function withLocale(string $locale): self
+    {
+        return clone ($this, ['defaultLocale' => $locale]);
+    }
+
+    /**
      * A zone name ICU will accept, which is not the same set PHP will produce.
      *
      * `new DateTimeImmutable('2026-06-15T12:00:00Z')` yields a zone named `Z`, and an ISO string
@@ -132,29 +155,6 @@ final readonly class DateFormatter
             intdiv(abs($offset), 3600),
             intdiv(abs($offset) % 3600, 60),
         );
-    }
-
-    /**
-     * Every named format at once — useful for a debug panel or an API that offers choices.
-     *
-     * @return array<string, string>
-     */
-    #[NoDiscard]
-    public function all(DateTimeInterface $instant, ?DateTimeZone $zone = null, ?string $locale = null): array
-    {
-        $formatted = [];
-
-        foreach (NamedFormat::cases() as $case) {
-            $formatted[$case->value] = $this->format($instant, $case, $zone, $locale);
-        }
-
-        return $formatted;
-    }
-
-    #[NoDiscard]
-    public function withLocale(string $locale): self
-    {
-        return clone ($this, ['defaultLocale' => $locale]);
     }
 
     private function inZone(DateTimeInterface $instant, ?DateTimeZone $zone): DateTimeInterface

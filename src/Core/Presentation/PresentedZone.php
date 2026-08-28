@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Presentation;
 
+use Stringable;
 use JsonSerializable;
 use Simtabi\Laranail\Chrono\Core\Enums\ZoneField;
-use Stringable;
 
 /**
  * One zone, rendered for display.
@@ -26,6 +26,17 @@ final readonly class PresentedZone implements JsonSerializable, Stringable
         public string $id,
         private array $fields,
     ) {}
+
+    public function __toString(): string
+    {
+        return $this->label();
+    }
+
+    /** @return array<string, scalar|null> */
+    public function __debugInfo(): array
+    {
+        return $this->fields;
+    }
 
     public function get(ZoneField $field): string|int|float|bool|null
     {
@@ -50,17 +61,6 @@ final readonly class PresentedZone implements JsonSerializable, Stringable
 
     /** @return array<string, scalar|null> */
     public function jsonSerialize(): array
-    {
-        return $this->fields;
-    }
-
-    public function __toString(): string
-    {
-        return $this->label();
-    }
-
-    /** @return array<string, scalar|null> */
-    public function __debugInfo(): array
     {
         return $this->fields;
     }

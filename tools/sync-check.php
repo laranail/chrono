@@ -67,7 +67,7 @@ fwrite(STDOUT, sprintf("Checking against tzdata %s, the release the files were g
 
 $generators = [
     'alias map' => __DIR__ . '/generate-alias-map.php',
-    'enums' => __DIR__ . '/generate-enums.php',
+    'enums'     => __DIR__ . '/generate-enums.php',
 ];
 
 $failed = [];

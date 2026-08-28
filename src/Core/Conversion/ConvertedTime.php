@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Conversion;
 
-use DateTimeImmutable;
+use Stringable;
 use JsonSerializable;
+use DateTimeImmutable;
 use Simtabi\Laranail\Chrono\Core\Enums\OffsetFormat;
 use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
-use Stringable;
 
 /**
  * One instant, expressed in one zone.
@@ -27,6 +27,11 @@ final readonly class ConvertedTime implements JsonSerializable, Stringable
         private string $format = 'Y-m-d H:i',
         private OffsetFormat $offsetFormat = OffsetFormat::Utc,
     ) {}
+
+    public function __toString(): string
+    {
+        return $this->formatted();
+    }
 
     public function formatted(): string
     {
@@ -59,15 +64,15 @@ final readonly class ConvertedTime implements JsonSerializable, Stringable
     public function toArray(): array
     {
         return [
-            'index' => $this->index,
-            'zone' => $this->zone->identifier,
-            'instant' => $this->instant->format('c'),
-            'local' => $this->local->format('c'),
-            'formatted' => $this->formatted(),
-            'offset' => $this->zone->offset($this->instant)->seconds,
+            'index'        => $this->index,
+            'zone'         => $this->zone->identifier,
+            'instant'      => $this->instant->format('c'),
+            'local'        => $this->local->format('c'),
+            'formatted'    => $this->formatted(),
+            'offset'       => $this->zone->offset($this->instant)->seconds,
             'offset_label' => $this->offsetLabel(),
             'abbreviation' => $this->abbreviation(),
-            'dst' => $this->isDst(),
+            'dst'          => $this->isDst(),
         ];
     }
 
@@ -75,10 +80,5 @@ final readonly class ConvertedTime implements JsonSerializable, Stringable
     public function jsonSerialize(): array
     {
         return $this->toArray();
-    }
-
-    public function __toString(): string
-    {
-        return $this->formatted();
     }
 }

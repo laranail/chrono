@@ -19,6 +19,8 @@ declare(strict_types=1);
  *
  * Usage:  php tools/generate-enums.php [--check]
  */
+require_once __DIR__ . '/pint-format.php';
+
 $check = in_array('--check', $argv, true);
 $root = dirname(__DIR__);
 $tzdata = timezone_version_get();
@@ -72,6 +74,9 @@ $render = static function (string $class, string $concern, array $cases, string 
 };
 
 $emit = static function (string $path, string $contents) use ($check): bool {
+    // Format first, so the bytes compared are the bytes that would be written.
+    $contents = laranail_pint_format($contents);
+
     if ($check) {
         $existing = is_file($path) ? file_get_contents($path) : '';
 

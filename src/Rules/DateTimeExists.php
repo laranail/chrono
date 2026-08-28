@@ -49,7 +49,7 @@ final class DateTimeExists implements DataAwareRule, ValidationRule
         if ($zone->inspect($value)->isGap()) {
             $fail('laranail-chrono::validation.datetime_exists')->translate([
                 'attribute' => $attribute,
-                'timezone' => $zone->identifier,
+                'timezone'  => $zone->identifier,
             ]);
         }
     }

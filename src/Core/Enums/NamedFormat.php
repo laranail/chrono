@@ -56,13 +56,13 @@ enum NamedFormat: string
     {
         return match ($this) {
             self::Iso8601, self::Atom, self::Rfc3339 => 'Y-m-d\TH:i:sP',
-            self::Rfc2822 => 'D, d M Y H:i:s O',
-            self::Sql => 'Y-m-d H:i:s',
-            self::SqlDate => 'Y-m-d',
-            self::SqlTime => 'H:i:s',
-            self::Cookie => 'l, d-M-Y H:i:s T',
-            self::Timestamp => 'U',
-            default => null,
+            self::Rfc2822                            => 'D, d M Y H:i:s O',
+            self::Sql                                => 'Y-m-d H:i:s',
+            self::SqlDate                            => 'Y-m-d',
+            self::SqlTime                            => 'H:i:s',
+            self::Cookie                             => 'l, d-M-Y H:i:s T',
+            self::Timestamp                          => 'U',
+            default                                  => null,
         };
     }
 
@@ -75,19 +75,19 @@ enum NamedFormat: string
     public function skeleton(): ?string
     {
         return match ($this) {
-            self::ShortDate => 'yMd',
-            self::MediumDate => 'yMMMd',
-            self::LongDate => 'yMMMMd',
-            self::FullDate => 'yMMMMEEEEd',
-            self::ShortTime => 'jm',
-            self::MediumTime => 'jms',
-            self::ShortDateTime => 'yMdjm',
+            self::ShortDate      => 'yMd',
+            self::MediumDate     => 'yMMMd',
+            self::LongDate       => 'yMMMMd',
+            self::FullDate       => 'yMMMMEEEEd',
+            self::ShortTime      => 'jm',
+            self::MediumTime     => 'jms',
+            self::ShortDateTime  => 'yMdjm',
             self::MediumDateTime => 'yMMMdjm',
-            self::LongDateTime => 'yMMMMdjms',
-            self::DayMonth => 'MMMd',
-            self::MonthYear => 'yMMMM',
-            self::WeekdayDate => 'EEEEyMMMMd',
-            default => null,
+            self::LongDateTime   => 'yMMMMdjms',
+            self::DayMonth       => 'MMMd',
+            self::MonthYear      => 'yMMMM',
+            self::WeekdayDate    => 'EEEEyMMMMd',
+            default              => null,
         };
     }
 }

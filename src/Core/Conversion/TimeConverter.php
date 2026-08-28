@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Conversion;
 
+use NoDiscard;
+use JsonException;
 use DateTimeImmutable;
 use DateTimeInterface;
-use JsonException;
-use NoDiscard;
-use Simtabi\Laranail\Chrono\Core\Config\DisplayOptions;
-use Simtabi\Laranail\Chrono\Core\Enums\AmbiguityPolicy;
 use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
 use Simtabi\Laranail\Chrono\Core\Enums\OffsetFormat;
 use Simtabi\Laranail\Chrono\Core\Timezone\Timezones;
+use Simtabi\Laranail\Chrono\Core\Config\DisplayOptions;
+use Simtabi\Laranail\Chrono\Core\Enums\AmbiguityPolicy;
 use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
 
 /**
@@ -250,6 +250,7 @@ final readonly class TimeConverter
 
     /**
      * @param string|DateTimeInterface|iterable<string|DateTimeInterface> $input
+     *
      * @return list<string|DateTimeInterface>
      */
     private function normalise(string|DateTimeInterface|iterable $input): array

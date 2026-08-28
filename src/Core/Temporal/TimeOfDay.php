@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Temporal;
 
-use DateTimeInterface;
-use JsonSerializable;
 use NoDiscard;
-use Simtabi\Laranail\Chrono\Core\Exception\InvalidTemporalValue;
 use Stringable;
+use JsonSerializable;
+use DateTimeInterface;
+use Simtabi\Laranail\Chrono\Core\Exception\InvalidTemporalValue;
 
 /**
  * A time of day with no date and no timezone — opening hours, a daily reminder, a shift start.
@@ -29,6 +29,11 @@ final readonly class TimeOfDay implements JsonSerializable, Stringable
         public int $minute,
         public int $second,
     ) {}
+
+    public function __toString(): string
+    {
+        return $this->toIso8601();
+    }
 
     /** @throws InvalidTemporalValue */
     public static function of(int $hour, int $minute = 0, int $second = 0): self
@@ -145,11 +150,6 @@ final readonly class TimeOfDay implements JsonSerializable, Stringable
         return $this->second === 0
             ? sprintf('%02d:%02d', $this->hour, $this->minute)
             : $this->toIso8601();
-    }
-
-    public function __toString(): string
-    {
-        return $this->toIso8601();
     }
 
     public function jsonSerialize(): string

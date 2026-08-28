@@ -50,9 +50,9 @@ final class DateTimeUnambiguous implements DataAwareRule, ValidationRule
 
         $fail('laranail-chrono::validation.datetime_unambiguous')->translate([
             'attribute' => $attribute,
-            'timezone' => $zone->identifier,
-            'first' => $this->describe($status->earlier()),
-            'second' => $this->describe($status->later()),
+            'timezone'  => $zone->identifier,
+            'first'     => $this->describe($status->earlier()),
+            'second'    => $this->describe($status->later()),
         ]);
     }
 
