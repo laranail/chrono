@@ -40,7 +40,7 @@ describe('timezones()', function (): void {
     });
 
     it('throws on something that names no zone', function (): void {
-        expect(fn (): Timezones|\Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone => timezones('not a zone'))
+        expect(fn (): Timezones|Timezone => timezones('not a zone'))
             ->toThrow(TimezoneNotFound::class);
     });
 });
