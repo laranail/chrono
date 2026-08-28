@@ -17,7 +17,7 @@ name: tz database bump
 
 on:
   schedule:
-    - cron: '0 7 * * 1'   # Mondays 07:00 UTC, an hour after the drift job
+    - cron: '8 7 * * 1'   # Mondays 07:00 UTC, an hour after the drift job
   workflow_dispatch:
 
 concurrency:
