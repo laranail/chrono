@@ -1,6 +1,6 @@
 {
     "name": "laranail/chrono",
-    "description": "Timezones, formatting and humanised time for Laravel — a tzdata-parity IANA catalogue with a fluent query builder, a resolver for messy input, and daylight-saving conversion with explicit gap and ambiguity policies.",
+    "description": "Timezones, formatting and humanised time for Laravel \u2014 a tzdata-parity IANA catalogue with a fluent query builder, a resolver for messy input, and daylight-saving conversion with explicit gap and ambiguity policies.",
     "keywords": [
         "laravel",
         "laranail",
@@ -67,7 +67,7 @@
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-strict-rules": "^2.0",
         "phpunit/phpunit": "^12.0",
-        "rector/rector": "^2.0",
+        "rector/rector": "^2.5.8",
         "roave/security-advisories": "dev-latest"
     },
     "suggest": {
@@ -149,6 +149,16 @@
         {
             "type": "vcs",
             "url": "https://github.com/laranail/package-tools"
+        },
+        {
+            "type": "composer",
+            "url": "https://repo.packagist.org",
+            "exclude": [
+                "laranail/*"
+            ]
+        },
+        {
+            "packagist.org": false
         }
     ]
 }
