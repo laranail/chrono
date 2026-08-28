@@ -9,13 +9,6 @@
 name: Dev container
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'docker/**'
-      - '.dockerignore'
-      - 'resources/tzdata-version.txt'
-      - '.github/workflows/docker.yml'
   pull_request:
     paths:
       - 'docker/**'
@@ -24,6 +17,10 @@ on:
       - '.github/workflows/docker.yml'
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -31,6 +28,7 @@ jobs:
   build:
     name: Build and check the tz database
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout

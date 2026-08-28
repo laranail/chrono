@@ -15,9 +15,11 @@
 name: Tests
 
 on:
-  push:
-    branches: [main]
   pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -26,6 +28,7 @@ jobs:
   pest:
     name: ${{ matrix.dependency-versions }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     strategy:
       fail-fast: false

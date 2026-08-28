@@ -9,9 +9,11 @@
 name: Static analysis
 
 on:
-  push:
-    branches: [main]
   pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -20,6 +22,7 @@ jobs:
   static:
     name: Lint · Pint · PHPStan · deptrac · Rector
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
