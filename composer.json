@@ -110,9 +110,6 @@
         "rector-fix": "vendor/bin/rector process",
         "sync": "@php vendor/bin/testbench laranail::chrono.sync",
         "sync-check": "@php tools/sync-check.php",
-        "audit": [
-            "@composer-audit"
-        ],
         "composer-audit": "@composer audit --no-interaction",
         "format": "@pint-fix"
     },
