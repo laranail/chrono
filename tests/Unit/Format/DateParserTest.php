@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
 use Simtabi\Laranail\Chrono\Core\Enums\NamedFormat;
-use Simtabi\Laranail\Chrono\Core\Format\DateParser;
 use Simtabi\Laranail\Chrono\Core\Exception\SkippedLocalTime;
 use Simtabi\Laranail\Chrono\Core\Exception\UnparsableDateTime;
+use Simtabi\Laranail\Chrono\Core\Format\DateParser;
 
 beforeEach(function (): void {
     $this->parser = new DateParser;

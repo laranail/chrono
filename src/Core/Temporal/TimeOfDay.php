@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Temporal;
 
-use NoDiscard;
-use Stringable;
-use JsonSerializable;
 use DateTimeInterface;
+use JsonSerializable;
+use NoDiscard;
 use Simtabi\Laranail\Chrono\Core\Exception\InvalidTemporalValue;
+use Stringable;
 
 /**
  * A time of day with no date and no timezone — opening hours, a daily reminder, a shift start.

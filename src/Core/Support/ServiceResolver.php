@@ -33,7 +33,7 @@ final class ServiceResolver
     /**
      * Install the resolver. Called once, from the service provider.
      *
-     * @param (Closure(class-string): ?object)|null $resolver
+     * @param  (Closure(class-string): ?object)|null  $resolver
      */
     public static function using(?Closure $resolver): void
     {
@@ -60,8 +60,7 @@ final class ServiceResolver
      *
      * @template T of object
      *
-     * @param class-string<T> $service
-     *
+     * @param  class-string<T>  $service
      * @return T|null
      */
     public static function resolve(string $service): ?object

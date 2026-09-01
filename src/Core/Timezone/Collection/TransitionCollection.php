@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Timezone\Collection;
 
-use Countable;
-use Generator;
-use NoDiscard;
-use Traversable;
 use ArrayIterator;
-use JsonSerializable;
+use Countable;
 use DateTimeInterface;
+use Generator;
 use IteratorAggregate;
+use JsonSerializable;
+use NoDiscard;
 use Simtabi\Laranail\Chrono\Core\Timezone\Value\Transition;
+use Traversable;
 
 /**
  * An immutable, chronologically ordered list of transitions.
@@ -116,8 +116,7 @@ final readonly class TransitionCollection implements Countable, IteratorAggregat
     /**
      * @template T
      *
-     * @param callable(Transition): T $callback
-     *
+     * @param  callable(Transition): T  $callback
      * @return list<T>
      */
     public function map(callable $callback): array

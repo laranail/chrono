@@ -35,7 +35,7 @@ final class SyncCommand extends Command
         $failed = false;
 
         foreach (['generate-alias-map.php', 'generate-enums.php'] as $script) {
-            $path = $root . '/tools/' . $script;
+            $path = $root.'/tools/'.$script;
 
             if (! is_file($path)) {
                 $this->components->error("Missing generator: {$script}");
@@ -54,7 +54,7 @@ final class SyncCommand extends Command
             ), $output, $exitCode);
 
             foreach ($output as $line) {
-                $exitCode === 0 ? $this->line('  ' . $line) : $this->components->error($line);
+                $exitCode === 0 ? $this->line('  '.$line) : $this->components->error($line);
             }
 
             $failed = $failed || $exitCode !== 0;

@@ -24,9 +24,9 @@ final readonly class OffsetResolver implements TimezoneResolver
     public function resolve(mixed $input, ResolutionContext $context): ?Resolution
     {
         $seconds = match (true) {
-            is_int($input)    => $input,
+            is_int($input) => $input,
             is_string($input) => OffsetParser::tryParse($input),
-            default           => null,
+            default => null,
         };
 
         if ($seconds === null) {

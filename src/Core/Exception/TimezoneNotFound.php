@@ -15,7 +15,7 @@ final class TimezoneNotFound extends ChronoExceptionBase
     {
         $exception = new self(sprintf(
             'Could not resolve %s to a timezone.',
-            is_scalar($input) ? '"' . $input . '"' : 'the given ' . get_debug_type($input),
+            is_scalar($input) ? '"'.$input.'"' : 'the given '.get_debug_type($input),
         ));
 
         $exception->context = ['input' => is_scalar($input) ? $input : get_debug_type($input)];

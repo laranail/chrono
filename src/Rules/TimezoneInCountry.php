@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Chrono\Rules;
 
 use Closure;
-use Illuminate\Support\Arr;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Support\Arr;
 use Simtabi\Laranail\Chrono\Core\Timezone\Timezones;
 
 /**
@@ -65,7 +65,7 @@ final class TimezoneInCountry implements DataAwareRule, ValidationRule
         if (! in_array($zone->identifier, $allowed, true)) {
             $fail('laranail-chrono::validation.timezone_country')->translate([
                 'attribute' => $attribute,
-                'country'   => strtoupper($country),
+                'country' => strtoupper($country),
             ]);
         }
     }

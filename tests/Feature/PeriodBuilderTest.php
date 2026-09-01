@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use Simtabi\Laranail\Chrono\Facades\Chrono;
-use Simtabi\Laranail\Chrono\Core\Period\Precision;
-use Simtabi\Laranail\Chrono\Core\Period\Boundaries;
 use Simtabi\Laranail\Chrono\Core\Exception\InvalidPeriod;
+use Simtabi\Laranail\Chrono\Core\Period\Boundaries;
+use Simtabi\Laranail\Chrono\Core\Period\Precision;
+use Simtabi\Laranail\Chrono\Facades\Chrono;
 
 it('builds a period from two dates', function (): void {
     $period = Chrono::period()->from('2026-01-01')->to('2026-01-31')->days()->build();

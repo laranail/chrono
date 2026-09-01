@@ -23,9 +23,9 @@ final class SkippedLocalTime extends ChronoExceptionBase
         ));
 
         $exception->context = [
-            'local_time'    => $localTime,
-            'identifier'    => $identifier,
-            'gap_seconds'   => $transition?->delta()->seconds,
+            'local_time' => $localTime,
+            'identifier' => $identifier,
+            'gap_seconds' => $transition?->delta()->seconds,
             'transition_at' => $transition?->at->format('c'),
         ];
 

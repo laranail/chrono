@@ -5,9 +5,9 @@ declare(strict_types=1);
 use Simtabi\Laranail\Chrono\Core\Enums\Region;
 use Simtabi\Laranail\Chrono\Core\Enums\SelectShape;
 use Simtabi\Laranail\Chrono\Core\Enums\TimezoneField;
-use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
 use Simtabi\Laranail\Chrono\Core\Timezone\Query\TimezoneQuery;
 use Simtabi\Laranail\Chrono\Core\Timezone\Repository\PhpTimezoneRepository;
+use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
 
 beforeEach(function (): void {
     $this->query = new TimezoneQuery(new PhpTimezoneRepository);
@@ -97,7 +97,7 @@ describe('select shapes', function (): void {
     })->with([
         [SelectShape::Flat, ['Africa/Nairobi' => 'Nairobi, KE (UTC +03:00)']],
         [SelectShape::Grouped, ['Africa' => ['Africa/Nairobi' => 'Nairobi (UTC +03:00)']]],
-        [SelectShape::Formed, ['Africa'  => ['Africa/Nairobi' => 'Africa/Nairobi (UTC +03:00)']]],
+        [SelectShape::Formed, ['Africa' => ['Africa/Nairobi' => 'Africa/Nairobi (UTC +03:00)']]],
     ]);
 
     it('renders a payload a JavaScript picker can use directly', function (): void {

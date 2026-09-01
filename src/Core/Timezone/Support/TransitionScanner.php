@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Timezone\Support;
 
-use NoDiscard;
-use DateTimeZone;
 use DateTimeImmutable;
+use DateTimeZone;
+use NoDiscard;
 use Simtabi\Laranail\Chrono\Core\Timezone\Value\Offset;
 use Simtabi\Laranail\Chrono\Core\Timezone\Value\Transition;
 
@@ -66,7 +66,7 @@ final readonly class TransitionScanner
 
             $transitions[] = new Transition(
                 timestamp: $timestamp,
-                at: new DateTimeImmutable('@' . $timestamp),
+                at: new DateTimeImmutable('@'.$timestamp),
                 offsetBefore: new Offset($previousOffset),
                 offsetAfter: new Offset($offset),
                 isDst: $entry['isdst'],
@@ -95,15 +95,15 @@ final readonly class TransitionScanner
         if ($raw === false || $raw === []) {
             // A fixed-offset zone: no rules, so ask the zone directly.
             return [
-                'offset'       => $zone->getOffset(new DateTimeImmutable('@' . $timestamp)),
-                'is_dst'       => false,
+                'offset' => $zone->getOffset(new DateTimeImmutable('@'.$timestamp)),
+                'is_dst' => false,
                 'abbreviation' => $zone->getName(),
             ];
         }
 
         return [
-            'offset'       => $raw[0]['offset'],
-            'is_dst'       => $raw[0]['isdst'],
+            'offset' => $raw[0]['offset'],
+            'is_dst' => $raw[0]['isdst'],
             'abbreviation' => $raw[0]['abbr'],
         ];
     }

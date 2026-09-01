@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
-use Simtabi\Laranail\Chrono\Core\Enums\SelectShape;
-use Simtabi\Laranail\Chrono\Core\Enums\OffsetFormat;
-use Simtabi\Laranail\Chrono\Core\Enums\TimezoneField;
 use Simtabi\Laranail\Chrono\Core\Enums\AmbiguityPolicy;
+use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
+use Simtabi\Laranail\Chrono\Core\Enums\OffsetFormat;
+use Simtabi\Laranail\Chrono\Core\Enums\SelectShape;
+use Simtabi\Laranail\Chrono\Core\Enums\TimezoneField;
 
 return [
 
@@ -53,8 +53,8 @@ return [
 
     'catalogue' => [
         'include_deprecated' => env('CHRONO_INCLUDE_DEPRECATED', false),
-        'include_fixed'      => env('CHRONO_INCLUDE_FIXED', false),
-        'include_utc'        => env('CHRONO_INCLUDE_UTC', true),
+        'include_fixed' => env('CHRONO_INCLUDE_FIXED', false),
+        'include_utc' => env('CHRONO_INCLUDE_UTC', true),
 
         // Restrict to these identifiers entirely. Empty means "everything else applies".
         'only' => [],
@@ -89,8 +89,8 @@ return [
     */
 
     'resolution' => [
-        'strict'        => env('CHRONO_STRICT', true),
-        'canonicalise'  => env('CHRONO_CANONICALISE', true),
+        'strict' => env('CHRONO_STRICT', true),
+        'canonicalise' => env('CHRONO_CANONICALISE', true),
         'abbreviations' => env('CHRONO_RESOLVE_ABBREVIATIONS', false),
 
         'strategies' => [
@@ -130,7 +130,7 @@ return [
     */
 
     'dst' => [
-        'on_gap'       => env('CHRONO_DST_GAP', GapPolicy::Forward->value),
+        'on_gap' => env('CHRONO_DST_GAP', GapPolicy::Forward->value),
         'on_ambiguous' => env('CHRONO_DST_AMBIGUOUS', AmbiguityPolicy::Earlier->value),
     ],
 
@@ -154,10 +154,10 @@ return [
     */
 
     'display' => [
-        'offset_format'   => env('CHRONO_OFFSET_FORMAT', OffsetFormat::Utc->value),
+        'offset_format' => env('CHRONO_OFFSET_FORMAT', OffsetFormat::Utc->value),
         'datetime_format' => env('CHRONO_DATETIME_FORMAT', 'M j, Y H:i'),
-        'time_format'     => env('CHRONO_TIME_FORMAT', 'H:i'),
-        'locale'          => null, // null = app()->getLocale()
+        'time_format' => env('CHRONO_TIME_FORMAT', 'H:i'),
+        'locale' => null, // null = app()->getLocale()
     ],
 
     /*
@@ -178,7 +178,7 @@ return [
     */
 
     'select' => [
-        'shape'       => env('CHRONO_SELECT_SHAPE', SelectShape::Grouped->value),
+        'shape' => env('CHRONO_SELECT_SHAPE', SelectShape::Grouped->value),
         'placeholder' => null, // null = trans('laranail-chrono::messages.select.placeholder')
     ],
 
@@ -200,9 +200,9 @@ return [
 
     'cache' => [
         'enabled' => env('CHRONO_CACHE', true),
-        'store'   => env('CHRONO_CACHE_STORE'), // null = default store
-        'prefix'  => env('CHRONO_CACHE_PREFIX', 'laranail.chrono'),
-        'ttl'     => (int) env('CHRONO_CACHE_TTL', 86400),
+        'store' => env('CHRONO_CACHE_STORE'), // null = default store
+        'prefix' => env('CHRONO_CACHE_PREFIX', 'laranail.chrono'),
+        'ttl' => (int) env('CHRONO_CACHE_TTL', 86400),
     ],
 
     /*
@@ -221,9 +221,9 @@ return [
     */
 
     'doctor' => [
-        'min_tzdata'        => env('CHRONO_TZDATA_MIN', '2024.1'),
+        'min_tzdata' => env('CHRONO_TZDATA_MIN', '2024.1'),
         'warn_on_icu_drift' => env('CHRONO_ICU_DRIFT_WARN', true),
-        'strict'            => env('CHRONO_DOCTOR_STRICT', false),
+        'strict' => env('CHRONO_DOCTOR_STRICT', false),
     ],
 
 ];
