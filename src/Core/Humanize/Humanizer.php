@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Humanize;
 
-use NoDiscard;
-use MessageFormatter;
 use DateTimeInterface;
+use MessageFormatter;
+use NoDiscard;
 use Psr\Clock\ClockInterface;
 use Simtabi\Laranail\Chrono\Core\Enums\TimeUnit;
 use Simtabi\Laranail\Chrono\Core\Timezone\Support\SystemClock;
@@ -38,7 +38,7 @@ final readonly class Humanizer
     /**
      * "3 hours ago", "in 2 days", "just now".
      *
-     * @param int $parts how many units to include — 2 gives "1 hour 20 minutes ago"
+     * @param  int  $parts  how many units to include — 2 gives "1 hour 20 minutes ago"
      */
     #[NoDiscard]
     public function diffForHumans(
@@ -66,7 +66,7 @@ final readonly class Humanizer
     /**
      * A bare duration with no past/future framing: "2 hours 5 minutes".
      *
-     * @param int $parts how many units to include
+     * @param  int  $parts  how many units to include
      */
     #[NoDiscard]
     public function duration(int $seconds, ?string $locale = null, int $parts = 1): string

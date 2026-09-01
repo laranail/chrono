@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Casts;
 
+use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
+use Simtabi\Laranail\Chrono\Core\Exception\TimezoneNotFound;
 use Simtabi\Laranail\Chrono\Core\Timezone\Timezones;
 use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
-use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
-use Simtabi\Laranail\Chrono\Core\Exception\TimezoneNotFound;
 
 /**
  * Casts a column to a `Timezone`, canonicalising on the way in.
@@ -32,7 +32,7 @@ final readonly class AsTimezone implements CastsAttributes
     /** Opt out of rewriting, for a column that must preserve exactly what was submitted. */
     public static function verbatim(): string
     {
-        return self::class . ':0';
+        return self::class.':0';
     }
 
     public function get(Model $model, string $key, mixed $value, array $attributes): ?Timezone

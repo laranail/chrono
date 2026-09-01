@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Timezone\Resolver;
 
-use Simtabi\Laranail\Chrono\Core\Timezone\Support\AliasMap;
 use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneResolver;
+use Simtabi\Laranail\Chrono\Core\Timezone\Support\AliasMap;
 
 /**
  * A deprecated identifier, rewritten to its canonical target.

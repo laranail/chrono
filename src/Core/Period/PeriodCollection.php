@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Period;
 
+use ArrayIterator;
 use Closure;
 use Countable;
+use IteratorAggregate;
+use JsonSerializable;
+use Simtabi\Laranail\Chrono\Core\Exception\InvalidPeriod;
 use Stringable;
 use Traversable;
-use ArrayIterator;
-use JsonSerializable;
-use IteratorAggregate;
-use Simtabi\Laranail\Chrono\Core\Exception\InvalidPeriod;
 
 /**
  * Several periods, operated on together.

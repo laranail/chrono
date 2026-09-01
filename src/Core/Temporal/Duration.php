@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Temporal;
 
-use NoDiscard;
-use Stringable;
 use DateInterval;
-use JsonSerializable;
 use DateTimeInterface;
+use JsonSerializable;
+use NoDiscard;
 use Simtabi\Laranail\Chrono\Core\Exception\InvalidTemporalValue;
+use Stringable;
 
 /**
  * An elapsed length of time, in seconds.
@@ -159,8 +159,8 @@ final readonly class Duration implements JsonSerializable, Stringable
         $remaining = abs($this->seconds);
 
         return [
-            'days'    => intdiv($remaining, 86400),
-            'hours'   => intdiv($remaining % 86400, 3600),
+            'days' => intdiv($remaining, 86400),
+            'hours' => intdiv($remaining % 86400, 3600),
             'minutes' => intdiv($remaining % 3600, 60),
             'seconds' => $remaining % 60,
         ];
@@ -179,17 +179,17 @@ final readonly class Duration implements JsonSerializable, Stringable
         $parts = $this->parts();
         $sign = ! $absolute && $this->seconds < 0 ? '-' : '';
 
-        $date = $parts['days'] > 0 ? $parts['days'] . 'D' : '';
+        $date = $parts['days'] > 0 ? $parts['days'].'D' : '';
 
-        $time = ($parts['hours'] > 0 ? $parts['hours'] . 'H' : '')
-            . ($parts['minutes'] > 0 ? $parts['minutes'] . 'M' : '')
-            . ($parts['seconds'] > 0 ? $parts['seconds'] . 'S' : '');
+        $time = ($parts['hours'] > 0 ? $parts['hours'].'H' : '')
+            .($parts['minutes'] > 0 ? $parts['minutes'].'M' : '')
+            .($parts['seconds'] > 0 ? $parts['seconds'].'S' : '');
 
         if ($date === '' && $time === '') {
-            return $sign . 'PT0S';
+            return $sign.'PT0S';
         }
 
-        return $sign . 'P' . $date . ($time === '' ? '' : 'T' . $time);
+        return $sign.'P'.$date.($time === '' ? '' : 'T'.$time);
     }
 
     /** `1:30:00`, `72:00:00` — hours are not wrapped, because elapsed time does not wrap. */

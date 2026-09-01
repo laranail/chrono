@@ -6,8 +6,8 @@ namespace Simtabi\Laranail\Chrono\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Simtabi\Laranail\Chrono\Core\Timezone\Timezones;
 use Simtabi\Laranail\Chrono\Core\Timezone\Support\OffsetParser;
+use Simtabi\Laranail\Chrono\Core\Timezone\Timezones;
 
 /**
  * The value must be a UTC offset.
@@ -31,9 +31,9 @@ final readonly class TimezoneOffset implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $seconds = match (true) {
-            is_int($value)    => $value,
+            is_int($value) => $value,
             is_string($value) => OffsetParser::tryParse($value),
-            default           => null,
+            default => null,
         };
 
         if ($seconds === null) {

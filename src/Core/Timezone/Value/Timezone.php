@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Timezone\Value;
 
-use NoDiscard;
-use Stringable;
-use DateTimeZone;
-use JsonSerializable;
 use DateTimeImmutable;
 use DateTimeInterface;
+use DateTimeZone;
+use JsonSerializable;
+use NoDiscard;
 use Psr\Clock\ClockInterface;
-use Simtabi\Laranail\Chrono\Core\Enums\Region;
-use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
 use Simtabi\Laranail\Chrono\Core\Config\DstPolicy;
-use Simtabi\Laranail\Chrono\Core\Enums\OffsetFormat;
-use Simtabi\Laranail\Chrono\Core\Enums\TimezoneKind;
 use Simtabi\Laranail\Chrono\Core\Enums\AmbiguityPolicy;
-use Simtabi\Laranail\Chrono\Core\Timezone\Support\AliasMap;
-use Simtabi\Laranail\Chrono\Core\Timezone\Support\SystemClock;
-use Simtabi\Laranail\Chrono\Core\Timezone\Support\LocalTimeResolver;
-use Simtabi\Laranail\Chrono\Core\Timezone\Support\TransitionScanner;
+use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
+use Simtabi\Laranail\Chrono\Core\Enums\OffsetFormat;
+use Simtabi\Laranail\Chrono\Core\Enums\Region;
+use Simtabi\Laranail\Chrono\Core\Enums\TimezoneKind;
 use Simtabi\Laranail\Chrono\Core\Timezone\Collection\TransitionCollection;
+use Simtabi\Laranail\Chrono\Core\Timezone\Support\AliasMap;
+use Simtabi\Laranail\Chrono\Core\Timezone\Support\LocalTimeResolver;
+use Simtabi\Laranail\Chrono\Core\Timezone\Support\SystemClock;
+use Simtabi\Laranail\Chrono\Core\Timezone\Support\TransitionScanner;
+use Stringable;
 
 /**
  * A single timezone, and everything you can ask about it.
@@ -61,12 +61,12 @@ final readonly class Timezone implements JsonSerializable, Stringable
         $offset = $this->offset();
 
         return [
-            'identifier'      => $this->identifier,
-            'kind'            => $this->kind->value,
-            'offset'          => $offset->format(OffsetFormat::Utc),
-            'abbreviation'    => $this->abbreviation(),
-            'dst_now'         => $this->isDst() ? 'yes' : 'no',
-            'observes_dst'    => $this->observesDst() ? 'yes' : 'no',
+            'identifier' => $this->identifier,
+            'kind' => $this->kind->value,
+            'offset' => $offset->format(OffsetFormat::Utc),
+            'abbreviation' => $this->abbreviation(),
+            'dst_now' => $this->isDst() ? 'yes' : 'no',
+            'observes_dst' => $this->observesDst() ? 'yes' : 'no',
             'next_transition' => $this->nextTransition()?->at->format('Y-m-d H:i \U\T\C') ?? 'none',
         ];
     }
@@ -350,12 +350,12 @@ final readonly class Timezone implements JsonSerializable, Stringable
         $window = [0, 2145916800];
 
         $mine = array_map(
-            static fn (Transition $t): string => $t->timestamp . ':' . $t->offsetAfter->seconds,
+            static fn (Transition $t): string => $t->timestamp.':'.$t->offsetAfter->seconds,
             $this->scanner->scan($this->zone, ...$window),
         );
 
         $theirs = array_map(
-            static fn (Transition $t): string => $t->timestamp . ':' . $t->offsetAfter->seconds,
+            static fn (Transition $t): string => $t->timestamp.':'.$t->offsetAfter->seconds,
             $other->scanner->scan($other->zone, ...$window),
         );
 
@@ -376,19 +376,19 @@ final readonly class Timezone implements JsonSerializable, Stringable
         $location = $this->location();
 
         return [
-            'identifier'   => $this->identifier,
-            'canonical'    => $this->canonicalIdentifier(),
-            'kind'         => $this->kind->value,
-            'region'       => $this->region()?->value,
-            'city'         => $this->city(),
-            'country'      => $location?->countryCode,
-            'offset'       => $offset->seconds,
+            'identifier' => $this->identifier,
+            'canonical' => $this->canonicalIdentifier(),
+            'kind' => $this->kind->value,
+            'region' => $this->region()?->value,
+            'city' => $this->city(),
+            'country' => $location?->countryCode,
+            'offset' => $offset->seconds,
             'offset_label' => $offset->format(),
             'abbreviation' => $this->abbreviation($at),
-            'is_dst'       => $this->isDst($at),
+            'is_dst' => $this->isDst($at),
             'observes_dst' => $this->observesDst(),
-            'latitude'     => $location?->latitude,
-            'longitude'    => $location?->longitude,
+            'latitude' => $location?->latitude,
+            'longitude' => $location?->longitude,
         ];
     }
 

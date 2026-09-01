@@ -74,10 +74,10 @@ final readonly class Location implements JsonSerializable
     public function toArray(): array
     {
         return [
-            'latitude'     => $this->latitude,
-            'longitude'    => $this->longitude,
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
             'country_code' => $this->countryCode,
-            'comments'     => $this->comments,
+            'comments' => $this->comments,
         ];
     }
 

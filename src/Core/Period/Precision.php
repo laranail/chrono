@@ -7,8 +7,8 @@ namespace Simtabi\Laranail\Chrono\Core\Period;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Simtabi\Laranail\Enumerator\Attributes\Label;
-use Simtabi\Laranail\Enumerator\Contracts\Enumerator;
 use Simtabi\Laranail\Enumerator\Concerns\HasEnumeratorBehavior;
+use Simtabi\Laranail\Enumerator\Contracts\Enumerator;
 
 /**
  * How finely a period measures time.
@@ -42,10 +42,10 @@ enum Precision: int implements Enumerator
     public function format(): string
     {
         return match ($this) {
-            self::Year   => 'Y-01-01 00:00:00',
-            self::Month  => 'Y-m-01 00:00:00',
-            self::Day    => 'Y-m-d 00:00:00',
-            self::Hour   => 'Y-m-d H:00:00',
+            self::Year => 'Y-01-01 00:00:00',
+            self::Month => 'Y-m-01 00:00:00',
+            self::Day => 'Y-m-d 00:00:00',
+            self::Hour => 'Y-m-d H:00:00',
             self::Minute => 'Y-m-d H:i:00',
             self::Second => 'Y-m-d H:i:s',
         };
@@ -55,10 +55,10 @@ enum Precision: int implements Enumerator
     public function interval(): string
     {
         return match ($this) {
-            self::Year   => '+1 year',
-            self::Month  => '+1 month',
-            self::Day    => '+1 day',
-            self::Hour   => '+1 hour',
+            self::Year => '+1 year',
+            self::Month => '+1 month',
+            self::Day => '+1 day',
+            self::Hour => '+1 hour',
             self::Minute => '+1 minute',
             self::Second => '+1 second',
         };

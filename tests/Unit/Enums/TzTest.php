@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Simtabi\Laranail\Chrono\Core\Enums\Tz;
 use Simtabi\Laranail\Chrono\Core\Enums\Timezone;
+use Simtabi\Laranail\Chrono\Core\Enums\Tz;
 
 it('has a constant for every canonical identifier, and no others', function (): void {
     $identifiers = Tz::identifiers();

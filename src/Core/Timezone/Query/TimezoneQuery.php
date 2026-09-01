@@ -5,23 +5,23 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Chrono\Core\Timezone\Query;
 
 use Countable;
-use Generator;
-use NoDiscard;
-use Traversable;
 use DateTimeInterface;
+use Generator;
 use IteratorAggregate;
+use NoDiscard;
 use Psr\Clock\ClockInterface;
+use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneRepository;
 use Simtabi\Laranail\Chrono\Core\Enums\Region;
 use Simtabi\Laranail\Chrono\Core\Enums\SelectShape;
-use Simtabi\Laranail\Chrono\Core\Enums\TimezoneKind;
 use Simtabi\Laranail\Chrono\Core\Enums\TimezoneField;
-use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
-use Simtabi\Laranail\Chrono\Core\Timezone\Support\AliasMap;
+use Simtabi\Laranail\Chrono\Core\Enums\TimezoneKind;
 use Simtabi\Laranail\Chrono\Core\Exception\TimezoneNotFound;
-use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneRepository;
+use Simtabi\Laranail\Chrono\Core\Timezone\Collection\TimezoneCollection;
+use Simtabi\Laranail\Chrono\Core\Timezone\Support\AliasMap;
 use Simtabi\Laranail\Chrono\Core\Timezone\Support\OffsetParser;
 use Simtabi\Laranail\Chrono\Core\Timezone\Support\TransitionScanner;
-use Simtabi\Laranail\Chrono\Core\Timezone\Collection\TimezoneCollection;
+use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
+use Traversable;
 
 /**
  * A fluent, immutable query over the timezone catalogue.
@@ -42,13 +42,13 @@ use Simtabi\Laranail\Chrono\Core\Timezone\Collection\TimezoneCollection;
 final readonly class TimezoneQuery implements Countable, IteratorAggregate
 {
     /**
-     * @param list<Region> $regions
-     * @param list<string> $countries
-     * @param list<int> $offsets
-     * @param list<string> $abbreviations
-     * @param list<string> $only
-     * @param list<string> $except
-     * @param list<callable(Timezone): bool> $callbacks
+     * @param  list<Region>  $regions
+     * @param  list<string>  $countries
+     * @param  list<int>  $offsets
+     * @param  list<string>  $abbreviations
+     * @param  list<string>  $only
+     * @param  list<string>  $except
+     * @param  list<callable(Timezone): bool>  $callbacks
      */
     public function __construct(
         private TimezoneRepository $repository,

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
-use Simtabi\Laranail\Chrono\Core\Timezone\Resolver\ResolverChain;
-use Simtabi\Laranail\Chrono\Core\Timezone\Resolver\ResolutionContext;
 use Simtabi\Laranail\Chrono\Core\Timezone\Repository\PhpTimezoneRepository;
+use Simtabi\Laranail\Chrono\Core\Timezone\Resolver\ResolutionContext;
+use Simtabi\Laranail\Chrono\Core\Timezone\Resolver\ResolverChain;
+use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
 
 beforeEach(function (): void {
     $this->repository = new PhpTimezoneRepository;

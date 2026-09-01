@@ -53,12 +53,12 @@ enum OffsetFormat: string
         $remainder = $absolute % 60;
 
         return match ($this) {
-            self::Colon   => $sign . self::pad($hours, $minutes, $remainder, ':'),
-            self::Compact => $sign . self::pad($hours, $minutes, $remainder, ''),
-            self::Short   => self::short($sign, $hours, $minutes, $remainder),
-            self::Gmt     => $seconds === 0 ? 'GMT' : 'GMT' . $sign . self::pad($hours, $minutes, $remainder, ':'),
-            self::Utc     => $seconds === 0 ? 'UTC' : 'UTC ' . $sign . self::pad($hours, $minutes, $remainder, ':'),
-            self::Iso8601 => $seconds === 0 ? 'Z' : $sign . self::pad($hours, $minutes, $remainder, ':'),
+            self::Colon => $sign.self::pad($hours, $minutes, $remainder, ':'),
+            self::Compact => $sign.self::pad($hours, $minutes, $remainder, ''),
+            self::Short => self::short($sign, $hours, $minutes, $remainder),
+            self::Gmt => $seconds === 0 ? 'GMT' : 'GMT'.$sign.self::pad($hours, $minutes, $remainder, ':'),
+            self::Utc => $seconds === 0 ? 'UTC' : 'UTC '.$sign.self::pad($hours, $minutes, $remainder, ':'),
+            self::Iso8601 => $seconds === 0 ? 'Z' : $sign.self::pad($hours, $minutes, $remainder, ':'),
         };
     }
 
@@ -66,17 +66,17 @@ enum OffsetFormat: string
     {
         $formatted = sprintf('%02d%s%02d', $hours, $separator, $minutes);
 
-        return $seconds === 0 ? $formatted : $formatted . $separator . sprintf('%02d', $seconds);
+        return $seconds === 0 ? $formatted : $formatted.$separator.sprintf('%02d', $seconds);
     }
 
     private static function short(string $sign, int $hours, int $minutes, int $seconds): string
     {
         if ($minutes === 0 && $seconds === 0) {
-            return $sign . $hours;
+            return $sign.$hours;
         }
 
-        $formatted = $sign . $hours . ':' . sprintf('%02d', $minutes);
+        $formatted = $sign.$hours.':'.sprintf('%02d', $minutes);
 
-        return $seconds === 0 ? $formatted : $formatted . ':' . sprintf('%02d', $seconds);
+        return $seconds === 0 ? $formatted : $formatted.':'.sprintf('%02d', $seconds);
     }
 }

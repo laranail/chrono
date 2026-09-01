@@ -32,8 +32,8 @@ enum PresentationPreset: string
     {
         return match ($this) {
             self::Minimal => [ZoneField::Id],
-            self::Select  => [ZoneField::Id, ZoneField::Label],
-            self::Form    => [
+            self::Select => [ZoneField::Id, ZoneField::Label],
+            self::Form => [
                 ZoneField::Id, ZoneField::Label, ZoneField::Continent, ZoneField::Country,
                 ZoneField::OffsetLabel, ZoneField::Flag, ZoneField::Search, ZoneField::Dir,
             ],

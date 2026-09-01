@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Conversion;
 
-use NoDiscard;
-use JsonException;
 use DateTimeImmutable;
 use DateTimeInterface;
+use JsonException;
+use NoDiscard;
+use Simtabi\Laranail\Chrono\Core\Config\DisplayOptions;
+use Simtabi\Laranail\Chrono\Core\Enums\AmbiguityPolicy;
 use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
 use Simtabi\Laranail\Chrono\Core\Enums\OffsetFormat;
 use Simtabi\Laranail\Chrono\Core\Timezone\Timezones;
-use Simtabi\Laranail\Chrono\Core\Config\DisplayOptions;
-use Simtabi\Laranail\Chrono\Core\Enums\AmbiguityPolicy;
 use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
 
 /**
@@ -36,8 +36,8 @@ use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
 final readonly class TimeConverter
 {
     /**
-     * @param list<string|DateTimeInterface> $inputs
-     * @param list<string> $targets
+     * @param  list<string|DateTimeInterface>  $inputs
+     * @param  list<string>  $targets
      */
     public function __construct(
         private Timezones $timezones,
@@ -59,7 +59,7 @@ final readonly class TimeConverter
      * A `DateTimeInterface` is taken as an instant and its own zone is honoured. A string with no
      * offset is a wall-clock reading and needs `from()`; with an offset it is already an instant.
      *
-     * @param string|DateTimeInterface|iterable<string|DateTimeInterface> $input
+     * @param  string|DateTimeInterface|iterable<string|DateTimeInterface>  $input
      */
     #[NoDiscard]
     public function of(string|DateTimeInterface|iterable $input): self
@@ -81,7 +81,7 @@ final readonly class TimeConverter
      * anything `Stringable` — because a caller who has `$user->timezone` should not have to know
      * which of those it is. Each is resolved once per call, not once per input.
      *
-     * @param mixed $zones one value, or any iterable of them
+     * @param  mixed  $zones  one value, or any iterable of them
      */
     #[NoDiscard]
     public function to(mixed $zones): self
@@ -249,8 +249,7 @@ final readonly class TimeConverter
     // ── internals ───────────────────────────────────────────────────────────────────────────
 
     /**
-     * @param string|DateTimeInterface|iterable<string|DateTimeInterface> $input
-     *
+     * @param  string|DateTimeInterface|iterable<string|DateTimeInterface>  $input
      * @return list<string|DateTimeInterface>
      */
     private function normalise(string|DateTimeInterface|iterable $input): array

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Chrono\Core\Concerns;
 
 use NoDiscard;
-use Simtabi\Laranail\Chrono\Core\Enums\SelectShape;
 use Simtabi\Laranail\Chrono\Core\Config\SelectOptions;
-use Simtabi\Laranail\Chrono\Core\Support\ServiceResolver;
+use Simtabi\Laranail\Chrono\Core\Enums\SelectShape;
 use Simtabi\Laranail\Chrono\Core\Presentation\TimezonePresenter;
+use Simtabi\Laranail\Chrono\Core\Support\ServiceResolver;
 
 /**
  * Building a timezone list for a consumer — a form, a JSON endpoint, an export, a console table.

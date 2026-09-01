@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Timezone\Value;
 
-use NoDiscard;
-use Stringable;
 use DateTimeZone;
 use JsonSerializable;
+use NoDiscard;
 use Simtabi\Laranail\Chrono\Core\Enums\OffsetFormat;
 use Simtabi\Laranail\Chrono\Core\Exception\InvalidOffset;
+use Stringable;
 
 /**
  * A UTC offset in seconds.
@@ -40,7 +40,7 @@ final readonly class Offset implements JsonSerializable, Stringable
     public function __debugInfo(): array
     {
         return [
-            'offset'  => $this->format(),
+            'offset' => $this->format(),
             'seconds' => (string) $this->seconds,
         ];
     }
@@ -170,8 +170,8 @@ final readonly class Offset implements JsonSerializable, Stringable
     {
         return [
             'seconds' => $this->seconds,
-            'label'   => $this->format(),
-            'hours'   => $this->hours(),
+            'label' => $this->format(),
+            'hours' => $this->hours(),
         ];
     }
 

@@ -20,7 +20,7 @@ declare(strict_types=1);
  *   php tools/tzdata-release.php --latest  the newest release PECL publishes
  *   php tools/tzdata-release.php --check   compare the two; exit 1 when a newer one exists
  */
-$versionFile = dirname(__DIR__) . '/resources/tzdata-version.txt';
+$versionFile = dirname(__DIR__).'/resources/tzdata-version.txt';
 $pinned = is_file($versionFile) ? trim((string) file_get_contents($versionFile)) : '';
 
 if ($pinned === '') {
@@ -33,7 +33,7 @@ $wantsLatest = in_array('--latest', $argv, true);
 $wantsCheck = in_array('--check', $argv, true);
 
 if (! $wantsLatest && ! $wantsCheck) {
-    fwrite(STDOUT, $pinned . "\n");
+    fwrite(STDOUT, $pinned."\n");
 
     exit(0);
 }
@@ -51,7 +51,7 @@ if (! is_string($latest) || trim($latest) === '') {
 $latest = trim($latest);
 
 if ($wantsLatest) {
-    fwrite(STDOUT, $latest . "\n");
+    fwrite(STDOUT, $latest."\n");
 
     exit(0);
 }

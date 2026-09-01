@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Presentation;
 
-use Locale;
-use NoDiscard;
-use DateTimeZone;
-use JsonException;
 use DateTimeImmutable;
 use DateTimeInterface;
+use DateTimeZone;
+use JsonException;
+use Locale;
+use NoDiscard;
 use Simtabi\Laranail\Chrono\Core\Enums\GroupBy;
-use Simtabi\Laranail\Chrono\Core\Enums\ZoneField;
-use Simtabi\Laranail\Chrono\Core\Enums\SelectShape;
 use Simtabi\Laranail\Chrono\Core\Enums\OffsetFormat;
-use Simtabi\Laranail\Chrono\Core\Enums\TimezoneField;
-use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
 use Simtabi\Laranail\Chrono\Core\Enums\PresentationPreset;
+use Simtabi\Laranail\Chrono\Core\Enums\SelectShape;
+use Simtabi\Laranail\Chrono\Core\Enums\TimezoneField;
+use Simtabi\Laranail\Chrono\Core\Enums\ZoneField;
 use Simtabi\Laranail\Chrono\Core\Timezone\Query\TimezoneQuery;
+use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
 
 /**
  * Turns a timezone query into something a human or a client can consume.
@@ -148,9 +148,9 @@ final readonly class TimezonePresenter
     public function shape(SelectShape $shape): self
     {
         return match ($shape) {
-            SelectShape::Flat    => $this->flat()->label('{city}, {country} ({gmt})'),
+            SelectShape::Flat => $this->flat()->label('{city}, {country} ({gmt})'),
             SelectShape::Grouped => $this->groupByContinent()->label('{city} ({gmt})'),
-            SelectShape::Formed  => $this->groupByContinent()->label('{id} ({gmt})'),
+            SelectShape::Formed => $this->groupByContinent()->label('{id} ({gmt})'),
             SelectShape::Payload => $this->flat()->preset(PresentationPreset::Api),
         };
     }
@@ -191,7 +191,7 @@ final readonly class TimezonePresenter
     {
         return clone ($this, [
             'locale' => $locale,
-            'rtl'    => $rtl ?? $this->isRightToLeft($locale),
+            'rtl' => $rtl ?? $this->isRightToLeft($locale),
         ]);
     }
 
@@ -293,7 +293,7 @@ final readonly class TimezonePresenter
                 'value' => $zone->identifier,
                 'label' => $this->renderLabel($zone),
                 'group' => $this->groupBy === GroupBy::None ? null : $this->groupFor($zone),
-                'dir'   => $this->rtl ? 'rtl' : 'ltr',
+                'dir' => $this->rtl ? 'rtl' : 'ltr',
                 ...$presented,
             ];
         }
@@ -380,24 +380,24 @@ final readonly class TimezonePresenter
         $location = $zone->location();
 
         return match ($field) {
-            ZoneField::Id           => $zone->identifier,
-            ZoneField::Label        => $this->renderLabel($zone),
-            ZoneField::City         => $zone->city(),
-            ZoneField::Country      => $location?->countryCode,
-            ZoneField::CountryName  => $this->countryName($location?->countryCode),
-            ZoneField::Continent    => $zone->region()?->value,
-            ZoneField::Offset       => $zone->offset($this->at)->seconds,
-            ZoneField::OffsetLabel  => $zone->offset($this->at)->format($this->offsetFormat),
+            ZoneField::Id => $zone->identifier,
+            ZoneField::Label => $this->renderLabel($zone),
+            ZoneField::City => $zone->city(),
+            ZoneField::Country => $location?->countryCode,
+            ZoneField::CountryName => $this->countryName($location?->countryCode),
+            ZoneField::Continent => $zone->region()?->value,
+            ZoneField::Offset => $zone->offset($this->at)->seconds,
+            ZoneField::OffsetLabel => $zone->offset($this->at)->format($this->offsetFormat),
             ZoneField::Abbreviation => $zone->abbreviation($this->at),
-            ZoneField::Dst          => $zone->isDst($this->at),
-            ZoneField::ObservesDst  => $zone->observesDst(),
-            ZoneField::LocalTime    => $this->localTime($zone),
-            ZoneField::Latitude     => $location?->latitude,
-            ZoneField::Longitude    => $location?->longitude,
-            ZoneField::Flag         => $this->flag($location?->countryCode),
-            ZoneField::Search       => $this->searchTokens($zone),
-            ZoneField::Dir          => $this->rtl ? 'rtl' : 'ltr',
-            ZoneField::Deprecated   => $zone->isDeprecated(),
+            ZoneField::Dst => $zone->isDst($this->at),
+            ZoneField::ObservesDst => $zone->observesDst(),
+            ZoneField::LocalTime => $this->localTime($zone),
+            ZoneField::Latitude => $location?->latitude,
+            ZoneField::Longitude => $location?->longitude,
+            ZoneField::Flag => $this->flag($location?->countryCode),
+            ZoneField::Search => $this->searchTokens($zone),
+            ZoneField::Dir => $this->rtl ? 'rtl' : 'ltr',
+            ZoneField::Deprecated => $zone->isDeprecated(),
         };
     }
 
@@ -407,16 +407,16 @@ final readonly class TimezonePresenter
         $offset = $zone->offset($this->at);
 
         return strtr($this->labelTemplate, [
-            '{id}'           => $zone->identifier,
-            '{city}'         => $zone->city(),
-            '{country}'      => $location->countryCode ?? '',
+            '{id}' => $zone->identifier,
+            '{city}' => $zone->city(),
+            '{country}' => $location->countryCode ?? '',
             '{country_name}' => $this->countryName($location?->countryCode) ?? '',
-            '{continent}'    => $zone->region()->value ?? '',
-            '{gmt}'          => $offset->format($this->offsetFormat),
-            '{offset}'       => $offset->format(OffsetFormat::Colon),
-            '{abbr}'         => $zone->abbreviation($this->at),
-            '{time}'         => $this->localTime($zone),
-            '{flag}'         => $this->flag($location?->countryCode) ?? '',
+            '{continent}' => $zone->region()->value ?? '',
+            '{gmt}' => $offset->format($this->offsetFormat),
+            '{offset}' => $offset->format(OffsetFormat::Colon),
+            '{abbr}' => $zone->abbreviation($this->at),
+            '{time}' => $this->localTime($zone),
+            '{flag}' => $this->flag($location?->countryCode) ?? '',
         ]);
     }
 
@@ -424,11 +424,11 @@ final readonly class TimezonePresenter
     {
         return match ($this->groupBy) {
             GroupBy::Continent => $zone->region()->value ?? $this->catchAllGroup,
-            GroupBy::Country   => $this->countryName($zone->location()?->countryCode)
+            GroupBy::Country => $this->countryName($zone->location()?->countryCode)
                 ?? $zone->location()->countryCode
                 ?? $this->catchAllGroup,
             GroupBy::Offset => $zone->offset($this->at)->format($this->offsetFormat),
-            GroupBy::None   => $this->catchAllGroup,
+            GroupBy::None => $this->catchAllGroup,
         };
     }
 
@@ -486,13 +486,13 @@ final readonly class TimezonePresenter
         static $names = [];
 
         $locale = $this->locale ?? 'en';
-        $key = $locale . '|' . $countryCode;
+        $key = $locale.'|'.$countryCode;
 
         if (array_key_exists($key, $names)) {
             return $names[$key];
         }
 
-        $name = Locale::getDisplayRegion('-' . $countryCode, $locale);
+        $name = Locale::getDisplayRegion('-'.$countryCode, $locale);
 
         return $names[$key] = is_string($name) && $name !== '' && $name !== $countryCode ? $name : null;
     }

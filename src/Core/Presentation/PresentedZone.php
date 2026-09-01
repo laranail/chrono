@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Presentation;
 
-use Stringable;
 use JsonSerializable;
 use Simtabi\Laranail\Chrono\Core\Enums\ZoneField;
+use Stringable;
 
 /**
  * One zone, rendered for display.

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Exception;
 
-use Throwable;
 use DateTimeInterface;
 use Simtabi\Laranail\Chrono\Core\Period\Precision;
+use Throwable;
 
 final class InvalidPeriod extends ChronoExceptionBase
 {
@@ -19,7 +19,7 @@ final class InvalidPeriod extends ChronoExceptionBase
         ));
         $exception->context = [
             'start' => $start->format(DateTimeInterface::ATOM),
-            'end'   => $end->format(DateTimeInterface::ATOM),
+            'end' => $end->format(DateTimeInterface::ATOM),
         ];
 
         return $exception;
@@ -35,7 +35,7 @@ final class InvalidPeriod extends ChronoExceptionBase
     public static function precisionMismatch(Precision $left, Precision $right): self
     {
         $exception = new self(sprintf(
-            'Periods measured in %s and %s cannot be compared. Rebuild one at the ' .
+            'Periods measured in %s and %s cannot be compared. Rebuild one at the '.
             'other\'s precision first, with Period::make($start, $end, Precision::%s).',
             strtolower($left->name),
             strtolower($right->name),

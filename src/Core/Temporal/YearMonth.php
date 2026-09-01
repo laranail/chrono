@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Temporal;
 
-use NoDiscard;
-use Stringable;
-use JsonSerializable;
 use DateTimeInterface;
+use JsonSerializable;
+use NoDiscard;
 use Simtabi\Laranail\Chrono\Core\Enums\Month;
 use Simtabi\Laranail\Chrono\Core\Exception\InvalidTemporalValue;
+use Stringable;
 
 /**
  * A month of a year — a billing period, a card expiry, a reporting bucket.

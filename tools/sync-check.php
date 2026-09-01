@@ -23,7 +23,7 @@ declare(strict_types=1);
  * gate is not running; on a contributor's laptop it means their PHP ships a different release, which
  * is normal and not their problem to fix.
  */
-$expectedFile = dirname(__DIR__) . '/resources/tzdata-version.txt';
+$expectedFile = dirname(__DIR__).'/resources/tzdata-version.txt';
 $expected = is_file($expectedFile) ? trim((string) file_get_contents($expectedFile)) : '';
 $actual = timezone_version_get();
 $inCi = getenv('CI') !== false && getenv('CI') !== '' && getenv('CI') !== 'false';
@@ -37,28 +37,28 @@ if ($expected === '') {
 if ($actual !== $expected) {
     $message = sprintf(
         "This host carries tzdata %s; the generated files were built against %s.\n"
-        . "Byte-for-byte comparison across two releases reports a difference that no commit caused,\n"
-        . "so it is not run here.\n",
+        ."Byte-for-byte comparison across two releases reports a difference that no commit caused,\n"
+        ."so it is not run here.\n",
         $actual === '0.system' ? '0.system (the OS database, which names no release)' : $actual,
         $expected,
     );
 
     if ($inCi) {
-        fwrite(STDERR, "sync-check cannot run, and in CI that is a failure.\n\n" . $message
-            . "\nCI runs this inside the development container, which carries " . $expected . " by\n"
-            . "construction. Reaching this branch there means the image is not the one it should be —\n"
-            . "the gate is silently not running. Rebuild it, or regenerate against a newer release.\n");
+        fwrite(STDERR, "sync-check cannot run, and in CI that is a failure.\n\n".$message
+            ."\nCI runs this inside the development container, which carries ".$expected." by\n"
+            ."construction. Reaching this branch there means the image is not the one it should be —\n"
+            ."the gate is silently not running. Rebuild it, or regenerate against a newer release.\n");
 
         exit(1);
     }
 
     // Name the fix, not only the reason. A skip that explains itself and stops is a message people
     // learn to scroll past; this one is two commands away from being a real check here as well.
-    fwrite(STDOUT, "sync-check skipped.\n\n" . $message . "\n"
-        . 'CI runs the real check against ' . $expected . ". To run it here too:\n\n"
-        . '  pecl install timezonedb-' . $expected . "\n"
-        . "  echo 'extension=timezonedb.so' > \"\$(php-config --ini-dir)/99-timezonedb.ini\"\n\n"
-        . "Delete that .ini file to go back to the database your PHP bundles.\n");
+    fwrite(STDOUT, "sync-check skipped.\n\n".$message."\n"
+        .'CI runs the real check against '.$expected.". To run it here too:\n\n"
+        .'  pecl install timezonedb-'.$expected."\n"
+        ."  echo 'extension=timezonedb.so' > \"\$(php-config --ini-dir)/99-timezonedb.ini\"\n\n"
+        ."Delete that .ini file to go back to the database your PHP bundles.\n");
 
     exit(0);
 }
@@ -66,8 +66,8 @@ if ($actual !== $expected) {
 fwrite(STDOUT, sprintf("Checking against tzdata %s, the release the files were generated on.\n", $expected));
 
 $generators = [
-    'alias map' => __DIR__ . '/generate-alias-map.php',
-    'enums'     => __DIR__ . '/generate-enums.php',
+    'alias map' => __DIR__.'/generate-alias-map.php',
+    'enums' => __DIR__.'/generate-enums.php',
 ];
 
 $failed = [];
@@ -91,7 +91,7 @@ if ($failed !== []) {
     fwrite(STDERR, "\nGenerated data is stale.\n\n");
 
     foreach ($failed as $label => $output) {
-        fwrite(STDERR, "  {$label}:\n" . preg_replace('/^/m', '    ', $output) . "\n");
+        fwrite(STDERR, "  {$label}:\n".preg_replace('/^/m', '    ', $output)."\n");
     }
 
     fwrite(STDERR, sprintf(

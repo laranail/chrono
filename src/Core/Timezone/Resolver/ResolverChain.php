@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Chrono\Core\Timezone\Resolver;
 
 use BackedEnum;
-use Stringable;
-use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
 use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneResolver;
+use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
+use Stringable;
 
 /**
  * Tries each strategy in turn and takes the first confident answer.

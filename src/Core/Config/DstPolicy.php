@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Chrono\Core\Config;
 
 use NoDiscard;
-use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
 use Simtabi\Laranail\Chrono\Core\Enums\AmbiguityPolicy;
+use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
 
 /**
  * What this application does with the two wall-clock readings a year that are not instants.
