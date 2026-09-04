@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Timezone\Value;
 
-use DateTimeImmutable;
+use NoDiscard;
 use DateTimeZone;
 use JsonSerializable;
-use NoDiscard;
+use DateTimeImmutable;
 
 /**
  * One moment at which a zone's UTC offset changed, carrying the offset on *both* sides.
@@ -105,14 +105,14 @@ final readonly class Transition implements JsonSerializable
     public function toArray(): array
     {
         return [
-            'timestamp' => $this->timestamp,
-            'at' => $this->at->format('c'),
+            'timestamp'     => $this->timestamp,
+            'at'            => $this->at->format('c'),
             'offset_before' => $this->offsetBefore->format(),
-            'offset_after' => $this->offsetAfter->format(),
+            'offset_after'  => $this->offsetAfter->format(),
             'delta_seconds' => $this->offsetAfter->seconds - $this->offsetBefore->seconds,
-            'is_dst' => $this->isDst,
-            'abbreviation' => $this->abbreviation,
-            'kind' => $this->isGap() ? 'gap' : ($this->isOverlap() ? 'overlap' : 'none'),
+            'is_dst'        => $this->isDst,
+            'abbreviation'  => $this->abbreviation,
+            'kind'          => $this->isGap() ? 'gap' : ($this->isOverlap() ? 'overlap' : 'none'),
         ];
     }
 

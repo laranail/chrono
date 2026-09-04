@@ -7,9 +7,9 @@ namespace Simtabi\Laranail\Chrono\Console;
 use Override;
 use Simtabi\Laranail\Chrono\Core\Enums\OffsetFormat;
 use Simtabi\Laranail\Chrono\Core\Timezone\Timezones;
+use Simtabi\Laranail\Console\Tools\Commands\Command;
 use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
 use Simtabi\Laranail\Chrono\Core\Timezone\Value\Transition;
-use Simtabi\Laranail\Console\Tools\Commands\Command;
 use Simtabi\Laranail\Console\Tools\Commands\Concerns\SupportsNamespacedNames;
 
 /**
@@ -44,7 +44,7 @@ final class ShowTimezoneCommand extends Command
             $candidates = $timezones->lenient()->candidates($input);
 
             if ($candidates->isNotEmpty()) {
-                $this->line('  Did you mean: '.implode(', ', array_slice($candidates->identifiers(), 0, 5)));
+                $this->line('  Did you mean: ' . implode(', ', array_slice($candidates->identifiers(), 0, 5)));
             }
 
             return self::FAILURE;
@@ -62,14 +62,14 @@ final class ShowTimezoneCommand extends Command
             ['City', $zone->city()],
             ['Country', $zone->countryCode() ?? '—'],
             ['Continent', $zone->region()->value ?? '—'],
-            ['Offset now', $offset->format(OffsetFormat::Utc).'  ('.$offset->seconds.'s)'],
+            ['Offset now', $offset->format(OffsetFormat::Utc) . '  (' . $offset->seconds . 's)'],
             ['Abbreviation', $zone->abbreviation()],
             ['DST in effect', $zone->isDst() ? 'yes' : 'no'],
             ['Observes DST', $zone->observesDst() ? 'yes' : 'no'],
             ['DST shift', $zone->observesDst() ? $zone->dstSavings()->format(OffsetFormat::Short) : '—'],
             ['Local time', $zone->convert($timezones->now())->format('Y-m-d H:i:s')],
-            ['Previous change', $previous instanceof Transition ? $previous->at->format('Y-m-d H:i').' UTC' : '—'],
-            ['Next change', $next instanceof Transition ? $next->at->format('Y-m-d H:i').' UTC' : '—'],
+            ['Previous change', $previous instanceof Transition ? $previous->at->format('Y-m-d H:i') . ' UTC' : '—'],
+            ['Next change', $next instanceof Transition ? $next->at->format('Y-m-d H:i') . ' UTC' : '—'],
         ];
 
         $this->table(['', $zone->identifier], $rows);

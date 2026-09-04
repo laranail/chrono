@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use Simtabi\Laranail\Chrono\Core\Exception\InvalidPeriod;
-use Simtabi\Laranail\Chrono\Core\Period\Boundaries;
 use Simtabi\Laranail\Chrono\Core\Period\Period;
-use Simtabi\Laranail\Chrono\Core\Period\PeriodCollection;
 use Simtabi\Laranail\Chrono\Core\Period\Precision;
+use Simtabi\Laranail\Chrono\Core\Period\Boundaries;
 use Simtabi\Laranail\Chrono\Core\Period\Visualizer;
+use Simtabi\Laranail\Chrono\Core\Exception\InvalidPeriod;
+use Simtabi\Laranail\Chrono\Core\Period\PeriodCollection;
 
 function period(string $start, string $end, Precision $precision = Precision::Day): Period
 {
@@ -279,7 +279,7 @@ describe('collections', function (): void {
 describe('the visualizer', function (): void {
     it('draws each block on a shared timeline', function (): void {
         $chart = new Visualizer(20)->visualize([
-            'sales' => period('2026-01-01', '2026-01-10'),
+            'sales'   => period('2026-01-01', '2026-01-10'),
             'support' => period('2026-01-05', '2026-01-15'),
         ]);
 

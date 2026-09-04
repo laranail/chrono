@@ -26,11 +26,11 @@ enum TimezoneField: string
     public function valueFor(Timezone $timezone, ?DateTimeInterface $at = null): string|int
     {
         return match ($this) {
-            self::Identifier => $timezone->identifier,
-            self::City => $timezone->city(),
-            self::Country => $timezone->countryCode() ?? '',
-            self::Region => $timezone->region()->value ?? '',
-            self::Offset => $timezone->offset($at)->seconds,
+            self::Identifier   => $timezone->identifier,
+            self::City         => $timezone->city(),
+            self::Country      => $timezone->countryCode() ?? '',
+            self::Region       => $timezone->region()->value ?? '',
+            self::Offset       => $timezone->offset($at)->seconds,
             self::Abbreviation => $timezone->abbreviation($at),
         };
     }

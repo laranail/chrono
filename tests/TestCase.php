@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Chrono\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use Simtabi\Laranail\Chrono\Testing\FreezesChronoTime;
 use Simtabi\Laranail\Chrono\Core\Support\ServiceResolver;
 use Simtabi\Laranail\Chrono\Providers\ChronoServiceProvider;
-use Simtabi\Laranail\Chrono\Testing\FreezesChronoTime;
 
 /**
  * Base case for tests that need a booted Laravel application.

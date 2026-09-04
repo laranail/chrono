@@ -3,17 +3,17 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Blade;
-use Simtabi\Laranail\Chrono\Chrono as ChronoService;
-use Simtabi\Laranail\Chrono\Core\Concerns\PresentsTimezones;
-use Simtabi\Laranail\Chrono\Core\Config\DisplayOptions;
-use Simtabi\Laranail\Chrono\Core\Config\DstPolicy;
-use Simtabi\Laranail\Chrono\Core\Config\SelectOptions;
-use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
-use Simtabi\Laranail\Chrono\Core\Enums\SelectShape;
-use Simtabi\Laranail\Chrono\Core\Exception\AmbiguousLocalTime;
-use Simtabi\Laranail\Chrono\Core\Exception\SkippedLocalTime;
-use Simtabi\Laranail\Chrono\Core\Timezone\Timezones as TimezonesService;
 use Simtabi\Laranail\Chrono\Facades\Chrono;
+use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
+use Simtabi\Laranail\Chrono\Core\Config\DstPolicy;
+use Simtabi\Laranail\Chrono\Core\Enums\SelectShape;
+use Simtabi\Laranail\Chrono\Chrono as ChronoService;
+use Simtabi\Laranail\Chrono\Core\Config\SelectOptions;
+use Simtabi\Laranail\Chrono\Core\Config\DisplayOptions;
+use Simtabi\Laranail\Chrono\Core\Concerns\PresentsTimezones;
+use Simtabi\Laranail\Chrono\Core\Exception\SkippedLocalTime;
+use Simtabi\Laranail\Chrono\Core\Exception\AmbiguousLocalTime;
+use Simtabi\Laranail\Chrono\Core\Timezone\Timezones as TimezonesService;
 
 /**
  * A configuration key that nothing reads is worse than one that does not exist.
@@ -42,7 +42,7 @@ describe('every documented key is reachable from the code', function (): void {
      */
     it('names no setting the source never mentions', function (): void {
         $source = collect(
-            (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(dirname(__DIR__, 2).'/src'))),
+            (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(dirname(__DIR__, 2) . '/src'))),
         )->filter(static fn (SplFileInfo $file): bool => $file->getExtension() === 'php')
             ->map(static fn (SplFileInfo $file): string => (string) file_get_contents($file->getPathname()))
             ->implode("\n");
@@ -54,12 +54,12 @@ describe('every documented key is reachable from the code', function (): void {
 
             // Either the whole path (`config('laranail.chrono.cache.ttl')`) or the leaf as an array
             // key inside a value object's fromArray() counts as a consumer.
-            if (! str_contains($source, $path) && ! str_contains($source, "'".$leaf."'")) {
+            if (! str_contains($source, $path) && ! str_contains($source, "'" . $leaf . "'")) {
                 $unread[] = $path;
             }
         }
 
-        expect($unread)->toBe([], 'These keys are documented but nothing reads them: '.implode(', ', $unread));
+        expect($unread)->toBe([], 'These keys are documented but nothing reads them: ' . implode(', ', $unread));
     });
 });
 
@@ -74,7 +74,7 @@ describe('every documented key is reachable from the code', function (): void {
  * every other value object and not that one.
  */
 it('binds every service the traits look up', function (): void {
-    $concerns = glob(dirname(__DIR__, 2).'/src/Core/Concerns/*.php') ?: [];
+    $concerns = glob(dirname(__DIR__, 2) . '/src/Core/Concerns/*.php') ?: [];
     $unbound = [];
 
     foreach ($concerns as $file) {
@@ -86,14 +86,14 @@ it('binds every service the traits look up', function (): void {
         $fqcn = [];
 
         foreach ($imports[1] as $import) {
-            $fqcn[substr((string) strrchr('\\'.$import, '\\'), 1)] = $import;
+            $fqcn[substr((string) strrchr('\\' . $import, '\\'), 1)] = $import;
         }
 
         foreach (array_unique($lookups[1]) as $short) {
             $class = $fqcn[$short] ?? null;
 
             if ($class !== null && ! app()->bound($class)) {
-                $unbound[] = basename($file).' asks for '.$short;
+                $unbound[] = basename($file) . ' asks for ' . $short;
             }
         }
     }
@@ -288,7 +288,8 @@ describe('doctor.strict', function (): void {
 /**
  * Flatten a config array to dotted leaf paths, treating a list as a leaf.
  *
- * @param  array<string, mixed>  $config
+ * @param array<string, mixed> $config
+ *
  * @return list<string>
  */
 function leafKeys(array $config, string $prefix = ''): array
@@ -296,7 +297,7 @@ function leafKeys(array $config, string $prefix = ''): array
     $paths = [];
 
     foreach ($config as $key => $value) {
-        $path = $prefix === '' ? (string) $key : $prefix.'.'.$key;
+        $path = $prefix === '' ? (string) $key : $prefix . '.' . $key;
 
         if (is_array($value) && $value !== [] && ! array_is_list($value)) {
             $paths = [...$paths, ...leafKeys($value, $path)];

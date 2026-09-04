@@ -4,29 +4,29 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Timezone;
 
+use NoDiscard;
 use BackedEnum;
 use DateTimeImmutable;
 use DateTimeInterface;
-use NoDiscard;
 use Psr\Clock\ClockInterface;
-use Simtabi\Laranail\Chrono\Core\Config\CatalogueOptions;
-use Simtabi\Laranail\Chrono\Core\Config\DstPolicy;
-use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneRepository;
-use Simtabi\Laranail\Chrono\Core\Enums\AmbiguityPolicy;
-use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
 use Simtabi\Laranail\Chrono\Core\Enums\Region;
+use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
+use Simtabi\Laranail\Chrono\Core\Config\DstPolicy;
 use Simtabi\Laranail\Chrono\Core\Enums\TimezoneKind;
-use Simtabi\Laranail\Chrono\Core\Exception\TimezoneNotFound;
-use Simtabi\Laranail\Chrono\Core\Timezone\Collection\TimezoneCollection;
-use Simtabi\Laranail\Chrono\Core\Timezone\Query\TimezoneQuery;
-use Simtabi\Laranail\Chrono\Core\Timezone\Repository\PhpTimezoneRepository;
-use Simtabi\Laranail\Chrono\Core\Timezone\Resolver\Resolution;
-use Simtabi\Laranail\Chrono\Core\Timezone\Resolver\ResolutionContext;
-use Simtabi\Laranail\Chrono\Core\Timezone\Resolver\ResolverChain;
-use Simtabi\Laranail\Chrono\Core\Timezone\Support\AliasMap;
-use Simtabi\Laranail\Chrono\Core\Timezone\Support\SystemClock;
-use Simtabi\Laranail\Chrono\Core\Timezone\Support\TransitionScanner;
+use Simtabi\Laranail\Chrono\Core\Enums\AmbiguityPolicy;
+use Simtabi\Laranail\Chrono\Core\Config\CatalogueOptions;
 use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
+use Simtabi\Laranail\Chrono\Core\Timezone\Support\AliasMap;
+use Simtabi\Laranail\Chrono\Core\Exception\TimezoneNotFound;
+use Simtabi\Laranail\Chrono\Core\Contracts\TimezoneRepository;
+use Simtabi\Laranail\Chrono\Core\Timezone\Query\TimezoneQuery;
+use Simtabi\Laranail\Chrono\Core\Timezone\Resolver\Resolution;
+use Simtabi\Laranail\Chrono\Core\Timezone\Support\SystemClock;
+use Simtabi\Laranail\Chrono\Core\Timezone\Resolver\ResolverChain;
+use Simtabi\Laranail\Chrono\Core\Timezone\Support\TransitionScanner;
+use Simtabi\Laranail\Chrono\Core\Timezone\Resolver\ResolutionContext;
+use Simtabi\Laranail\Chrono\Core\Timezone\Collection\TimezoneCollection;
+use Simtabi\Laranail\Chrono\Core\Timezone\Repository\PhpTimezoneRepository;
 
 /**
  * The framework-free entry point for everything timezone-related.
@@ -305,9 +305,9 @@ final readonly class Timezones
         // An enum case spells an identifier just as a string does, so `TimezoneLegacy::AsiaCalcutta`
         // is preserved on the same terms as the literal.
         $written = match (true) {
-            is_string($input) => $input,
+            is_string($input)                                        => $input,
             $input instanceof BackedEnum && is_string($input->value) => $input->value,
-            default => null,
+            default                                                  => null,
         };
 
         if ($written === null || $written === $identifier) {

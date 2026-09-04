@@ -7,8 +7,8 @@ namespace Simtabi\Laranail\Chrono\Core\Enums\Concerns;
 use BackedEnum;
 use DateTimeZone;
 use Simtabi\Laranail\Chrono\Core\Enums\TimezoneKind;
-use Simtabi\Laranail\Chrono\Core\Timezone\Support\AliasMap;
 use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
+use Simtabi\Laranail\Chrono\Core\Timezone\Support\AliasMap;
 
 /**
  * Behaviour for the generated identifier enums.

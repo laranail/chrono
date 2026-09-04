@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Timezone\Support;
 
+use NoDiscard;
+use DateTimeZone;
 use DateTimeImmutable;
 use DateTimeInterface;
-use DateTimeZone;
-use NoDiscard;
-use Simtabi\Laranail\Chrono\Core\Enums\AmbiguityPolicy;
 use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
 use Simtabi\Laranail\Chrono\Core\Enums\LocalTimeKind;
+use Simtabi\Laranail\Chrono\Core\Enums\AmbiguityPolicy;
 use Simtabi\Laranail\Chrono\Core\Timezone\Value\LocalTime;
 use Simtabi\Laranail\Chrono\Core\Timezone\Value\Transition;
 
@@ -97,13 +97,13 @@ final readonly class LocalTimeResolver
         foreach ($this->scanner->offsetsAround($zone, $naive - self::WINDOW_SECONDS, $naive + self::WINDOW_SECONDS) as $offset) {
             $instant = $naive - $offset;
 
-            if ($zone->getOffset(new DateTimeImmutable('@'.$instant)) === $offset) {
+            if ($zone->getOffset(new DateTimeImmutable('@' . $instant)) === $offset) {
                 // Expressed in the zone, not UTC. `resolve()` used to apply the zone at the end
                 // while `inspect()` handed back raw UTC instants, so the two disagreed about
                 // the same reading — and a caller showing the candidates to a user got
                 // "05:30 GMT+0000 and 06:30 GMT+0000" where both should read 01:30, told apart
                 // by their abbreviation.
-                $found[$instant] = new DateTimeImmutable('@'.$instant)->setTimezone($zone);
+                $found[$instant] = new DateTimeImmutable('@' . $instant)->setTimezone($zone);
             }
         }
 

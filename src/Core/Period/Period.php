@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Period;
 
+use Exception;
+use Stringable;
+use JsonSerializable;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Exception;
-use JsonSerializable;
 use Simtabi\Laranail\Chrono\Core\Exception\InvalidPeriod;
-use Stringable;
 
 /**
  * A span of time between two moments, at a stated precision.
@@ -46,7 +46,7 @@ final readonly class Period implements JsonSerializable, Stringable
             : $start;
 
         $this->includedEnd = $boundaries->endExcluded()
-            ? $end->modify('-'.ltrim($precision->interval(), '+'))
+            ? $end->modify('-' . ltrim($precision->interval(), '+'))
             : $end;
     }
 
@@ -54,7 +54,7 @@ final readonly class Period implements JsonSerializable, Stringable
     {
         $format = $this->precision === Precision::Day ? 'Y-m-d' : 'Y-m-d H:i:s';
 
-        return '['.$this->includedStart->format($format).', '.$this->includedEnd->format($format).']';
+        return '[' . $this->includedStart->format($format) . ', ' . $this->includedEnd->format($format) . ']';
     }
 
     /**
@@ -142,11 +142,11 @@ final readonly class Period implements JsonSerializable, Stringable
         $this->assertSamePrecision($other);
 
         $step = ltrim($this->precision->interval(), '+');
-        if ($this->includedEnd->modify('+'.$step)->getTimestamp() === $other->includedStart->getTimestamp()) {
+        if ($this->includedEnd->modify('+' . $step)->getTimestamp() === $other->includedStart->getTimestamp()) {
             return true;
         }
 
-        return $this->includedStart->modify('-'.$step)->getTimestamp() === $other->includedEnd->getTimestamp();
+        return $this->includedStart->modify('-' . $step)->getTimestamp() === $other->includedEnd->getTimestamp();
     }
 
     public function contains(DateTimeInterface|self $other): bool
@@ -224,13 +224,13 @@ final readonly class Period implements JsonSerializable, Stringable
             if ($other->includedStart > $cursor) {
                 $remaining = $remaining->add(new self(
                     $cursor,
-                    $other->includedStart->modify('-'.$step),
+                    $other->includedStart->modify('-' . $step),
                     $this->precision,
                 ));
             }
 
             if ($other->includedEnd >= $cursor) {
-                $cursor = $other->includedEnd->modify('+'.$step);
+                $cursor = $other->includedEnd->modify('+' . $step);
             }
         }
 
@@ -257,8 +257,8 @@ final readonly class Period implements JsonSerializable, Stringable
             : [$other, $this];
 
         return new self(
-            $first->includedEnd->modify('+'.$step),
-            $second->includedStart->modify('-'.$step),
+            $first->includedEnd->modify('+' . $step),
+            $second->includedStart->modify('-' . $step),
             $this->precision,
         );
     }
@@ -279,7 +279,7 @@ final readonly class Period implements JsonSerializable, Stringable
     public function renew(): self
     {
         $step = ltrim($this->precision->interval(), '+');
-        $start = $this->includedEnd->modify('+'.$step);
+        $start = $this->includedEnd->modify('+' . $step);
 
         // length() counts both endpoints, so a 31-day period advances 30 steps
         // from its new start. Advancing 31 would renew into 32 days.
@@ -372,9 +372,9 @@ final readonly class Period implements JsonSerializable, Stringable
     public function toArray(): array
     {
         return [
-            'start' => $this->start->format(DateTimeInterface::ATOM),
-            'end' => $this->end->format(DateTimeInterface::ATOM),
-            'precision' => strtolower($this->precision->name),
+            'start'      => $this->start->format(DateTimeInterface::ATOM),
+            'end'        => $this->end->format(DateTimeInterface::ATOM),
+            'precision'  => strtolower($this->precision->name),
             'boundaries' => $this->boundaries->name,
         ];
     }

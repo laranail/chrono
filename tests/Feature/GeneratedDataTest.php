@@ -16,14 +16,14 @@ use Simtabi\Laranail\Chrono\Core\Timezone\Support\AliasMap;
 */
 
 it('regenerates byte for byte against the runner\'s database', function (string $generator): void {
-    $script = dirname(__DIR__, 2).'/tools/'.$generator;
+    $script = dirname(__DIR__, 2) . '/tools/' . $generator;
 
     exec(sprintf('%s %s --check 2>&1', escapeshellarg(PHP_BINARY), escapeshellarg($script)), $output, $exitCode);
 
     expect($exitCode)->toBe(0, implode("\n", $output));
 })->with([
     'alias map' => ['generate-alias-map.php'],
-    'enums' => ['generate-enums.php'],
+    'enums'     => ['generate-enums.php'],
 ])->skip(
     fn (): bool => ! tzdataIsVersioned(),
     'the host reads the OS tz database, which carries no release to compare against',
@@ -40,7 +40,7 @@ it('maps every alias to a target with identical rules', function (): void {
         $transitions = new DateTimeZone($identifier)->getTransitions(0, 2145916800);
 
         return hash('xxh128', implode(',', array_map(
-            static fn (array $t): string => $t['ts'].':'.$t['offset'].':'.(int) $t['isdst'],
+            static fn (array $t): string => $t['ts'] . ':' . $t['offset'] . ':' . (int) $t['isdst'],
             $transitions === false ? [] : $transitions,
         )));
     };
