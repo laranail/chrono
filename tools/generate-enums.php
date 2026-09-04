@@ -19,13 +19,13 @@ declare(strict_types=1);
  *
  * Usage:  php tools/generate-enums.php [--check]
  */
-require_once __DIR__.'/pint-format.php';
+require_once __DIR__ . '/pint-format.php';
 
 $check = in_array('--check', $argv, true);
 $root = dirname(__DIR__);
 $tzdata = timezone_version_get();
 
-require_once $root.'/src/Core/Timezone/Support/AliasMap.php';
+require_once $root . '/src/Core/Timezone/Support/AliasMap.php';
 
 $caseName = static function (string $identifier): string {
     $name = str_replace(['+', '-'], [' Plus ', ' Minus '], $identifier);
@@ -35,7 +35,7 @@ $caseName = static function (string $identifier): string {
 };
 
 /**
- * @param  array<string, string>  $cases  case name => backed value
+ * @param array<string, string> $cases case name => backed value
  */
 $render = static function (string $class, string $concern, array $cases, string $summary) use ($tzdata): string {
     $body = '';
@@ -127,22 +127,22 @@ $build = static function (array $identifiers) use ($caseName): array {
 $ok = true;
 
 $ok = $emit(
-    $root.'/src/Core/Enums/Timezone.php',
+    $root . '/src/Core/Enums/Timezone.php',
     $render('Timezone', 'ResolvesZone', $build($canonical), 'Every canonical IANA timezone identifier PHP knows.'),
 ) && $ok;
 
 $legacy = array_values(array_diff($withBc, $canonical));
 
 $ok = $emit(
-    $root.'/src/Core/Enums/TimezoneLegacy.php',
+    $root . '/src/Core/Enums/TimezoneLegacy.php',
     $render(
         'TimezoneLegacy',
         'ResolvesZone',
         $build($legacy),
         'Identifiers that exist only in the backward-compatible list: deprecated aliases such as '
-        .'`Asia/Calcutta`, the fixed-offset `Etc/*` zones, and rule-bearing abbreviations like `CET`. '
-        .'Use `AliasMap` to find the canonical target, remembering that the `Etc/*` and abbreviation '
-        .'cases have none.',
+        . '`Asia/Calcutta`, the fixed-offset `Etc/*` zones, and rule-bearing abbreviations like `CET`. '
+        . 'Use `AliasMap` to find the canonical target, remembering that the `Etc/*` and abbreviation '
+        . 'cases have none.',
     ),
 ) && $ok;
 
@@ -156,14 +156,14 @@ foreach (array_keys(DateTimeZone::listAbbreviations()) as $abbreviation) {
 ksort($abbreviationCases);
 
 $ok = $emit(
-    $root.'/src/Core/Enums/TimezoneAbbreviation.php',
+    $root . '/src/Core/Enums/TimezoneAbbreviation.php',
     $render(
         'TimezoneAbbreviation',
         'DescribesAbbreviation',
         $abbreviationCases,
         'Every timezone abbreviation PHP knows. Note most are ambiguous — 96 of these map to more '
-        .'than one zone, and `CST` alone matches 62 — so an abbreviation is a display label, never '
-        .'an identifier.',
+        . 'than one zone, and `CST` alone matches 62 — so an abbreviation is a display label, never '
+        . 'an identifier.',
     ),
 ) && $ok;
 
@@ -229,7 +229,7 @@ final class Tz
 
 TZ;
 
-$ok = $emit($root.'/src/Core/Enums/Tz.php', $tz) && $ok;
+$ok = $emit($root . '/src/Core/Enums/Tz.php', $tz) && $ok;
 // ── the laranail/enumerator bridge ──────────────────────────────────────────────────────────
 //
 // This lives in the Laravel shell, not in Core. `laranail/enumerator` requires illuminate/*, and
@@ -310,7 +310,7 @@ enum TimezoneEnum: string implements Enumerator
 
 BRIDGE;
 
-$ok = $emit($root.'/src/Enums/TimezoneEnum.php', $bridge) && $ok;
+$ok = $emit($root . '/src/Enums/TimezoneEnum.php', $bridge) && $ok;
 if ($check) {
     if (! $ok) {
         fwrite(STDERR, "Run `laranail::chrono.sync` to regenerate.\n");
@@ -325,7 +325,7 @@ if ($check) {
 
 // The release every generated file in this repository corresponds to. Written by both generators,
 // so it cannot drift from the data it describes.
-file_put_contents(dirname(__DIR__).'/resources/tzdata-version.txt', $tzdata."\n");
+file_put_contents(dirname(__DIR__) . '/resources/tzdata-version.txt', $tzdata . "\n");
 
 fwrite(STDOUT, sprintf(
     "Wrote 3 enums + Tz + the enumerator bridge — %d canonical, %d legacy, %d abbreviations, %d constants, tzdata %s.\n",

@@ -18,9 +18,9 @@ use Simtabi\Laranail\Chrono\Core\Timezone\Query\TimezoneQuery;
 final readonly class CatalogueOptions
 {
     /**
-     * @param  list<string>  $only
-     * @param  list<string>  $except
-     * @param  list<string>  $countries
+     * @param list<string> $only
+     * @param list<string> $except
+     * @param list<string> $countries
      */
     public function __construct(
         public bool $includeDeprecated = false,

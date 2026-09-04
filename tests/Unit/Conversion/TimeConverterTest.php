@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
+use Simtabi\Laranail\Chrono\Core\Timezone\Timezones;
 use Simtabi\Laranail\Chrono\Core\Conversion\ConvertedTime;
 use Simtabi\Laranail\Chrono\Core\Conversion\TimeConverter;
-use Simtabi\Laranail\Chrono\Core\Enums\GapPolicy;
 use Simtabi\Laranail\Chrono\Core\Exception\SkippedLocalTime;
-use Simtabi\Laranail\Chrono\Core\Timezone\Timezones;
 
 beforeEach(function (): void {
     $this->converter = new TimeConverter(new Timezones);

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Core\Concerns;
 
-use DateTimeInterface;
 use NoDiscard;
+use DateTimeInterface;
 use Simtabi\Laranail\Chrono\Core\Config\DisplayOptions;
+use Simtabi\Laranail\Chrono\Core\Support\ServiceResolver;
 use Simtabi\Laranail\Chrono\Core\Conversion\ConvertedTime;
 use Simtabi\Laranail\Chrono\Core\Conversion\TimeConverter;
-use Simtabi\Laranail\Chrono\Core\Support\ServiceResolver;
 
 /**
  * "What time is that, over there?" for a class that asks it more than once.
@@ -56,7 +56,7 @@ trait ConvertsTimezones
     /**
      * A converter, optionally already loaded with what to convert.
      *
-     * @param  string|DateTimeInterface|iterable<string|DateTimeInterface>|null  $input
+     * @param string|DateTimeInterface|iterable<string|DateTimeInterface>|null $input
      */
     #[NoDiscard]
     protected function convertTime(string|DateTimeInterface|iterable|null $input = null): TimeConverter

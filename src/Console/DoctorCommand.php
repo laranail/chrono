@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Console;
 
-use IntlTimeZone;
 use Override;
-use Simtabi\Laranail\Chrono\Core\Config\CatalogueOptions;
+use IntlTimeZone;
 use Simtabi\Laranail\Chrono\Core\Config\DstPolicy;
 use Simtabi\Laranail\Chrono\Core\Timezone\Timezones;
-use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
 use Simtabi\Laranail\Console\Tools\Commands\Command;
+use Simtabi\Laranail\Chrono\Core\Config\CatalogueOptions;
+use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
 use Simtabi\Laranail\Console\Tools\Commands\Concerns\SupportsNamespacedNames;
 
 /**
@@ -50,7 +50,7 @@ final class DoctorCommand extends Command
         // minimum would warn on every well-maintained Debian host in existence, so say what is
         // actually true instead: the data comes from the OS, and the OS is what keeps it current.
         if ($timezones->usesSystemDatabase()) {
-            $this->components->twoColumnDetail('PHP tzdata', 'from the OS ('.$phpTzdata.')');
+            $this->components->twoColumnDetail('PHP tzdata', 'from the OS (' . $phpTzdata . ')');
             $this->components->twoColumnDetail(
                 '',
                 '<fg=gray>keep it current with the system package, not with PHP</>',
@@ -63,7 +63,7 @@ final class DoctorCommand extends Command
             && version_compare($this->comparable($phpTzdata), $this->comparable($minimum), '<')) {
             $this->components->warn(sprintf(
                 'tzdata %s is older than the configured minimum of %s. Zones change several times a '
-                .'year by decree; this host is likely wrong about at least one country.',
+                . 'year by decree; this host is likely wrong about at least one country.',
                 $phpTzdata,
                 $minimum,
             ));
@@ -82,7 +82,7 @@ final class DoctorCommand extends Command
                 if ($this->comparable($icu) !== $this->comparable($phpTzdata)) {
                     $this->components->warn(sprintf(
                         'ICU carries tzdata %s while PHP carries %s. Localised names come from ICU and '
-                        .'offsets from PHP, so the two can disagree about the same zone.',
+                        . 'offsets from PHP, so the two can disagree about the same zone.',
                         $icu,
                         $phpTzdata,
                     ));
@@ -108,8 +108,8 @@ final class DoctorCommand extends Command
             if ($offered === 0) {
                 $this->components->error(
                     'The configured catalogue matches no zones at all, so every picker is empty and '
-                    .'every timezone_allowed rule rejects everything. Check catalogue.only and '
-                    .'catalogue.countries.',
+                    . 'every timezone_allowed rule rejects everything. Check catalogue.only and '
+                    . 'catalogue.countries.',
                 );
                 $failed = true;
             }
@@ -135,10 +135,10 @@ final class DoctorCommand extends Command
         }
 
         foreach (['default', 'fallback'] as $key) {
-            $value = (string) config('laranail.chrono.'.$key, 'UTC');
+            $value = (string) config('laranail.chrono.' . $key, 'UTC');
             $resolved = $timezones->tryOf($value);
 
-            $this->components->twoColumnDetail($key, $value.($resolved instanceof Timezone ? '' : ' — UNRESOLVABLE'));
+            $this->components->twoColumnDetail($key, $value . ($resolved instanceof Timezone ? '' : ' — UNRESOLVABLE'));
 
             if (! $resolved instanceof Timezone) {
                 $failed = true;
@@ -179,6 +179,6 @@ final class DoctorCommand extends Command
     {
         [$year, $release] = array_pad(explode('.', $version, 2), 2, '0');
 
-        return $year.'.'.str_pad(preg_replace('/\D/', '', $release) ?: '0', 3, '0', STR_PAD_LEFT);
+        return $year . '.' . str_pad(preg_replace('/\D/', '', $release) ?: '0', 3, '0', STR_PAD_LEFT);
     }
 }

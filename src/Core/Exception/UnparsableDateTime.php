@@ -12,8 +12,8 @@ final class UnparsableDateTime extends ChronoExceptionBase
         $exception = new self(sprintf(
             'Could not parse "%s"%s.%s',
             $value,
-            $format === null ? '' : ' using the format "'.$format.'"',
-            $errors === [] ? '' : ' '.implode(' ', $errors),
+            $format === null ? '' : ' using the format "' . $format . '"',
+            $errors === [] ? '' : ' ' . implode(' ', $errors),
         ));
 
         $exception->context = ['value' => $value, 'format' => $format, 'errors' => $errors];
@@ -25,7 +25,7 @@ final class UnparsableDateTime extends ChronoExceptionBase
     {
         $exception = new self(sprintf(
             'The value "%s" carries the offset %s, which conflicts with the requested zone %s. '
-            .'PHP would silently ignore the zone; strict parsing refuses instead.',
+            . 'PHP would silently ignore the zone; strict parsing refuses instead.',
             $value,
             $parsedOffset,
             $zone,

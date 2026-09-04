@@ -49,7 +49,7 @@ it('embeds its options as inert JSON', function (): void {
 });
 
 it('groups by whatever it is told to', function (string $group, string $expected): void {
-    $html = Blade::render('<x-laranail-chrono::timezone-select name="tz" group="'.$group.'" />');
+    $html = Blade::render('<x-laranail-chrono::timezone-select name="tz" group="' . $group . '" />');
 
     expect($html)->toContain($expected);
 })->with([
@@ -79,7 +79,7 @@ it('publishes the enhancement script', function (): void {
 });
 
 it('ships a script with no dependencies and no build step', function (): void {
-    $js = file_get_contents(dirname(__DIR__, 2).'/resources/js/chrono-select.js');
+    $js = file_get_contents(dirname(__DIR__, 2) . '/resources/js/chrono-select.js');
 
     expect($js)->toContain('data-chrono-select')
         ->toContain('listbox')                // it builds an accessible combobox

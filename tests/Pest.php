@@ -59,7 +59,7 @@ function zone(string $identifier): DateTimeZone
  */
 function tzdataIsVersioned(): bool
 {
-    $expected = trim((string) @file_get_contents(dirname(__DIR__).'/resources/tzdata-version.txt'));
+    $expected = trim((string) @file_get_contents(dirname(__DIR__) . '/resources/tzdata-version.txt'));
 
     return $expected !== '' && $expected === timezone_version_get();
 }

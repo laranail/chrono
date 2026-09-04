@@ -38,16 +38,16 @@ enum Region: string
     public function mask(): int
     {
         return match ($this) {
-            self::Africa => DateTimeZone::AFRICA,
-            self::America => DateTimeZone::AMERICA,
-            self::Antarctica => DateTimeZone::ANTARCTICA,
-            self::Arctic => DateTimeZone::ARCTIC,
-            self::Asia => DateTimeZone::ASIA,
-            self::Atlantic => DateTimeZone::ATLANTIC,
-            self::Australia => DateTimeZone::AUSTRALIA,
-            self::Europe => DateTimeZone::EUROPE,
-            self::Indian => DateTimeZone::INDIAN,
-            self::Pacific => DateTimeZone::PACIFIC,
+            self::Africa         => DateTimeZone::AFRICA,
+            self::America        => DateTimeZone::AMERICA,
+            self::Antarctica     => DateTimeZone::ANTARCTICA,
+            self::Arctic         => DateTimeZone::ARCTIC,
+            self::Asia           => DateTimeZone::ASIA,
+            self::Atlantic       => DateTimeZone::ATLANTIC,
+            self::Australia      => DateTimeZone::AUSTRALIA,
+            self::Europe         => DateTimeZone::EUROPE,
+            self::Indian         => DateTimeZone::INDIAN,
+            self::Pacific        => DateTimeZone::PACIFIC,
             self::Utc, self::Etc => DateTimeZone::UTC,
         };
     }

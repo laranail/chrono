@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\Models\Concerns;
 
-use DateTimeInterface;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use NoDiscard;
+use DateTimeInterface;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Simtabi\Laranail\Chrono\Casts\AsTimezone;
-use Simtabi\Laranail\Chrono\Core\Concerns\InteractsWithTimezones;
 use Simtabi\Laranail\Chrono\Core\Timezone\Value\Timezone;
+use Simtabi\Laranail\Chrono\Core\Concerns\InteractsWithTimezones;
 
 /**
  * A model that belongs to a timezone — a user, a venue, a tenant, a store.
@@ -141,7 +141,7 @@ trait HasTimezone
      * `whereTimezone('US/Eastern')` finds rows stored as `America/New_York`, which a plain `where`
      * on the column does not.
      *
-     * @param  Builder<covariant Model>  $query
+     * @param Builder<covariant Model> $query
      */
     public function scopeWhereTimezone(Builder $query, mixed $zone): void
     {
@@ -149,8 +149,8 @@ trait HasTimezone
     }
 
     /**
-     * @param  Builder<covariant Model>  $query
-     * @param  iterable<mixed>  $zones  anything the resolver accepts
+     * @param Builder<covariant Model> $query
+     * @param iterable<mixed> $zones anything the resolver accepts
      */
     public function scopeWhereTimezoneIn(Builder $query, iterable $zones): void
     {
@@ -166,7 +166,7 @@ trait HasTimezone
     /**
      * Rows whose zone belongs to a country — "every store in Kenya", without a country column.
      *
-     * @param  Builder<covariant Model>  $query
+     * @param Builder<covariant Model> $query
      */
     public function scopeWhereTimezoneCountry(Builder $query, string ...$countryCodes): void
     {

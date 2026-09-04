@@ -25,7 +25,7 @@ final class DateFormatterCache
 
     public function patternFor(string $locale, string $skeleton): string
     {
-        $key = $locale.'|'.$skeleton;
+        $key = $locale . '|' . $skeleton;
 
         if (isset($this->patterns[$key])) {
             return $this->patterns[$key];

@@ -35,9 +35,9 @@ enum Month: int
     public function length(int $year): int
     {
         return match ($this) {
-            self::February => self::isLeapYear($year) ? 29 : 28,
+            self::February                                           => self::isLeapYear($year) ? 29 : 28,
             self::April, self::June, self::September, self::November => 30,
-            default => 31,
+            default                                                  => 31,
         };
     }
 

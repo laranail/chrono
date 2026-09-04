@@ -23,8 +23,8 @@ declare(strict_types=1);
 function laranail_pint_format(string $contents): string
 {
     $root = dirname(__DIR__);
-    $pint = $root.'/vendor/bin/pint';
-    $config = $root.'/vendor/laranail/package-tools/pint.json';
+    $pint = $root . '/vendor/bin/pint';
+    $config = $root . '/vendor/laranail/package-tools/pint.json';
 
     if (! is_file($pint) || ! is_file($config)) {
         return $contents;
@@ -36,7 +36,7 @@ function laranail_pint_format(string $contents): string
     }
 
     // Pint only inspects files it recognises as PHP.
-    $file = $tmp.'.php';
+    $file = $tmp . '.php';
     rename($tmp, $file);
 
     try {

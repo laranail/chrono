@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Chrono\View\Components;
 
-use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
+use Illuminate\Contracts\View\View;
 use Simtabi\Laranail\Chrono\Chrono;
-use Simtabi\Laranail\Chrono\Core\Config\SelectOptions;
 use Simtabi\Laranail\Chrono\Core\Enums\GroupBy;
-use Simtabi\Laranail\Chrono\Core\Enums\OffsetFormat;
-use Simtabi\Laranail\Chrono\Core\Enums\PresentationPreset;
 use Simtabi\Laranail\Chrono\Core\Enums\SelectShape;
+use Simtabi\Laranail\Chrono\Core\Enums\OffsetFormat;
+use Simtabi\Laranail\Chrono\Core\Config\SelectOptions;
+use Simtabi\Laranail\Chrono\Core\Enums\PresentationPreset;
 use Simtabi\Laranail\Chrono\Core\Presentation\TimezonePresenter;
 
 /**
@@ -66,15 +66,15 @@ final class TimezoneSelect extends Component
         $view = 'laranail-chrono::components.select';
 
         return view($view, [
-            'fieldId' => $this->id ?? 'chrono-tz-'.substr(md5($this->name), 0, 8),
-            'grouped' => $groupBy === GroupBy::None ? ['' => $grouped] : $grouped,
-            'options' => $presenter->flat()->forApi(),
-            'direction' => $this->isRightToLeft($this->localeFor()) ? 'rtl' : 'ltr',
+            'fieldId'         => $this->id ?? 'chrono-tz-' . substr(md5($this->name), 0, 8),
+            'grouped'         => $groupBy === GroupBy::None ? ['' => $grouped] : $grouped,
+            'options'         => $presenter->flat()->forApi(),
+            'direction'       => $this->isRightToLeft($this->localeFor()) ? 'rtl' : 'ltr',
             'placeholderText' => $this->placeholder
                 ?? $options->placeholder
                 ?? __('laranail-chrono::messages.select.placeholder'),
             'searchPlaceholderText' => $this->searchPlaceholder ?? __('laranail-chrono::messages.select.search'),
-            'emptyText' => $this->emptyMessage ?? __('laranail-chrono::messages.select.empty'),
+            'emptyText'             => $this->emptyMessage ?? __('laranail-chrono::messages.select.empty'),
         ]);
     }
 
@@ -129,7 +129,7 @@ final class TimezoneSelect extends Component
 
         return match ($shape) {
             SelectShape::Grouped, SelectShape::Formed => GroupBy::Continent,
-            SelectShape::Flat, SelectShape::Payload => GroupBy::None,
+            SelectShape::Flat, SelectShape::Payload   => GroupBy::None,
         };
     }
 

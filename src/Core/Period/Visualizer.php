@@ -28,7 +28,7 @@ final readonly class Visualizer
     }
 
     /**
-     * @param  array<string, Period|PeriodCollection>  $blocks  label => what to draw
+     * @param array<string, Period|PeriodCollection> $blocks label => what to draw
      */
     public function visualize(array $blocks): string
     {
@@ -60,7 +60,7 @@ final readonly class Visualizer
     /**
      * One row: a blank line with a bar drawn wherever a period covers it.
      *
-     * @param  list<Period>  $periods
+     * @param list<Period> $periods
      */
     private function row(array $periods, Period $bounds): string
     {

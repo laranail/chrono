@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use Simtabi\Laranail\Chrono\Core\Enums\TimeUnit;
 use Simtabi\Laranail\Chrono\Core\Humanize\Humanizer;
-use Simtabi\Laranail\Chrono\Core\Humanize\MessageCatalogue;
 use Simtabi\Laranail\Chrono\Core\Testing\FrozenClock;
+use Simtabi\Laranail\Chrono\Core\Humanize\MessageCatalogue;
 
 beforeEach(function (): void {
     $this->humanizer = (new Humanizer)->withClock(new FrozenClock('2026-06-15T12:00:00Z'));
@@ -15,9 +15,9 @@ it('phrases a difference in the past and the future', function (string $instant,
     expect($this->humanizer->diffForHumans(utc($instant)))->toBe($expected);
 })->with([
     '3 hours ago' => ['2026-06-15 09:00', '3 hours ago'],
-    'in 2 days' => ['2026-06-17 12:00', 'in 2 days'],
-    'just now' => ['2026-06-15 11:59:50', 'just now'],
-    'singular' => ['2026-06-14 12:00', '1 day ago'],
+    'in 2 days'   => ['2026-06-17 12:00', 'in 2 days'],
+    'just now'    => ['2026-06-15 11:59:50', 'just now'],
+    'singular'    => ['2026-06-14 12:00', '1 day ago'],
 ]);
 
 it('can include more than one unit', function (): void {
@@ -91,8 +91,8 @@ it('accepts application-supplied patterns', function (): void {
 it('promotes to a larger unit at the conventional thresholds', function (int $seconds, TimeUnit $expected): void {
     expect($this->humanizer->unitFor($seconds))->toBe($expected);
 })->with([
-    '44 seconds stays seconds' => [44, TimeUnit::Second],
+    '44 seconds stays seconds'    => [44, TimeUnit::Second],
     '45 seconds becomes a minute' => [45, TimeUnit::Minute],
-    '23 hours becomes a day' => [82800, TimeUnit::Day],
-    '40 days becomes a month' => [40 * 86400, TimeUnit::Month],
+    '23 hours becomes a day'      => [82800, TimeUnit::Day],
+    '40 days becomes a month'     => [40 * 86400, TimeUnit::Month],
 ]);
