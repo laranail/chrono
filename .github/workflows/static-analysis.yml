@@ -41,7 +41,7 @@ jobs:
         run: docker/run composer parallel-lint
 
       - name: Pint (code style)
-        run: docker/run vendor/bin/pint --test
+        run: docker/run vendor/bin/laranail-pint --test
 
       - name: PHPStan (shell level 8, core level 10 + strict)
         run: docker/run composer phpstan
