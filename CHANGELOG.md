@@ -174,7 +174,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the bundled database's `??`/-90/-180 sentinel; a system build writes `0.0/0.0` with a `?` comment
   instead, so rule-less zones came back as a location in the Gulf of Guinea. A zone with no country
   is not a place, which is the only test that holds across builds.
-- `chrono:doctor` warned that tzdata was stale on every well-maintained Debian host, because
+- `laranail::chrono.doctor` warned that tzdata was stale on every well-maintained Debian host, because
   `timezone_version_get()` returns the literal `0.system` there and no comparison against it can
   succeed. It now reports where the data comes from and says the OS package is what keeps it current.
 - `tools/generate-alias-map.php` died rather than stepping over a non-zone entry.
@@ -219,7 +219,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Every entry point now accepts a string-backed enum case or any `Stringable` — `Timezones::of(
   Timezone::AmericaNewYork)` — by unwrapping it to the string it spells and judging that string like
   any other. An abbreviation enum still has to earn its answer from the abbreviation strategy.
-- `chrono:doctor` reports the daylight-saving pair in force and the size of the configured catalogue,
+- `laranail::chrono.doctor` reports the daylight-saving pair in force and the size of the configured catalogue,
   and fails outright when that catalogue matches no zones.
 - `TimezoneRepository::isCanonical()`.
 

@@ -45,7 +45,7 @@ database. Resolution is deliberately unaffected: with `only => ['UTC', 'Africa/N
 `Antarctica/Troll` still resolves, still renders and still converts. Reach the unrestricted set
 explicitly with `Timezones::unrestrictedQuery()`.
 
-`chrono:doctor` fails outright when the configured catalogue matches no zones, because that is a
+`laranail::chrono.doctor` fails outright when the configured catalogue matches no zones, because that is a
 broken application rather than a stale one: every picker is blank and every rule rejects everything.
 
 ## Resolution
@@ -111,7 +111,7 @@ that call only. The defaults reproduce PHP's own behaviour, so adopting the pack
 until you opt in. Use `throw` for bookings, payroll and billing. See
 [Daylight saving](daylight-saving.md).
 
-`chrono:doctor` reports the pair in force and says so when it is the permissive one.
+`laranail::chrono.doctor` reports the pair in force and says so when it is the permissive one.
 
 ## Display
 

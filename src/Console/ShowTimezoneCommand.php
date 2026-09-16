@@ -22,10 +22,6 @@ final class ShowTimezoneCommand extends Command
 {
     use SupportsNamespacedNames;
 
-    /** @var list<string> */
-    #[Override]
-    protected array $commandAliases = ['chrono:show'];
-
     #[Override]
     protected $signature = 'laranail::chrono.show {zone : An identifier, alias, offset, country code or Windows id}';
 
