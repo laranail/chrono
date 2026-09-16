@@ -1,16 +1,16 @@
 # Commands
 
 Four Artisan commands. Each has a namespaced name and a short alias, so `laranail::chrono.doctor`
-and `chrono:doctor` are the same command.
+and `laranail::chrono.doctor` are the same command.
 
-## `chrono:show`
+## `laranail::chrono.show`
 
 Everything known about one zone — what you run when a timestamp looks wrong.
 
 ```bash
-php artisan chrono:show Africa/Nairobi
-php artisan chrono:show KE
-php artisan chrono:show "Pacific Standard Time"
+php artisan laranail::chrono.show Africa/Nairobi
+php artisan laranail::chrono.show KE
+php artisan laranail::chrono.show "Pacific Standard Time"
 ```
 
 It accepts anything the resolver does and reports what the input actually resolved to, which is
@@ -21,16 +21,16 @@ observes it at all, the size of its shift, the local time, and the previous and 
 When the input resolves to nothing it exits non-zero and suggests candidates rather than just
 failing.
 
-## `chrono:list`
+## `laranail::chrono.list`
 
 The catalogue **as this application has configured it** — not the full 419.
 
 ```bash
-php artisan chrono:list --region=Africa
-php artisan chrono:list --country=KE --country=TZ
-php artisan chrono:list --search=nairobi
-php artisan chrono:list --group=offset
-php artisan chrono:list --format=ids
+php artisan laranail::chrono.list --region=Africa
+php artisan laranail::chrono.list --country=KE --country=TZ
+php artisan laranail::chrono.list --search=nairobi
+php artisan laranail::chrono.list --group=offset
+php artisan laranail::chrono.list --format=ids
 ```
 
 | Option | |
@@ -44,13 +44,13 @@ php artisan chrono:list --format=ids
 Worth running when a picker and a validation rule disagree: the configured catalogue and the full
 list are rarely the same, and the difference is invisible until a user hits it.
 
-## `chrono:doctor`
+## `laranail::chrono.doctor`
 
 "Is this host's date data trustworthy?"
 
 ```bash
-php artisan chrono:doctor
-php artisan chrono:doctor --strict   # warnings become failures
+php artisan laranail::chrono.doctor
+php artisan laranail::chrono.doctor --strict   # warnings become failures
 ```
 
 It reports the checks nobody thinks to make:
@@ -74,13 +74,13 @@ It reports the checks nobody thinks to make:
 `--strict` turns warnings into a non-zero exit for one run; `doctor.strict` does it permanently,
 which is what a CI pipeline wants. A genuine failure exits non-zero either way.
 
-## `chrono:sync`
+## `laranail::chrono.sync`
 
 Regenerate the generated enums and alias map from this host's tz database.
 
 ```bash
-php artisan chrono:sync
-php artisan chrono:sync --check   # report drift, write nothing, exit non-zero
+php artisan laranail::chrono.sync
+php artisan laranail::chrono.sync --check   # report drift, write nothing, exit non-zero
 ```
 
 `--check` is what CI runs. See [Generated data](generated-data.md) for what is generated and why the

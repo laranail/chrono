@@ -97,7 +97,7 @@ describe('select shapes', function (): void {
     })->with([
         [SelectShape::Flat, ['Africa/Nairobi' => 'Nairobi, KE (UTC +03:00)']],
         [SelectShape::Grouped, ['Africa' => ['Africa/Nairobi' => 'Nairobi (UTC +03:00)']]],
-        [SelectShape::Formed, ['Africa'  => ['Africa/Nairobi' => 'Africa/Nairobi (UTC +03:00)']]],
+        [SelectShape::Formed, ['Africa' => ['Africa/Nairobi' => 'Africa/Nairobi (UTC +03:00)']]],
     ]);
 
     it('renders a payload a JavaScript picker can use directly', function (): void {

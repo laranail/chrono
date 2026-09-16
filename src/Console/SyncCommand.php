@@ -18,10 +18,6 @@ final class SyncCommand extends Command
 {
     use SupportsNamespacedNames;
 
-    /** @var list<string> */
-    #[Override]
-    protected array $commandAliases = ['chrono:sync'];
-
     #[Override]
     protected $signature = 'laranail::chrono.sync {--check : Report drift without writing}';
 

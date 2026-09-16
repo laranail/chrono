@@ -26,10 +26,6 @@ final class DoctorCommand extends Command
 {
     use SupportsNamespacedNames;
 
-    /** @var list<string> */
-    #[Override]
-    protected array $commandAliases = ['chrono:doctor'];
-
     #[Override]
     protected $signature = 'laranail::chrono.doctor {--strict : Treat warnings as failures, as doctor.strict does permanently}';
 

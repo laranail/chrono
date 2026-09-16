@@ -24,10 +24,6 @@ final class ListTimezonesCommand extends Command
 {
     use SupportsNamespacedNames;
 
-    /** @var list<string> */
-    #[Override]
-    protected array $commandAliases = ['chrono:list'];
-
     #[Override]
     protected $signature = 'laranail::chrono.list
         {--region= : Restrict to a continent, e.g. Africa}
