@@ -23,6 +23,21 @@ declare(strict_types=1);
  * gate is not running; on a contributor's laptop it means their PHP ships a different release, which
  * is normal and not their problem to fix.
  */
+// The generated files are committed Pint-formatted, and the generators format their output through
+// Pint before comparing (tools/pint-format.php). Without Pint installed that step falls back to raw
+// text, so every formatted file would read as "out of sync with the tz database" -- the wrong cause,
+// pointing at tzdata. Say what is actually missing instead.
+$pintRoot = dirname(__DIR__) . '/vendor';
+
+if (! is_file($pintRoot . '/bin/pint') || ! is_file($pintRoot . '/laranail/package-tools/pint.json')) {
+    fwrite(STDERR, "Pint is not installed (vendor/bin/pint and laranail/package-tools' pint.json).
+"
+        . 'The generated files are Pint-formatted, so they cannot be compared without it. Run `composer install`.
+', );
+
+    exit(1);
+}
+
 $expectedFile = dirname(__DIR__) . '/resources/tzdata-version.txt';
 $expected = is_file($expectedFile) ? trim((string) file_get_contents($expectedFile)) : '';
 $actual = timezone_version_get();

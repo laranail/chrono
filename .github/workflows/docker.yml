@@ -41,6 +41,13 @@ jobs:
 
       # The Dockerfile already fails if timezonedb did not take, and the action reports what the
       # image carries. This proves the thing the image exists for: that the gate is real inside it.
+      # The generated files are committed Pint-formatted and the gate formats before comparing, so it
+      # needs the dev dependencies. Without them it reported every formatted file as stale tzdata.
+      - name: Install dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        run: docker/run composer update --prefer-stable --no-interaction --no-progress
+
       - name: The generated-data gate is real in there
         env:
           CI: 'true'
