@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        uses: actions/checkout@v7
 
       # Through the same composite action every other workflow uses, so this shares their layer
       # cache and cannot drift onto a different base or a stale action pin.
