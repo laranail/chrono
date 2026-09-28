@@ -43,6 +43,16 @@ jobs:
         id: changelog
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
+          # A tag with no CHANGELOG section used to publish an empty release. Refuse instead.
+          notes=$(awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { found = 1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md)
+          if [ -z "$(printf '%s' "$notes" | tr -d '[:space:]')" ]; then
+            echo "::error::CHANGELOG.md has no section for $VERSION; a release without real notes is incomplete." >&2
+            exit 1
+          fi
           {
             echo 'body<<CHANGELOG_EOF'
             awk -v ver="$VERSION" '

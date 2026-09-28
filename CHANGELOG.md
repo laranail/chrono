@@ -5,6 +5,24 @@ All notable changes to `laranail/chrono` are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.8] - 2026-09-28
+
+### Changed
+
+- **The tz database moves from 2026.3 to 2026.4.** The catalogue is unchanged: regenerating under PECL timezonedb
+  2026.4 reproduces every generated file, and only the recorded release (`resources/tzdata-version.txt`) moves.
+- **The bare command aliases are gone.** `chrono:doctor`, `chrono:list`, `chrono:show` and `chrono:sync` no longer
+  resolve; use `laranail::chrono.doctor`, `laranail::chrono.list`, `laranail::chrono.show` and
+  `laranail::chrono.sync`. A bare alias hands back the flat-registry collision the vendor-scoped name exists to
+  prevent. Scripts calling the short names need updating.
+
+### Fixed
+
+- **The Docker `sync-check` reported every generated file as stale tzdata.** The job ran without installing
+  dependencies, and the generators format through Pint before comparing, falling back to raw text without it. The
+  job now installs dependencies, and `tools/sync-check.php` exits with "Pint is not installed" instead of a
+  misleading staleness report. It blocked every change touching `docker/`, `docker.yml` or the tzdata pin.
+
 ## [0.1.7] - 2026-08-15
 
 ### Fixed
