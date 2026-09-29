@@ -5,6 +5,14 @@ All notable changes to `laranail/chrono` are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **The weekly tz database bump opens its pull request as the Refresh Bot GitHub App.** A pull request
+  opened with the workflow's own `GITHUB_TOKEN` starts no CI, so `main`'s required checks never reported
+  on it. The workflow's own token now only reads the repository and files the fallback issue.
+
 ## [0.1.8] - 2026-09-28
 
 ### Changed
