@@ -140,9 +140,13 @@ Two-part acts get half-done, and the half that gets forgotten here is invisible.
 5. opens a pull request describing what actually changed — whether any identifier, abbreviation or
    alias moved, or whether the release only altered transition rules.
 
-Step 4 is there because a pull request opened by a workflow does not itself trigger CI. Proposing an
-unverified bump would be worse than proposing none, so the proof happens in the bump job and the
-pull request says so.
+Step 4 is there because proposing an unverified bump would be worse than proposing none, so the proof
+happens in the bump job and the pull request says so. The pull request then runs CI as well: the
+branch and the pull request come from the maintainer-owned Refresh Bot GitHub App, through a token
+minted per run from the organisation-level `REFRESH_APP_CLIENT_ID` and `REFRESH_APP_PRIVATE_KEY`. A
+pull request opened with the workflow's own `GITHUB_TOKEN` starts no workflows, so `main`'s required
+checks would never report on it. If the app cannot open the pull request, the job files an issue
+linking the pushed branch instead.
 
 Run it early with `gh workflow run tzdata-bump.yml`.
 

@@ -24,9 +24,11 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# The workflow's own token only reads the repository and files the fallback issue. The branch and the
+# pull request come from the maintainer-owned Refresh Bot app: a pull request opened with GITHUB_TOKEN
+# starts no workflows, so main's required checks would never report on it.
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
   issues: write
 
 jobs:
@@ -36,8 +38,22 @@ jobs:
     timeout-minutes: 15
 
     steps:
+      # A per-run token, scoped to this repository's contents and pull requests and revoked when the job
+      # ends. The client ID and key are organisation-level (REFRESH_APP_CLIENT_ID, REFRESH_APP_PRIVATE_KEY).
+      - name: Mint the Refresh Bot token
+        id: app
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.REFRESH_APP_CLIENT_ID }}
+          private-key: ${{ secrets.REFRESH_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
+      # Checked out with the app's token, so the branch push below is the app's too.
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          token: ${{ steps.app.outputs.token }}
 
       # Built on the *current* pin, purely to ask PECL what exists. Cached, so it costs seconds.
       - name: Build the container
@@ -86,8 +102,8 @@ jobs:
           # image was built on, rather than trusting the step above to have stayed true.
           test "$(cat resources/tzdata-version.txt)" = "${{ steps.check.outputs.latest }}"
 
-      # A pull request opened by a workflow does not itself trigger CI, so the proof has to happen
-      # here. Opening one that has not been checked would be worse than opening none.
+      # The pull request runs CI too, now that the app opens it. This stays: a bump that fails here is
+      # never proposed at all, and opening one that has not been checked would be worse than none.
       - name: Prove the new state before proposing it
         if: steps.check.outputs.needed == 'true'
         env:
@@ -122,7 +138,8 @@ jobs:
       - name: Open the pull request
         if: steps.check.outputs.needed == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          ISSUE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CURRENT: ${{ steps.check.outputs.current }}
           LATEST: ${{ steps.check.outputs.latest }}
           SUMMARY: ${{ steps.summary.outputs.summary }}
@@ -181,9 +198,10 @@ jobs:
           rm -f commit-message.txt
           git push -u origin "$BRANCH"
 
-          # The organisation may forbid workflow tokens from opening pull requests, and this job
-          # should still be worth running when it does: the branch is pushed and verified either
-          # way, so all that is left is a click. Failing here would throw that work away.
+          # If the app cannot open the pull request (not installed, or its key rotated away), this job
+          # should still be worth running: the branch is pushed and verified either way, so all that is
+          # left is a click. Failing here would throw that work away. The issue is filed with the
+          # workflow's own token, because the app holds no issues permission.
           if gh pr create \
             --title "chore(tzdata): move from $CURRENT to $LATEST" \
             --body-file pr-body.md 2>pr-error.txt; then
@@ -191,11 +209,11 @@ jobs:
           else
             cat pr-error.txt
 
-            gh issue create \
+            GH_TOKEN="$ISSUE_TOKEN" gh issue create \
               --title "tz database $LATEST is ready to merge" \
               --body "\`$BRANCH\` is pushed and verified — the suite, \`composer sync-check\` and \`composer lint\` all ran against \`$LATEST\` in [this run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID).
 
-          This workflow could not open the pull request itself; the token is not permitted to. Open it here:
+          This workflow could not open the pull request itself; see the run log for why. Open it here:
           $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/compare/main...$BRANCH?expand=1" \
               --label tzdata
           fi
