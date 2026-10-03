@@ -16,7 +16,21 @@ Built on a framework-free core that never calls `date_default_timezone_set()` an
 composer require laranail/chrono
 ```
 
-## Quick start
+## Quick start guide and usage
+
+### Getting started
+
+Nothing is required: the service provider and the `Chrono` and `Timezones` facades are
+auto-discovered, and every config key has a working default. Optionally:
+
+1. Publish the config (writes `config/laranail/chrono.php`):
+   `php artisan vendor:publish --tag=laranail::chrono-config`.
+2. Publish the translations to override validation messages:
+   `php artisan vendor:publish --tag=laranail::chrono-translations`.
+3. Check the tzdata release PHP is carrying with `Timezones::version()`; two or more years old means
+   the host is wrong about any country that has changed its rules since.
+
+### Usage
 
 ```php
 use Simtabi\Laranail\Chrono\Facades\Timezones;
