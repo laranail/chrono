@@ -326,3 +326,5 @@ Initial public release.
   one-line `use` change. See [UPGRADING.md](UPGRADING.md).
 - Calendars, recurrence, intervals, reporting periods, business days and astronomy are planned for
   `v0.2` and `v0.3`.
+
+[Unreleased]: https://github.com/laranail/chrono/compare/v0.1.8...HEAD
