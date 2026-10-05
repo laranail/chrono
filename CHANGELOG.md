@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Views and translations also answer to `laranail/chrono::`**, the composer package name, over
+  the same files as `laranail-chrono::`, which stays for Blade tags and existing callers. This comes
+  from `laranail/package-tools` `v0.1.3`, whose `hasViews()` / `hasTranslations()` register both
+  forms, so the constraint is now `^0.1.3`. Guarded by `NamingConventionTest`, which reads the live
+  view and translation registries.
+
 ### Changed
 
 - **The weekly tz database bump opens its pull request as the Refresh Bot GitHub App.** A pull request

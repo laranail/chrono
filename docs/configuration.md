@@ -139,7 +139,7 @@ Read the resolved set with `Chrono::display()`.
 | Key | Env | Default |
 |---|---|---|
 | `select.shape` | `CHRONO_SELECT_SHAPE` | `grouped` |
-| `select.placeholder` | — | `null`, meaning `trans('laranail-chrono::messages.select.placeholder')` |
+| `select.placeholder` | — | `null`, meaning `trans('laranail/chrono::messages.select.placeholder')` |
 
 The shape sets grouping and label template together, so the Blade component and anything calling
 `Chrono::present()->toShape()` agree without either restating it:
@@ -158,6 +158,10 @@ One field can override the application default:
 ```
 
 See [the Blade component](tools/blade.md) and [Presentation](tools/presentation.md).
+
+Chrono's views and translations answer to `laranail/chrono::`, the composer package name, which is
+the form to use with `view()`, `trans()` and `__()`. `laranail-chrono::` resolves the same files and
+stays: a Blade tag cannot spell a slash, so components are `<x-laranail-chrono::…>`.
 
 ## Cache
 
