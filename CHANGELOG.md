@@ -341,4 +341,8 @@ Initial public release.
 - Calendars, recurrence, intervals, reporting periods, business days and astronomy are planned for
   `v0.2` and `v0.3`.
 
-[Unreleased]: https://github.com/laranail/chrono/compare/v0.1.8...HEAD
+[Unreleased]: https://github.com/laranail/chrono/compare/v0.1.10...HEAD
+[0.1.10]: https://github.com/laranail/chrono/compare/v0.1.9...v0.1.10
+[0.1.9]: https://github.com/laranail/chrono/compare/v0.1.8...v0.1.9
+[0.1.8]: https://github.com/laranail/chrono/compare/v0.1.0...v0.1.8
+[0.1.0]: https://github.com/laranail/chrono/releases/tag/v0.1.0
