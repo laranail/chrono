@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.11] - 2026-10-20
+
 ### Changed
 
 - A guard now keeps literal credentials out of the tests, and every credential generated with
@@ -349,7 +351,8 @@ Initial public release.
 - Calendars, recurrence, intervals, reporting periods, business days and astronomy are planned for
   `v0.2` and `v0.3`.
 
-[Unreleased]: https://github.com/laranail/chrono/compare/v0.1.10...HEAD
+[Unreleased]: https://github.com/laranail/chrono/compare/v0.1.11...HEAD
+[0.1.11]: https://github.com/laranail/chrono/compare/v0.1.10...v0.1.11
 [0.1.10]: https://github.com/laranail/chrono/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/laranail/chrono/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/laranail/chrono/compare/v0.1.0...v0.1.8
