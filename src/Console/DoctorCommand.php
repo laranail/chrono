@@ -73,6 +73,13 @@ final class DoctorCommand extends Command
             $this->components->twoColumnDetail('ICU', (string) $icuVersion);
             $this->components->twoColumnDetail('ICU tzdata', $icu === false ? 'unknown' : $icu);
 
+            // PHPStan's intl stub types getTZDataVersion() as `string`, so it reads this check as
+            // already-narrowed. The extension itself promises no such thing: measured 2026-11-13 on
+            // PHP 8.5.12 with ICU 57.2, ReflectionMethod reports *no declared return type* for it,
+            // and the manual has documented `string|false` since PHP 5. The guard is kept and the
+            // stub's disagreement is exempted here rather than deleting a branch the runtime can
+            // still take -- line 74 above handles the same `false` for the same reason.
+            // @phpstan-ignore function.alreadyNarrowedType
             if (is_string($icu) && $icu !== '' && ! $timezones->usesSystemDatabase()
                 && (bool) config('laranail.chrono.doctor.warn_on_icu_drift', true)) {
                 if ($this->comparable($icu) !== $this->comparable($phpTzdata)) {
