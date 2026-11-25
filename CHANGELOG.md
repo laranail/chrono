@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **The tz database moves from 2026.5 to 2026.6.** The catalogue is unchanged: regenerating under
+  tzdata 2026.6 reproduces every identifier, abbreviation and alias, and only the recorded release
+  (`resources/tzdata-version.txt`) and the generated files' version stamps move. The `php:8.5` image now
+  bundles 2026.6, so the container's pin check refused the old 2026.5 pin.
+
 ## [0.1.11] - 2026-10-20
 
 ### Changed
